@@ -1,3 +1,8 @@
+Run npm run build
+and npm run serve
+
+to checkout the api navigate to localhost:3200/api-docs. Try querying inventory or health
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
