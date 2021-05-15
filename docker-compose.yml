@@ -10,7 +10,7 @@ services:
   #     POSTGRES_USER: dev
   #     POSTGRES_PASSWORD: dev
   #     POSTGRES_DB: last_respects_development
-  frontend:
+  last_respects:
     build:
       context: .
     ports:
