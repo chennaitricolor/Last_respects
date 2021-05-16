@@ -1,10 +1,9 @@
-'use strict';
+
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 
 const routes = require('./routes');
-// const slots_route = require('./ro    utes/slots');
 const path = require('path');
 
 const swaggerJSDoc = require('swagger-jsdoc');
@@ -53,7 +52,7 @@ const swaggerDefinition = {
       res.setHeader('Content-Type', 'application/json');
       res.send(swaggerSpec);
     } catch (err) {
-      logger.error('Error in generating Swagger');
+      console.log('Error in generating swagger');
     }
   });
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(options)));

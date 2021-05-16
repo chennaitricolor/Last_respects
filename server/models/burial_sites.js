@@ -1,4 +1,3 @@
-const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   const burial_sites= sequelize.define('burial_sites', {
     id: {
