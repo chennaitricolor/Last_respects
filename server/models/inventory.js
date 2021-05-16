@@ -1,4 +1,3 @@
-const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   const inventory =  sequelize.define('inventory', {
     id: {

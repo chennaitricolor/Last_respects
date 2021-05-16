@@ -3,17 +3,32 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@babel/core": "7.12.3",
+    "@babel/eslint-parser": "7.14.2",
+    "@typescript-eslint/eslint-plugin": "4.5.0",
+    "@typescript-eslint/parser": "4.5.0",
+    "babel-jest": "26.6.0",
+    "babel-loader": "8.1.0",
+    "babel-plugin-named-asset-import": "0.3.7",
+    "babel-preset-react-app": "10.0.0",
     "cookie-parser": "^1.4.5",
+    "eslint-config-react-app": "6.0.0",
+    "eslint-plugin-flowtype": "5.2.0",
+    "eslint-plugin-jest": "24.1.0",
+    "eslint-plugin-testing-library": "3.9.2",
+    "eslint-webpack-plugin": "2.1.0",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "express-winston": "^4.1.0",
     "helmet": "^4.6.0",
+    "moment": "2.29.1",
+    "primereact": "6.0.1",
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
+    "react-scripts": "^4.0.3",
     "pg": "^8.6.0",
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0",
-    "react-scripts": "3.2.0",
     "sequelize": "^5.22.3",
-    "swagger-jsdoc": "^3.0.3",
+    "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.0.1",
     "winston": "^3.3.3"
   },
@@ -23,7 +38,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "serve": "node server/server.js",
-    "serve:dev": "nodemon server/server.js"
+    "serve:dev": "nodemon server/server.js",
+    "lint": "eslint \"src/**/*.{js,jsx,json}\"",
+    "lint:fix": "eslint . --fix"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -39,5 +56,13 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint": "7.18.0",
+    "eslint-config-airbnb": "18.2.1",
+    "eslint-plugin-import": "2.22.1",
+    "eslint-plugin-jsx-a11y": "6.4.1",
+    "eslint-plugin-react": "7.22.0",
+    "eslint-plugin-react-hooks": "4.2.0"
   }
 }
