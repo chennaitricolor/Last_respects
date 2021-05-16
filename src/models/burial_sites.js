@@ -1,40 +1,64 @@
-const Sequelize = require('sequelize');
+/* jshint indent: 2 */
+
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('burial_sites', {
+  return sequelize.define('burialSites', {
     id: {
       type: DataTypes.BIGINT,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
+      field: 'id'
     },
     lat: {
       type: DataTypes.DOUBLE,
-      allowNull: false
+      allowNull: false,
+      field: 'lat'
     },
     long: {
       type: DataTypes.DOUBLE,
-      allowNull: false
+      allowNull: false,
+      field: 'long'
     },
-    zone: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
-      allowNull: false
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: 'status'
     },
-    machinery_status: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
-      allowNull: false
+    city: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: 'city'
+    },
+    address: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: 'address'
+    },
+    zoneOrDivision: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: 'zone_or_division'
+    },
+    siteName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: 'site_name'
+    },
+    contactNo: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      field: 'contact_no'
+    },
+    adminType: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: 'admin_type'
+    },
+    siteType: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: 'site_type'
     }
   }, {
-    sequelize,
-    tableName: 'burial_sites',
-    schema: 'public',
-    timestamps: false,
-    indexes: [
-      {
-        name: "burial_sites_pkey",
-        unique: true,
-        fields: [
-          { name: "id" },
-        ]
-      },
-    ]
+    tableName: 'burial_sites'
   });
 };

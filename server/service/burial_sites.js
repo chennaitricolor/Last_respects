@@ -1,5 +1,5 @@
 const models = require('../models');
-const {burial_sites} = models;
+const {burialSites} = models;
 
 class BurialSites {
   /**
@@ -15,7 +15,7 @@ class BurialSites {
    */
   static list(req, res) {
     try {
-      return burial_sites.findAll().then(items => res.status(200).send(items));
+      return burialSites.findAll().then(items => res.status(200).send(items));
     } catch (e) {
       res.status(500).send({ error: e.message });
     }
