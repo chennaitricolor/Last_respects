@@ -1,12 +1,21 @@
 import React from "react";
+import {
+  Route,
+  Switch
+} from 'react-router-dom';
 import "./App.css";
 import BaseContainer from './containers/BaseContainer';
+import SlotBookingContainer from "./containers/SlotBookingContainer";
 
 const App = () => {
   return (
     <div className="App">
       <BaseContainer>
-        Edit <code>src/App.js</code> and save to reload.
+      <Switch>
+          <Route path="/slotbooking">
+            <SlotBookingContainer/>
+          </Route>
+        </Switch>
       </BaseContainer>
     </div>
   );
