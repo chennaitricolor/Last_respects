@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import DateSelection from "../components/SlotBooking/DateSelection";
+import ZoneSelection from "../views/ZoneSelection/ZoneSelection";
 
 const useStyles = makeStyles(() => ({
   slotBookingTitle: {
