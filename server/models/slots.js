@@ -1,4 +1,6 @@
 /* jshint indent: 2 */
+const _ = require('lodash');
+const { SLOT_STATUS } = require('../constant/enum');
 
 module.exports = function(sequelize, DataTypes) {
   const slots =  sequelize.define('slots', {
@@ -12,9 +14,10 @@ module.exports = function(sequelize, DataTypes) {
       field: 'burial_site_id'
     },
     status: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM,
       allowNull: false,
-      field: 'status'
+      field: 'status',
+      values: _.keys(SLOT_STATUS)
     },
     covidRelated: {
       type: DataTypes.BOOLEAN,
@@ -92,7 +95,10 @@ module.exports = function(sequelize, DataTypes) {
     slot: {
       type: DataTypes.STRING,
       allowNull: true,
-      field: 'slot'
+      field: 'slot',
+      validate: {
+        is: /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]-([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/
+      }
     },
     id: {
       type: DataTypes.BIGINT,

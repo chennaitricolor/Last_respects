@@ -13,6 +13,9 @@ const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const winston = require('winston');
 const expressWinston = require('express-winston');
+const moment = require('moment-timezone');
+
+moment.tz.setDefault("Asia/Kolkata");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
