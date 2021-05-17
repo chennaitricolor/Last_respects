@@ -1,7 +1,5 @@
 .App {
   height: 100%;
-  overflow: hidden;
-  background-color: #F1FBFD;
 }
 
 .App-logo {
@@ -21,4 +19,8 @@
 
 .App-link {
   color: #09d3ac;
+}
+
+.container{
+  border:1px solid #ccc;
 }

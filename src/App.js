@@ -25,8 +25,8 @@ const useStyles = makeStyles({
   //card start
   dateCard: {
     minWidth: 175,
-    marginRight: 10,
-    marginLeft: 10,
+    marginRight: 0,
+    marginLeft: 0,
   },
   timeCard: {
     minWidth: 50,
@@ -37,21 +37,27 @@ const useStyles = makeStyles({
   pos: {
     marginBottom: 12,
   },
+  overflowHidden:{
+    overflow:'hidden'
+  },
   rowFullWidth: {
     width: "100%",
   },
-  timeSlot: {
+  timeSlotWrapper: {
     listStyleType: "none",
     margin: 0,
     padding: 0,
     height: "100%",
   },
+  timeSlot:{
+    padding:'10px 15px',
+    backgroundColor:'#ff0000',
+    borderBottom:'2px solid #ccc',
+    color:'#F2F2F2'
+  },
   slotData: {
-    width: 910,
-    height: 611,
-    left: 425,
-    top: 357,
     background: "#EEFAFE",
+    padding:0
   },
   autoComplete: {
     width: 235,
@@ -78,25 +84,25 @@ const App = () => {
             <SlotBookingContainer />
           </Route>
         </Switch>
-        <div className="container body p-0 m-auto">
-          <div className={`row ${classes.rowFullWidth} slotheader p-4`}>
-            <div className="col-12 col-md-3 dropdown">
+        <div className="container">
+          <div className={`row slotheader mb-4 mt-4`}>
+            <div className="col-6 col-md-3 dropdown">
               <Autocomplete
                 id="combo-box-demo"
                 options={top100Films}
                 getOptionLabel={(option) => option.title}
-                style={{ width: 235 }}
+                style={{ width: '100%' }}
                 renderInput={(params) => (
                   <TextField {...params} label="Zone Name" variant="outlined" />
                 )}
               />
             </div>
-            <div className="col-12 col-md-3 dropdown">
+            <div className="col-6 col-md-3 dropdown">
               <Autocomplete
                 id="combo-box-demo"
                 options={top100Films}
                 getOptionLabel={(option) => option.title}
-                style={{ width: 235 }}
+                style={{ width: '100%' }}
                 renderInput={(params) => (
                   <TextField {...params} label="Zone Name" variant="outlined" />
                 )}
@@ -106,179 +112,132 @@ const App = () => {
             <div className="col-12 col-md-2 text">text</div>
             <div className="col-12 col-md-2 text">text</div>
           </div>
-          <div className={`row ${classes.rowFullWidth} slotContent `}>
-            <h4> Slot Booking</h4>
-            <div className="row">
-              <div className={`row ${classes.rowFullWidth} dateSelection `}>
-                <div className={`row m-1 p-0 ${classes.rowFullWidth} `}>
-                  <h5>Date</h5>
-                </div>
-                <div className="col-2">
-                  <Card className={classes.dateCard}>
-                    <CardContent>
-                      <Typography
-                        className={classes.pos}
-                        variant="h5"
-                        component="h2"
-                      >
-                        16
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </div>
-                <div className="col-2">
-                  <Card className={classes.dateCard}>
-                    <CardContent>
-                      <Typography
-                        className={classes.pos}
-                        variant="h5"
-                        component="h2"
-                      >
-                        17
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </div>
-                <div className="col-2">
-                  <Card className={classes.dateCard}>
-                    <CardContent>
-                      <Typography
-                        className={classes.pos}
-                        variant="h5"
-                        component="h2"
-                      >
-                        18
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </div>
-                <div className="col-2">
-                  <Card className={classes.dateCard}>
-                    <CardContent>
-                      <Typography
-                        className={classes.pos}
-                        variant="h5"
-                        component="h2"
-                      >
-                        19
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </div>
+          <div className={`row slotContent `}>
+            <div className="col-12">
+              <h4> Slot Booking</h4>
+            </div>
+            <div className={`col-12 ${classes.overflowHidden}`}>
+              <h6>Date</h6>
+              <div className="d-flex">
+                <Card className={classes.dateCard}>
+                  <CardContent>
+                    <Typography
+                      className={classes.pos}
+                      variant="h5"
+                      component="h2"
+                    >
+                      16
+                    </Typography>
+                  </CardContent>
+                </Card>
+                <Card className={classes.dateCard}>
+                  <CardContent>
+                    <Typography
+                      className={classes.pos}
+                      variant="h5"
+                      component="h2"
+                    >
+                      17
+                    </Typography>
+                  </CardContent>
+                </Card>
+                <Card className={classes.dateCard}>
+                  <CardContent>
+                    <Typography
+                      className={classes.pos}
+                      variant="h5"
+                      component="h2"
+                    >
+                      18
+                    </Typography>
+                  </CardContent>
+                </Card>
+                <Card className={classes.dateCard}>
+                  <CardContent>
+                    <Typography
+                      className={classes.pos}
+                      variant="h5"
+                      component="h2"
+                    >
+                      19
+                    </Typography>
+                  </CardContent>
+                </Card>
               </div>
-              <div className={`row m-1 p-0 ${classes.rowFullWidth} `}>
-                <h5>Time</h5>
-              </div>
-              <div className="col-3 ">
-                <ul className={` ${classes.timeSlot} ${classes.rowFullWidth} `}>
-                  <li>
-                    <Card className={classes.timeCard}>
-                      <CardContent>
-                        <Typography
-                          className={classes.pos}
-                          variant="h5"
-                          component="h2"
-                        >
-                          8:00 AM to 8:45 AM
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </li>
-                  <li>
-                    <Card className={classes.timeCard}>
-                      <CardContent>
-                        <Typography
-                          className={classes.pos}
-                          variant="h5"
-                          component="h2"
-                        >
-                          9:00 AM to 9:30 AM
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </li>
-                  <li>
-                    <Card className={classes.timeCard}>
-                      <CardContent>
-                        <Typography
-                          className={classes.pos}
-                          variant="h5"
-                          component="h2"
-                        >
-                          9:30 AM to 10:15 AM
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </li>
-                  <li>
-                    <Card className={classes.timeCard}>
-                      <CardContent>
-                        <Typography
-                          className={classes.pos}
-                          variant="h5"
-                          component="h2"
-                        >
-                          10:15 AM to 11.00 AM
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </li>
-                </ul>
-              </div>
-              <div className="col-9 slotData">
-                <div className="row displaydate">
-                  <h4> Date & Time Slot : 15/12/2021 & 9.30am to 10.15 am </h4>
+              <h6 className="mt-4">Time</h6>
+              <div className="row">
+                <div className="col-xs-12 col-md-3 pr-0">
+                  <ul className={`${classes.timeSlotWrapper}`}>
+                    <li className={`${classes.timeSlot}`}>
+                      8:00 AM to 8:45 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      9:00 AM to 9:30 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      9:30 AM to 10:15 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      10:15 AM to 11.00 AM
+                    </li>
+                  </ul>
                 </div>
-                <div className="row p-4 htmlform ">
-                  
-                </div>
-                <div className="row p-4 status">
-                  <div className="col-2">
-                    <Radio
-                      checked={selectedValue === "a"}
-                      onChange={handleChange}
-                      value="a"
-                      name="radio-button-demo"
-                      inputProps={{ "aria-label": "A" }}
-                    />
+                <div className={`col-9 ${classes.slotData}`}>
+                  <h4 className="col-12 displaydate"> Date & Time Slot : 15/12/2021 & 9.30am to 10.15 am </h4>
+                  <div className="form col-12">
+
                   </div>
-                  <div className="col-2">
-                    <Radio
-                      checked={selectedValue === "a"}
-                      onChange={handleChange}
-                      value="a"
-                      name="radio-button-demo"
-                      inputProps={{ "aria-label": "A" }}
-                    />
+                  {/* <div className="row p-4 htmlform ">
+                    
                   </div>
-                  <div className="col-2">
-                    <Radio
-                      checked={selectedValue === "a"}
-                      onChange={handleChange}
-                      value="a"
-                      name="radio-button-demo"
-                      inputProps={{ "aria-label": "A" }}
-                    />
+                  <div className="row p-4 status">
+                    <div className="col-2">
+                      <Radio
+                        checked={selectedValue === "a"}
+                        onChange={handleChange}
+                        value="a"
+                        name="radio-button-demo"
+                        inputProps={{ "aria-label": "A" }}
+                      />
+                    </div>
+                    <div className="col-2">
+                      <Radio
+                        checked={selectedValue === "a"}
+                        onChange={handleChange}
+                        value="a"
+                        name="radio-button-demo"
+                        inputProps={{ "aria-label": "A" }}
+                      />
+                    </div>
+                    <div className="col-2">
+                      <Radio
+                        checked={selectedValue === "a"}
+                        onChange={handleChange}
+                        value="a"
+                        name="radio-button-demo"
+                        inputProps={{ "aria-label": "A" }}
+                      />
+                    </div>
+                    <div className="col-2">
+                      <Radio
+                        checked={selectedValue === "a"}
+                        onChange={handleChange}
+                        value="a"
+                        name="radio-button-demo"
+                        inputProps={{ "aria-label": "A" }}
+                      />
+                    </div>
                   </div>
-                  <div className="col-2">
-                    <Radio
-                      checked={selectedValue === "a"}
-                      onChange={handleChange}
-                      value="a"
-                      name="radio-button-demo"
-                      inputProps={{ "aria-label": "A" }}
-                    />
-                  </div>
-                </div>
-                <div className="row p-4 buttons">
-                  <div className="col-2">
-                    <Button variant="contained" color="primary">
-                      Submit
-                    </Button>
-                  </div>
-                  <div className="col-2">
-                    <Button variant="outlined">Reset</Button>
-                  </div>
+                  <div className="row p-4 buttons">
+                    <div className="col-2">
+                      <Button variant="contained" color="primary">
+                        Submit
+                      </Button>
+                    </div>
+                    <div className="col-2">
+                      <Button variant="outlined">Reset</Button>
+                    </div>
+                  </div> */}
                 </div>
               </div>
             </div>
