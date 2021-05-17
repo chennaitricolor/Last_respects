@@ -1,20 +1,23 @@
 /* eslint-disable */
-
+import { makeStyles } from "@material-ui/core/styles";
 import React from 'react';
 
-const Header = (props) => { 
+const useStyles = makeStyles({
+  header: {
+    position: "absolute",
+    width: "100%",
+    height: 60,
+    left: 0,
+    top: 0,
+    background: "#2F80ED"
+  },
+});
+
+const Header = () => { 
+  const classes = useStyles();
   return (
     <header>
-      <div className="container">
-        <div className="header">
-          <div className="row">
-            <div className="col-4 logo text-center">
-            </div>
-            <div className="col-4 icons text-right">
-            </div>
-          </div>
-        </div>
-      </div>  
+        <div className={`row ${classes.header} `} />
     </header>
   )
 };

@@ -46,6 +46,21 @@ const useStyles = makeStyles({
     padding: 0,
     height: "100%",
   },
+  slotData: {
+    position: "absolute",
+    width: 910,
+    height: 611,
+    left: 425,
+    top: 357,
+    background: "#EEFAFE",
+  },
+  autoComplete: {
+    position: "absolute",
+    width: 235,
+    height: 59,
+    left: 111,
+    top: 101,
+  },
 
   //card end
 });
@@ -65,18 +80,14 @@ const App = () => {
             <SlotBookingContainer />
           </Route>
         </Switch>
-        {/** */}
-
-        {/**  */}
-
-        <div className="container">
+        <div className="container body">
           <div className={`row ${classes.rowFullWidth} slotheader p-4`}>
             <div className="col-12 col-md-3 dropdown">
               <Autocomplete
                 id="combo-box-demo"
                 options={top100Films}
                 getOptionLabel={(option) => option.title}
-                style={{ width: 300 }}
+                style={{ width: 235 }}
                 renderInput={(params) => (
                   <TextField {...params} label="Zone Name" variant="outlined" />
                 )}
@@ -87,7 +98,7 @@ const App = () => {
                 id="combo-box-demo"
                 options={top100Films}
                 getOptionLabel={(option) => option.title}
-                style={{ width: 300 }}
+                style={{ width: 235 }}
                 renderInput={(params) => (
                   <TextField {...params} label="Zone Name" variant="outlined" />
                 )}
@@ -101,64 +112,64 @@ const App = () => {
             <div className={`row ${classes.rowFullWidth} `}>
               <h2> Slot Booking</h2>
             </div>
-            <div className={`row ${classes.rowFullWidth} dateSelection `}>
-              <div className={`row m-1 p-0 ${classes.rowFullWidth} `}>
-                <h5>Date</h5>
+            <div className="row">
+              <div className={`row ${classes.rowFullWidth} dateSelection `}>
+                <div className={`row m-1 p-0 ${classes.rowFullWidth} `}>
+                  <h5>Date</h5>
+                </div>
+                <div className="col-2">
+                  <Card className={classes.dateCard}>
+                    <CardContent>
+                      <Typography
+                        className={classes.pos}
+                        variant="h5"
+                        component="h2"
+                      >
+                        16
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </div>
+                <div className="col-2">
+                  <Card className={classes.dateCard}>
+                    <CardContent>
+                      <Typography
+                        className={classes.pos}
+                        variant="h5"
+                        component="h2"
+                      >
+                        17
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </div>
+                <div className="col-2">
+                  <Card className={classes.dateCard}>
+                    <CardContent>
+                      <Typography
+                        className={classes.pos}
+                        variant="h5"
+                        component="h2"
+                      >
+                        18
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </div>
+                <div className="col-2">
+                  <Card className={classes.dateCard}>
+                    <CardContent>
+                      <Typography
+                        className={classes.pos}
+                        variant="h5"
+                        component="h2"
+                      >
+                        19
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </div>
               </div>
-              <div className="col-2">
-                <Card className={classes.dateCard}>
-                  <CardContent>
-                    <Typography
-                      className={classes.pos}
-                      variant="h5"
-                      component="h2"
-                    >
-                      16
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </div>
-              <div className="col-2">
-                <Card className={classes.dateCard}>
-                  <CardContent>
-                    <Typography
-                      className={classes.pos}
-                      variant="h5"
-                      component="h2"
-                    >
-                      17
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </div>
-              <div className="col-2">
-                <Card className={classes.dateCard}>
-                  <CardContent>
-                    <Typography
-                      className={classes.pos}
-                      variant="h5"
-                      component="h2"
-                    >
-                      18
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </div>
-              <div className="col-2">
-                <Card className={classes.dateCard}>
-                  <CardContent>
-                    <Typography
-                      className={classes.pos}
-                      variant="h5"
-                      component="h2"
-                    >
-                      19
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-            <div className={`row m-1 p-0 ${classes.rowFullWidth} `}>
               <div className={`row m-1 p-0 ${classes.rowFullWidth} `}>
                 <h5>Time</h5>
               </div>
@@ -218,12 +229,14 @@ const App = () => {
                   </li>
                 </ul>
               </div>
-              <div className="col-9">
+              <div className="col-9 slotData">
                 <div className="row displaydate">
                   <h4> Date & Time Slot : 15/12/2021 & 9.30am to 10.15 am </h4>
                 </div>
-                <div className="row htmlform"></div>
-                <div className="row status p-4">
+                <div className="row p-4 htmlform ">
+                  
+                </div>
+                <div className="row p-4 status">
                   <div className="col-2">
                     <Radio
                       checked={selectedValue === "a"}
@@ -261,7 +274,7 @@ const App = () => {
                     />
                   </div>
                 </div>
-                <div className="row buttons p-4">
+                <div className="row p-4 buttons">
                   <div className="col-2">
                     <Button variant="contained" color="primary">
                       Submit
