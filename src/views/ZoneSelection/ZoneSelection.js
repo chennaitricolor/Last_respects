@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Dropdown } from 'primereact/dropdown';
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import { makeStyles } from '@material-ui/core/styles';
 import { getSiteList, getZoneList } from '../../utils/CommonUtils';
 
@@ -9,44 +10,35 @@ const useStyles = makeStyles(() => ({
 
 const ZoneSelection = () => {
 
-  const zoneList = getZoneList();
-  const siteList = getSiteList();
-  const [selectedZone, setZone] = useState(zoneList[0].value);
-  const [selectedSite, setSite] = useState(siteList[0].value);
-  const [isSiteDisabled, setSiteDisabled] = useState(true);
-
-  const handleZoneSelection = (e) => {
-    setZone(e.target.value);
-    setSiteDisabled(true);
-  }
-  const handleSiteSelection = (e) => {
-    setSite(e.target.value);
-
-  }
+  const top100Films = [
+    { title: 'The Shawshank Redemption', year: 1994 },
+    { title: 'The Godfather', year: 1972 },
+    { title: 'The Godfather: Part II', year: 1974 },
+    { title: 'The Dark Knight', year: 2008 },
+    { title: '12 Angry Men', year: 1957 }
+  ];
 
   return (
     <div className="container">
       <div className="row">
         <div className="col-6 ">
-          <label>Zone Name</label>
-          <Dropdown
-            placeholder="Zone Name"
-            value={selectedZone}
-            options={zoneList}
-            className="graph-select"
-            onChange={(e) => handleZoneSelection(e)}
-          />
+        <Autocomplete
+                id="combo-box-demo"
+                options={top100Films}
+                getOptionLabel={(option) => option.title}
+                style={{ width: 300 }}
+                renderInput={(params) => <TextField {...params} label="Zone Name" variant="outlined" />}
+              />
         </div>
         <div className="col-6 ">
           <label>Site Name</label>
-          <Dropdown
-            placeholder="Site Name"
-            value={selectedSite}
-            options={siteList}
-            disabled={isSiteDisabled}
-            className="graph-select"
-            onChange={(e) => handleSiteSelection(e)}
-          />
+          <Autocomplete
+                id="combo-box-demo"
+                options={top100Films}
+                getOptionLabel={(option) => option.title}
+                style={{ width: 300 }}
+                renderInput={(params) => <TextField {...params} label="Site Name" variant="outlined" />}
+              />
         </div>
         <div className="col-12 ">
           <ul>
