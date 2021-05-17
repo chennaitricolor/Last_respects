@@ -8,7 +8,6 @@ const BaseContainer = ({
   <div className="base-container">
     <Header />
       { children }
-    <Footer />
   </div>
 );
 

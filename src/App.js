@@ -47,7 +47,6 @@ const useStyles = makeStyles({
     height: "100%",
   },
   slotData: {
-    position: "absolute",
     width: 910,
     height: 611,
     left: 425,
@@ -55,7 +54,6 @@ const useStyles = makeStyles({
     background: "#EEFAFE",
   },
   autoComplete: {
-    position: "absolute",
     width: 235,
     height: 59,
     left: 111,
@@ -80,7 +78,7 @@ const App = () => {
             <SlotBookingContainer />
           </Route>
         </Switch>
-        <div className="container body">
+        <div className="container body p-0 m-auto">
           <div className={`row ${classes.rowFullWidth} slotheader p-4`}>
             <div className="col-12 col-md-3 dropdown">
               <Autocomplete
@@ -109,9 +107,7 @@ const App = () => {
             <div className="col-12 col-md-2 text">text</div>
           </div>
           <div className={`row ${classes.rowFullWidth} slotContent `}>
-            <div className={`row ${classes.rowFullWidth} `}>
-              <h2> Slot Booking</h2>
-            </div>
+            <h4> Slot Booking</h4>
             <div className="row">
               <div className={`row ${classes.rowFullWidth} dateSelection `}>
                 <div className={`row m-1 p-0 ${classes.rowFullWidth} `}>
