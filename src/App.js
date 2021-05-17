@@ -7,8 +7,8 @@ import "./App.css";
 
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import Radio from '@material-ui/core/Radio';
-import Button from '@material-ui/core/Button';
+import Radio from "@material-ui/core/Radio";
+import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
@@ -23,22 +23,28 @@ const top100Films = [
 
 const useStyles = makeStyles({
   //card start
-  root: {
-    minWidth: 275,
+  dateCard: {
+    minWidth: 175,
     marginRight: 10,
-    marginLeft: 10
+    marginLeft: 10,
+  },
+  timeCard: {
+    minWidth: 50,
+    minHeight: 10,
+    padding: 3,
+    margin: 3,
   },
   pos: {
     marginBottom: 12,
   },
   rowFullWidth: {
-    width: "100%"
+    width: "100%",
   },
   timeSlot: {
     listStyleType: "none",
     margin: 0,
     padding: 0,
-    height:"100%"
+    height: "100%",
   },
 
   //card end
@@ -46,7 +52,7 @@ const useStyles = makeStyles({
 
 const App = () => {
   const classes = useStyles();
-  const [selectedValue, setSelectedValue] = React.useState('a');
+  const [selectedValue, setSelectedValue] = React.useState("a");
 
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
@@ -61,11 +67,10 @@ const App = () => {
         </Switch>
         {/** */}
 
-
         {/**  */}
 
         <div className="container">
-          <div className={`row ${classes.rowFullWidth} slotheader `}>
+          <div className={`row ${classes.rowFullWidth} slotheader p-4`}>
             <div className="col-12 col-md-3 dropdown">
               <Autocomplete
                 id="combo-box-demo"
@@ -73,38 +78,24 @@ const App = () => {
                 getOptionLabel={(option) => option.title}
                 style={{ width: 300 }}
                 renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Zone Name"
-                    variant="outlined"
-                  />
+                  <TextField {...params} label="Zone Name" variant="outlined" />
                 )}
               />
             </div>
-            <div className="col-12 col-md-3 drodown">
+            <div className="col-12 col-md-3 dropdown">
               <Autocomplete
                 id="combo-box-demo"
                 options={top100Films}
                 getOptionLabel={(option) => option.title}
                 style={{ width: 300 }}
                 renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Zone Name"
-                    variant="outlined"
-                  />
+                  <TextField {...params} label="Zone Name" variant="outlined" />
                 )}
               />
             </div>
-            <div className="col-12 col-md-2 text">
-              text
-            </div>
-            <div className="col-12 col-md-2 text">
-              text
-            </div>
-            <div className="col-12 col-md-2 text">
-              text
-            </div>
+            <div className="col-12 col-md-2 text">text</div>
+            <div className="col-12 col-md-2 text">text</div>
+            <div className="col-12 col-md-2 text">text</div>
           </div>
           <div className={`row ${classes.rowFullWidth} slotContent `}>
             <div className={`row ${classes.rowFullWidth} `}>
@@ -112,96 +103,180 @@ const App = () => {
             </div>
             <div className={`row ${classes.rowFullWidth} dateSelection `}>
               <div className={`row m-1 p-0 ${classes.rowFullWidth} `}>
-                <h6>Date</h6>
+                <h5>Date</h5>
               </div>
               <div className="col-2">
-                Date Component
-                    </div>
+                <Card className={classes.dateCard}>
+                  <CardContent>
+                    <Typography
+                      className={classes.pos}
+                      variant="h5"
+                      component="h2"
+                    >
+                      16
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </div>
               <div className="col-2">
-                Date Component
-                    </div>
+                <Card className={classes.dateCard}>
+                  <CardContent>
+                    <Typography
+                      className={classes.pos}
+                      variant="h5"
+                      component="h2"
+                    >
+                      17
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </div>
               <div className="col-2">
-                Date Component
-                    </div>
+                <Card className={classes.dateCard}>
+                  <CardContent>
+                    <Typography
+                      className={classes.pos}
+                      variant="h5"
+                      component="h2"
+                    >
+                      18
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </div>
               <div className="col-2">
-                Date Component
-                    </div>
+                <Card className={classes.dateCard}>
+                  <CardContent>
+                    <Typography
+                      className={classes.pos}
+                      variant="h5"
+                      component="h2"
+                    >
+                      19
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
-            <div className={`row ${classes.rowFullWidth} `}>
+            <div className={`row m-1 p-0 ${classes.rowFullWidth} `}>
               <div className={`row m-1 p-0 ${classes.rowFullWidth} `}>
                 <h5>Time</h5>
               </div>
               <div className="col-3 ">
+                <ul className={` ${classes.timeSlot} ${classes.rowFullWidth} `}>
+                  <li>
+                    <Card className={classes.timeCard}>
+                      <CardContent>
+                        <Typography
+                          className={classes.pos}
+                          variant="h5"
+                          component="h2"
+                        >
+                          8:00 AM to 8:45 AM
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </li>
+                  <li>
+                    <Card className={classes.timeCard}>
+                      <CardContent>
+                        <Typography
+                          className={classes.pos}
+                          variant="h5"
+                          component="h2"
+                        >
+                          9:00 AM to 9:30 AM
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </li>
+                  <li>
+                    <Card className={classes.timeCard}>
+                      <CardContent>
+                        <Typography
+                          className={classes.pos}
+                          variant="h5"
+                          component="h2"
+                        >
+                          9:30 AM to 10:15 AM
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </li>
+                  <li>
+                    <Card className={classes.timeCard}>
+                      <CardContent>
+                        <Typography
+                          className={classes.pos}
+                          variant="h5"
+                          component="h2"
+                        >
+                          10:15 AM to 11.00 AM
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </li>
+                </ul>
               </div>
-              <ul className={` ${classes.timeSlot} ${classes.rowFullWidth} `}>
-                <li>
-                  Slot time
-                            </li>
-                <li>
-                  Slot time
-                            </li>
-                <li>
-                  Slot time
-                            </li>
-                <li>
-                  Slot time
-                            </li>
-              </ul>
+              <div className="col-9">
+                <div className="row displaydate">
+                  <h4> Date & Time Slot : 15/12/2021 & 9.30am to 10.15 am </h4>
+                </div>
+                <div className="row htmlform"></div>
+                <div className="row status p-4">
+                  <div className="col-2">
+                    <Radio
+                      checked={selectedValue === "a"}
+                      onChange={handleChange}
+                      value="a"
+                      name="radio-button-demo"
+                      inputProps={{ "aria-label": "A" }}
+                    />
+                  </div>
+                  <div className="col-2">
+                    <Radio
+                      checked={selectedValue === "a"}
+                      onChange={handleChange}
+                      value="a"
+                      name="radio-button-demo"
+                      inputProps={{ "aria-label": "A" }}
+                    />
+                  </div>
+                  <div className="col-2">
+                    <Radio
+                      checked={selectedValue === "a"}
+                      onChange={handleChange}
+                      value="a"
+                      name="radio-button-demo"
+                      inputProps={{ "aria-label": "A" }}
+                    />
+                  </div>
+                  <div className="col-2">
+                    <Radio
+                      checked={selectedValue === "a"}
+                      onChange={handleChange}
+                      value="a"
+                      name="radio-button-demo"
+                      inputProps={{ "aria-label": "A" }}
+                    />
+                  </div>
+                </div>
+                <div className="row buttons p-4">
+                  <div className="col-2">
+                    <Button variant="contained" color="primary">
+                      Submit
+                    </Button>
+                  </div>
+                  <div className="col-2">
+                    <Button variant="outlined">Reset</Button>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="col-9">
-              <div className="row displaydate">
-
-              </div>
-              <div className="row htmlform">
-
-              </div>
-              <div className="row status">
-                <div className="col-2">
-                  <Radio
-                    checked={selectedValue === 'a'}
-                    onChange={handleChange}
-                    value="a"
-                    name="radio-button-demo"
-                    inputProps={{ 'aria-label': 'A' }}
-                  />
-                </div>
-                <div className="col-2">
-                  <Radio
-                    checked={selectedValue === 'a'}
-                    onChange={handleChange}
-                    value="a"
-                    name="radio-button-demo"
-                    inputProps={{ 'aria-label': 'A' }}
-                  />
-                </div>
-                <div className="col-2">
-                  <Radio
-                    checked={selectedValue === 'a'}
-                    onChange={handleChange}
-                    value="a"
-                    name="radio-button-demo"
-                    inputProps={{ 'aria-label': 'A' }}
-                  />
-                </div>
-                <div className="col-2">
-                  <Radio
-                    checked={selectedValue === 'a'}
-                    onChange={handleChange}
-                    value="a"
-                    name="radio-button-demo"
-                    inputProps={{ 'aria-label': 'A' }}
-                  />
-                </div>
-              </div>
-              <div className="row buttons">
-
-              </div>
-            </div>
-
           </div>
         </div>
       </BaseContainer>
-    </div >
+    </div>
   );
 };
 
