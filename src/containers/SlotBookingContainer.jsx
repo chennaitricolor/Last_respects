@@ -30,6 +30,7 @@ const SlotBookingContainer = () => {
 
   return (
     <div>
+      <ZoneSelection/>
       <div className={styles.slotBookingTitle}>Slot Booking</div>
       <DateSelection selectedDate={selectedDate} selectDate={selectDate} />
     </div>

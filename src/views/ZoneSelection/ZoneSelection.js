@@ -1,4 +1,4 @@
-import React,{ useState }  from 'react';
+import React, { useState } from 'react';
 import { Dropdown } from 'primereact/dropdown';
 import { makeStyles } from '@material-ui/core/styles';
 import { getSiteList, getZoneList } from '../../utils/CommonUtils';
@@ -13,7 +13,7 @@ const ZoneSelection = () => {
   const siteList = getSiteList();
   const [selectedZone, setZone] = useState(zoneList[0].value);
   const [selectedSite, setSite] = useState(siteList[0].value);
-  const[isSiteDisabled, setSiteDisabled] = useState(true);
+  const [isSiteDisabled, setSiteDisabled] = useState(true);
 
   const handleZoneSelection = (e) => {
     setZone(e.target.value);
@@ -23,11 +23,11 @@ const ZoneSelection = () => {
     setSite(e.target.value);
 
   }
-  
+
   return (
-    <div >
-      <div className="col-12 float-left mb-4">
-        <div className="col-6 float-left px-0">
+    <div className="container">
+      <div className="row">
+        <div className="col-6 ">
           <label>Zone Name</label>
           <Dropdown
             placeholder="Zone Name"
@@ -37,7 +37,7 @@ const ZoneSelection = () => {
             onChange={(e) => handleZoneSelection(e)}
           />
         </div>
-        <div className="col-6 float-right px-0">
+        <div className="col-6 ">
           <label>Site Name</label>
           <Dropdown
             placeholder="Site Name"
@@ -48,22 +48,20 @@ const ZoneSelection = () => {
             onChange={(e) => handleSiteSelection(e)}
           />
         </div>
-        <div className="col-12 p-0 mt-3">
-          <label>Site Name : </label>
-          <div className="m-0 row">
+        <div className="col-12 ">
+          <ul>
+            <li className="col-md-4"> <label>Site Name : </label>
+              <span>{""} </span>
+            </li>
 
-          </div>
-        </div>
-        <div className="col-12 p-0 mt-3">
-          <label>Contact : </label>
-          <div className="m-0 row">
+            <li> <label className="col-md-4">Contact : </label>
+              <span>{""} </span>
+            </li>
 
-          </div>
-        </div>
-        <div className="col-12 p-0 mt-3">
-          <label>Address : </label>
-          <div className="m-0 row">
-          </div>
+            <li> <label className="col-md-4">Address : </label>
+              <span>{""} </span>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
