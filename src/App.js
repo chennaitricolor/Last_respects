@@ -7,7 +7,8 @@ import "./App.css";
 
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-
+import Radio from '@material-ui/core/Radio';
+import Button from '@material-ui/core/Button';
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
@@ -24,17 +25,32 @@ const useStyles = makeStyles({
   //card start
   root: {
     minWidth: 275,
-    marginRight : 10,
+    marginRight: 10,
     marginLeft: 10
   },
   pos: {
     marginBottom: 12,
   },
+  rowFullWidth: {
+    width: "100%"
+  },
+  timeSlot: {
+    listStyleType: "none",
+    margin: 0,
+    padding: 0,
+    height:"100%"
+  },
+
   //card end
 });
 
 const App = () => {
   const classes = useStyles();
+  const [selectedValue, setSelectedValue] = React.useState('a');
+
+  const handleChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
   return (
     <div className="App">
       <BaseContainer>
@@ -45,124 +61,147 @@ const App = () => {
         </Switch>
         {/** */}
 
-        <div className="baseContainer">
-          {/** Slot Booking Header */}
-          <div className="slotBookingHeader">
-            <div className="row">
-              <div className="col-6 ">
-                <Autocomplete
-                  id="combo-box-demo"
-                  options={top100Films}
-                  getOptionLabel={(option) => option.title}
-                  style={{ width: 300 }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Zone Name"
-                      variant="outlined"
-                    />
-                  )}
-                />
-              </div>
-              <div className="col-6 ">
-                <Autocomplete
-                  id="combo-box-demo"
-                  options={top100Films}
-                  getOptionLabel={(option) => option.title}
-                  style={{ width: 300 }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Site Name"
-                      variant="outlined"
-                    />
-                  )}
-                />
-              </div>
-              <div className="col-12 ">
-                <ul>
-                  <li className="col-md-4">
-                    {" "}
-                    <label>Site Name : </label>
-                    <span>{""} </span>
-                  </li>
 
-                  <li>
-                    {" "}
-                    <label className="col-md-4">Contact : </label>
-                    <span>{""} </span>
-                  </li>
+        {/**  */}
 
-                  <li>
-                    {" "}
-                    <label className="col-md-4">Address : </label>
-                    <span>{""} </span>
-                  </li>
-                </ul>
-              </div>
+        <div className="container">
+          <div className={`row ${classes.rowFullWidth} slotheader `}>
+            <div className="col-12 col-md-3 dropdown">
+              <Autocomplete
+                id="combo-box-demo"
+                options={top100Films}
+                getOptionLabel={(option) => option.title}
+                style={{ width: 300 }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Zone Name"
+                    variant="outlined"
+                  />
+                )}
+              />
+            </div>
+            <div className="col-12 col-md-3 drodown">
+              <Autocomplete
+                id="combo-box-demo"
+                options={top100Films}
+                getOptionLabel={(option) => option.title}
+                style={{ width: 300 }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Zone Name"
+                    variant="outlined"
+                  />
+                )}
+              />
+            </div>
+            <div className="col-12 col-md-2 text">
+              text
+            </div>
+            <div className="col-12 col-md-2 text">
+              text
+            </div>
+            <div className="col-12 col-md-2 text">
+              text
             </div>
           </div>
-          {/** Slot Booking Container */}
-          <div className="slotBookingContainer">
-            <div className="row ml-auto">
-              <label> Slot Booking </label>
+          <div className={`row ${classes.rowFullWidth} slotContent `}>
+            <div className={`row ${classes.rowFullWidth} `}>
+              <h2> Slot Booking</h2>
             </div>
-            <div className="row ml-auto">
-              <label> Date </label>
+            <div className={`row ${classes.rowFullWidth} dateSelection `}>
+              <div className={`row m-1 p-0 ${classes.rowFullWidth} `}>
+                <h6>Date</h6>
+              </div>
+              <div className="col-2">
+                Date Component
+                    </div>
+              <div className="col-2">
+                Date Component
+                    </div>
+              <div className="col-2">
+                Date Component
+                    </div>
+              <div className="col-2">
+                Date Component
+                    </div>
             </div>
-            <div className="dateSelection row">
-              <Card className={classes.root}>
-                <CardContent>
-                  <Typography
-                    className={classes.pos}
-                    variant="h5"
-                    component="h2"
-                  >
-                    16
-                  </Typography>
-                </CardContent>
-              </Card>
-              <Card className={classes.root}>
-                <CardContent>
-                  <Typography
-                    className={classes.pos}
-                    variant="h5"
-                    component="h2"
-                  >
-                    17
-                  </Typography>
-                </CardContent>
-              </Card>
+            <div className={`row ${classes.rowFullWidth} `}>
+              <div className={`row m-1 p-0 ${classes.rowFullWidth} `}>
+                <h5>Time</h5>
+              </div>
+              <div className="col-3 ">
+              </div>
+              <ul className={` ${classes.timeSlot} ${classes.rowFullWidth} `}>
+                <li>
+                  Slot time
+                            </li>
+                <li>
+                  Slot time
+                            </li>
+                <li>
+                  Slot time
+                            </li>
+                <li>
+                  Slot time
+                            </li>
+              </ul>
             </div>
-            <div className= "slotSelection  mx-auto">
-            <Card className={classes.root}>
-                <CardContent>
-                  <Typography
-                    className={classes.pos}
-                    variant="h5"
-                    component="h2"
-                  >
-                    8:00 AM to 8:45 AM
-                  </Typography>
-                </CardContent>
-              </Card>
-              <Card className={classes.root}>
-                <CardContent>
-                  <Typography
-                    className={classes.pos}
-                    variant="h5"
-                    component="h2"
-                  >
-                    8:45 AM to 9:30 AM
-                  </Typography>
-                </CardContent>
-              </Card>
+            <div className="col-9">
+              <div className="row displaydate">
+
+              </div>
+              <div className="row htmlform">
+
+              </div>
+              <div className="row status">
+                <div className="col-2">
+                  <Radio
+                    checked={selectedValue === 'a'}
+                    onChange={handleChange}
+                    value="a"
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'A' }}
+                  />
+                </div>
+                <div className="col-2">
+                  <Radio
+                    checked={selectedValue === 'a'}
+                    onChange={handleChange}
+                    value="a"
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'A' }}
+                  />
+                </div>
+                <div className="col-2">
+                  <Radio
+                    checked={selectedValue === 'a'}
+                    onChange={handleChange}
+                    value="a"
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'A' }}
+                  />
+                </div>
+                <div className="col-2">
+                  <Radio
+                    checked={selectedValue === 'a'}
+                    onChange={handleChange}
+                    value="a"
+                    name="radio-button-demo"
+                    inputProps={{ 'aria-label': 'A' }}
+                  />
+                </div>
+              </div>
+              <div className="row buttons">
+
+              </div>
             </div>
+
           </div>
         </div>
-        {/**  */}
       </BaseContainer>
-    </div>
+    </div >
   );
 };
 
