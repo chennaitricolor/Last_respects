@@ -1,7 +1,9 @@
 const Sequelize = require('sequelize');
 const fs = require('fs');
 const path = require('path');
+const moment = require('moment-timezone');
 
+moment.tz.setDefault("Asia/Kolkata");
 const env = process.env.NODE_ENV || 'development';
 // eslint-disable-next-line import/no-dynamic-require
 const config = require(path.join(__dirname, '/../../config/database.js'))[env];
