@@ -84,6 +84,7 @@ const App = () => {
             <SlotBookingContainer />
           </Route>
         </Switch>
+        
         <div className="container">
           <div className={`row slotheader mb-4 mt-4`}>
             <div className="col-6 col-md-3 dropdown">
