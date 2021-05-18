@@ -15,4 +15,6 @@ const {
 
     app.put('/slots/:slotId', slots.update);
 
+    app.get('/slots/:slotId', slots.get)
+
   };

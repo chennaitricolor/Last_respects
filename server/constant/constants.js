@@ -5,7 +5,15 @@ const errors = {
           errorCode: 'SLOT_NOT_FOUND',
           message: 'Slot not found'
         }],
-      statusCode: 400
+      statusCode: 404
+  },
+  BAD_REQUEST: {
+    errors: [{
+      errorCode: 'BAD_REQUEST',
+      message: 'Please Check the Given Value'
+    }],
+    statusCode: 400
+
   },
   SLOT_UNAVAILABLE: {
     errors: [{

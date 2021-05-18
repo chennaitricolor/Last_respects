@@ -1,7 +1,7 @@
 const models = require('../models');
 const { slots, slotMeta, Sequelize } = models;
 const moment = require('moment-timezone');
-const { DATE_RANGE, SLOT_NOT_FOUND, SLOT_UNAVAILABLE } = require('../constant/constants');
+const { DATE_RANGE, SLOT_NOT_FOUND, SLOT_UNAVAILABLE, BAD_REQUEST } = require('../constant/constants');
 const { SLOT_STATUS, SLOT_UPDATE_TYPE } = require('../constant/enum');
 const { constructSlots, validateStateTransition } = require('../utils/helpers');
 const { slots: slotsValidator, validate, exceptionparser } = require('../utils/validators');
@@ -73,6 +73,25 @@ class Slots {
       const { code, message } = exceptionparser(e);
       res.status(code).send({ error: message });
     }
+  }
+
+  static async get(req, res) {
+    const {slotId} = req.params;
+    try {
+      if (slotId) {
+        const slotDetails = slots.findByPk(slotId);
+        if(_.isEmpty(slotDetails)) {
+          throw SLOT_NOT_FOUND;
+        }
+        res.status(200).send(slotDetails)
+      } else {
+        res.status(400).send(BAD_REQUEST)
+      }
+    } catch (e) {
+      const { code, message } = exceptionparser(e);
+      res.status(code).send({ error: message });
+    }
+
   }
     /**
    * @swagger
