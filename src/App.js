@@ -12,6 +12,7 @@ import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
+import LastRespectFormContainer from "./containers/LastRespectFormContainer";
 
 const top100Films = [
   { title: "The Shawshank Redemption", year: 1994 },
@@ -84,7 +85,8 @@ const App = () => {
             <SlotBookingContainer />
           </Route>
         </Switch>
-        <div className="container">
+
+        <div className="container mt-4">
           <div className={`row slotheader mb-4 mt-4`}>
             <div className="col-6 col-md-3 dropdown">
               <Autocomplete
@@ -108,9 +110,9 @@ const App = () => {
                 )}
               />
             </div>
-            <div className="col-12 col-md-2 text">text</div>
-            <div className="col-12 col-md-2 text">text</div>
-            <div className="col-12 col-md-2 text">text</div>
+            <div className="col-12 col-md-2 text">Name : </div>
+            <div className="col-12 col-md-2 text">Contact : </div>
+            <div className="col-12 col-md-2 text">Address : </div>
           </div>
           <div className={`row slotContent `}>
             <div className="col-12">
@@ -130,39 +132,7 @@ const App = () => {
                     </Typography>
                   </CardContent>
                 </Card>
-                <Card className={classes.dateCard}>
-                  <CardContent>
-                    <Typography
-                      className={classes.pos}
-                      variant="h5"
-                      component="h2"
-                    >
-                      17
-                    </Typography>
-                  </CardContent>
-                </Card>
-                <Card className={classes.dateCard}>
-                  <CardContent>
-                    <Typography
-                      className={classes.pos}
-                      variant="h5"
-                      component="h2"
-                    >
-                      18
-                    </Typography>
-                  </CardContent>
-                </Card>
-                <Card className={classes.dateCard}>
-                  <CardContent>
-                    <Typography
-                      className={classes.pos}
-                      variant="h5"
-                      component="h2"
-                    >
-                      19
-                    </Typography>
-                  </CardContent>
-                </Card>
+                 
               </div>
               <h6 className="mt-4">Time</h6>
               <div className="row">
@@ -185,59 +155,8 @@ const App = () => {
                 <div className={`col-9 ${classes.slotData}`}>
                   <h4 className="col-12 displaydate"> Date & Time Slot : 15/12/2021 & 9.30am to 10.15 am </h4>
                   <div className="form col-12">
-
+                      <LastRespectFormContainer/>
                   </div>
-                  {/* <div className="row p-4 htmlform ">
-                    
-                  </div>
-                  <div className="row p-4 status">
-                    <div className="col-2">
-                      <Radio
-                        checked={selectedValue === "a"}
-                        onChange={handleChange}
-                        value="a"
-                        name="radio-button-demo"
-                        inputProps={{ "aria-label": "A" }}
-                      />
-                    </div>
-                    <div className="col-2">
-                      <Radio
-                        checked={selectedValue === "a"}
-                        onChange={handleChange}
-                        value="a"
-                        name="radio-button-demo"
-                        inputProps={{ "aria-label": "A" }}
-                      />
-                    </div>
-                    <div className="col-2">
-                      <Radio
-                        checked={selectedValue === "a"}
-                        onChange={handleChange}
-                        value="a"
-                        name="radio-button-demo"
-                        inputProps={{ "aria-label": "A" }}
-                      />
-                    </div>
-                    <div className="col-2">
-                      <Radio
-                        checked={selectedValue === "a"}
-                        onChange={handleChange}
-                        value="a"
-                        name="radio-button-demo"
-                        inputProps={{ "aria-label": "A" }}
-                      />
-                    </div>
-                  </div>
-                  <div className="row p-4 buttons">
-                    <div className="col-2">
-                      <Button variant="contained" color="primary">
-                        Submit
-                      </Button>
-                    </div>
-                    <div className="col-2">
-                      <Button variant="outlined">Reset</Button>
-                    </div>
-                  </div> */}
                 </div>
               </div>
             </div>
