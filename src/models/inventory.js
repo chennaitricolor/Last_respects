@@ -1,5 +1,7 @@
+/* jshint indent: 2 */
+
 module.exports = function(sequelize, DataTypes) {
-  const inventory =  sequelize.define('inventory', {
+  return sequelize.define('inventory', {
     id: {
       type: DataTypes.BIGINT,
       allowNull: false,
@@ -28,5 +30,4 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     tableName: 'inventory'
   });
-  return inventory;
 };
