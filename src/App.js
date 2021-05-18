@@ -132,7 +132,6 @@ const App = () => {
                     </Typography>
                   </CardContent>
                 </Card>
-                 
               </div>
               <h6 className="mt-4">Time</h6>
               <div className="row">
