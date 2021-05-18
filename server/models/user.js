@@ -24,11 +24,13 @@ module.exports = function(sequelize, DataTypes) {
     id: {
       type: DataTypes.BIGINT,
       allowNull: false,
+      autoIncrement: true,
       primaryKey: true,
       field: 'id'
     }
   }, {
-    tableName: 'user'
+    tableName: 'user',
+    timestamps:false
   });
   return user;
 };
