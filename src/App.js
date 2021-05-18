@@ -28,6 +28,10 @@ const useStyles = makeStyles({
     minWidth: 175,
     marginRight: 0,
     marginLeft: 0,
+    display : "flex",
+    justifyContent: "center",
+    alignItems : "center",
+    textAlign : "center"
   },
   timeCard: {
     minWidth: 50,
@@ -49,6 +53,8 @@ const useStyles = makeStyles({
     margin: 0,
     padding: 0,
     height: "100%",
+    maxHeight: 1000,
+    overflow: "auto"
   },
   timeSlot:{
     padding:'10px 15px',
@@ -66,6 +72,13 @@ const useStyles = makeStyles({
     left: 111,
     top: 101,
   },
+  customContainer:{
+    maxWidth: 1500
+  },
+  slotheader : {
+    display : "flex",
+    alignItems : "center"
+  }
 
   //card end
 });
@@ -86,8 +99,8 @@ const App = () => {
           </Route>
         </Switch>
 
-        <div className="container mt-4">
-          <div className={`row slotheader mb-4 mt-4`}>
+        <div className={`container ${classes.customContainer} mt-4`}>
+          <div className={`row ${classes.slotheader} mb-4 mt-4`}>
             <div className="col-6 col-md-3 dropdown">
               <Autocomplete
                 id="combo-box-demo"
@@ -128,7 +141,10 @@ const App = () => {
                       variant="h5"
                       component="h2"
                     >
-                      16
+                      <div>
+                        <p>{16}</p>
+                        <p>{8 + ' Slots Available'}</p>
+                      </div>
                     </Typography>
                   </CardContent>
                 </Card>
@@ -147,6 +163,98 @@ const App = () => {
                       9:30 AM to 10:15 AM
                     </li>
                     <li className={`${classes.timeSlot}`}>
+                      
+                      10:15 AM to 11.00 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      8:00 AM to 8:45 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      9:00 AM to 9:30 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      9:30 AM to 10:15 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      
+                      10:15 AM to 11.00 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      8:00 AM to 8:45 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      9:00 AM to 9:30 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      9:30 AM to 10:15 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      
+                      10:15 AM to 11.00 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      8:00 AM to 8:45 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      9:00 AM to 9:30 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      9:30 AM to 10:15 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      
+                      10:15 AM to 11.00 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      8:00 AM to 8:45 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      9:00 AM to 9:30 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      9:30 AM to 10:15 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      
+                      10:15 AM to 11.00 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      8:00 AM to 8:45 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      9:00 AM to 9:30 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      9:30 AM to 10:15 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      
+                      10:15 AM to 11.00 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      8:00 AM to 8:45 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      9:00 AM to 9:30 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      9:30 AM to 10:15 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      
+                      10:15 AM to 11.00 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      8:00 AM to 8:45 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      9:00 AM to 9:30 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      9:30 AM to 10:15 AM
+                    </li>
+                    <li className={`${classes.timeSlot}`}>
+                      
                       10:15 AM to 11.00 AM
                     </li>
                   </ul>

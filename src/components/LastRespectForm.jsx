@@ -130,7 +130,7 @@ const useStyles = makeStyles({
 
 const renderTextInput = (label, value, id, handleOnChange, styles, multiline, rows, disabled, isRequired = false) => {
   return (
-    <div className="col-12 col-md-6" style={{ marginTop: '3%' }}>
+    <div className="col-md-6 col-sm-12 col-12" style={{ marginTop: '3%' }}>
       <Typography component={'div'} className={styles.fieldLabel}>
         {label}
         {isRequired && <RequiredFieldMarker />}
@@ -154,7 +154,7 @@ const renderTextInput = (label, value, id, handleOnChange, styles, multiline, ro
 const renderRadioButtonField = (label, value, id, radioButtonList, handleOnChange, styles, disabled, isRequired, isFullwidth) => {
   const lastForm = clsx(`last-respect-form-${id}`);
   const formLablel = clsx(`last-respect-form-${id}-label`, styles.radioButton)
-  const radioClass = isFullwidth ? `col-12 ${lastForm}` : `col-12 col-md-6 ${lastForm}`;
+  const radioClass = isFullwidth ? `col-12 ${lastForm}` : `col-md-6  col-sm-12 col-12 ${lastForm}`;
   return (
     <div className={`${radioClass}`}>
       <Typography component={'div'} className={`${formLablel}`}>
@@ -186,7 +186,7 @@ const renderRadioButtonField = (label, value, id, radioButtonList, handleOnChang
 
 const renderNumberInput = (label, value, id, handleOnChange, lengthAsMask, styles, disabled, isRequired = false) => {
   return (
-    <div className="col-12 col-md-6" style={{ marginTop: '3%' }}>
+    <div className="col-md-6  col-sm-12 col-12" style={{ marginTop: '3%' }}>
       <Typography component={'div'} className={styles.fieldLabel}>
         {label}
         {isRequired && <RequiredFieldMarker />}
@@ -200,7 +200,7 @@ const renderNumberInput = (label, value, id, handleOnChange, lengthAsMask, style
 
 const renderDropdownInput = (label, value, id, handleOnChange, list, styles, disabled, isRequired = false) => {
   return (
-    <div className ="col-12 col-md-6">
+    <div className ="col-md-6  col-sm-12 col-12">
     <FormControl className={styles.dropDown}>
       <Typography component={'div'} className={styles.fieldLabel}>
         {label}
