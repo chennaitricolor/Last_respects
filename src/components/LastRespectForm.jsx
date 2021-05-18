@@ -130,7 +130,7 @@ const useStyles = makeStyles({
 
 const renderTextInput = (label, value, id, handleOnChange, styles, multiline, rows, disabled, isRequired = false) => {
   return (
-    <div style={{ marginTop: '3%' }}>
+    <div className="col-12 col-md-6" style={{ marginTop: '3%' }}>
       <Typography component={'div'} className={styles.fieldLabel}>
         {label}
         {isRequired && <RequiredFieldMarker />}
@@ -151,10 +151,13 @@ const renderTextInput = (label, value, id, handleOnChange, styles, multiline, ro
   );
 };
 
-const renderRadioButtonField = (label, value, id, radioButtonList, handleOnChange, styles, disabled, isRequired) => {
+const renderRadioButtonField = (label, value, id, radioButtonList, handleOnChange, styles, disabled, isRequired, isFullwidth) => {
+  const lastForm = clsx(`last-respect-form-${id}`);
+  const formLablel = clsx(`last-respect-form-${id}-label`, styles.radioButton)
+  const radioClass = isFullwidth ? `col-12 ${lastForm}` : `col-12 col-md-6 ${lastForm}`;
   return (
-    <div className={clsx(`last-respect-form-${id}`)}>
-      <Typography component={'div'} className={clsx(`last-respect-form-${id}-label`, styles.radioButton)}>
+    <div className={`${radioClass}`}>
+      <Typography component={'div'} className={`${formLablel}`}>
         {label}
         {isRequired && <RequiredFieldMarker />}
       </Typography>
@@ -167,7 +170,7 @@ const renderRadioButtonField = (label, value, id, radioButtonList, handleOnChang
         {radioButtonList.map((radioButton, index) => {
           return (
             <FormControlLabel
-              className={`${styles.formControlValue} last-respect-form-${id}-form-control`}
+              className={` ${styles.formControlValue} last-respect-form-${id}-form-control`}
               key={index}
               value={radioButton}
               control={<Radio />}
@@ -183,7 +186,7 @@ const renderRadioButtonField = (label, value, id, radioButtonList, handleOnChang
 
 const renderNumberInput = (label, value, id, handleOnChange, lengthAsMask, styles, disabled, isRequired = false) => {
   return (
-    <div style={{ marginTop: '3%' }}>
+    <div className="col-12 col-md-6" style={{ marginTop: '3%' }}>
       <Typography component={'div'} className={styles.fieldLabel}>
         {label}
         {isRequired && <RequiredFieldMarker />}
@@ -197,6 +200,7 @@ const renderNumberInput = (label, value, id, handleOnChange, lengthAsMask, style
 
 const renderDropdownInput = (label, value, id, handleOnChange, list, styles, disabled, isRequired = false) => {
   return (
+    <div className ="col-12 col-md-6">
     <FormControl className={styles.dropDown}>
       <Typography component={'div'} className={styles.fieldLabel}>
         {label}
@@ -218,6 +222,7 @@ const renderDropdownInput = (label, value, id, handleOnChange, list, styles, dis
         })}
       </Select>
     </FormControl>
+    </div>
   );
 };
 
@@ -334,24 +339,32 @@ const LastRespectForm = (props) => {
           <Typography className={styles.header} component={'div'}>
             Details
           </Typography>
-          {renderTextInput('Deceased Name', details.deceasedName, 'deceasedName', handleOnChange, styles, false, null, props.type === 'EDIT', true)}
-          {renderRadioButtonField('COVID 19?', details.isCovid19, 'isCovid19', yesNoRadioButton, handleOnChange, styles, props.type === 'EDIT', true)}
-          {renderTextInput('Death Certificate Number', details.deathCertificateNumber, 'deathCertificateNumber', handleOnChange, styles, false, null, props.type === 'EDIT', true)}
-          {renderTextInput('Attender Name', details.attenderName, 'attenderName', handleOnChange, styles, false, null, props.type === 'EDIT', true)}
-          {renderNumberInput('Attender Contact Number', details.attenderContactNumber, 'attenderContactNumber', handleOnChange, '9999999999', styles, props.type === 'EDIT', true)}
-          {renderDropdownInput(
-            'Attender Relationship',
-            details.attenderRelationship,
-            'attenderRelationship',
-            handleOnChange,
-            attenderRelationship,
-            styles,
-            props.type === 'EDIT',
-            true,
-          )}
-          {renderTextInput('Address', details.address, 'address', handleOnChange, styles, true, 3, props.type === 'EDIT', true)}
-          {renderDropdownInput('Address Proof', details.addressProof, 'addressProof', handleOnChange, addressProof, styles, props.type === 'EDIT', true)}
-          {renderRadioButtonField('Status', details.status, 'status', status, handleOnChange, styles, false, true)}
+          <div className="row ">
+            {renderTextInput('Deceased Name', details.deceasedName, 'deceasedName', handleOnChange, styles, false, null, props.type === 'EDIT', true)}
+            {renderRadioButtonField('COVID 19?', details.isCovid19, 'isCovid19', yesNoRadioButton, handleOnChange, styles, props.type === 'EDIT', true, false)}
+          </div>
+          <div className="row ">
+            {renderTextInput('Death Certificate Number', details.deathCertificateNumber, 'deathCertificateNumber', handleOnChange, styles, false, null, props.type === 'EDIT', true)}
+            {renderTextInput('Attender Name', details.attenderName, 'attenderName', handleOnChange, styles, false, null, props.type === 'EDIT', true)}
+          </div>
+          <div className="row ">
+            {renderNumberInput('Attender Contact Number', details.attenderContactNumber, 'attenderContactNumber', handleOnChange, '9999999999', styles, props.type === 'EDIT', true)}
+            {renderDropdownInput(
+              'Attender Relationship',
+              details.attenderRelationship,
+              'attenderRelationship',
+              handleOnChange,
+              attenderRelationship,
+              styles,
+              props.type === 'EDIT',
+              true,
+            )}
+          </div>
+          <div className="row ">
+            {renderTextInput('Address', details.address, 'address', handleOnChange, styles, true, 3, props.type === 'EDIT', true)}
+            {renderDropdownInput('Address Proof', details.addressProof, 'addressProof', handleOnChange, addressProof, styles, props.type === 'EDIT', true)}
+          </div>
+          {renderRadioButtonField('Status', details.status, 'status', status, handleOnChange, styles, false, true, true)}
         </form>
       </div>
       <div style={{ textAlign: 'center', marginTop: '10%' }}>
