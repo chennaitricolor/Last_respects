@@ -7,6 +7,13 @@ const errors = {
         }],
       statusCode: 404
   },
+  SITE_NOT_FOUND: {
+    errors: [{
+      errorCode: 'SITE_NOT_FOUND',
+      message: 'Site not found'
+    }],
+    statusCode: 404
+  },
   BAD_REQUEST: {
     errors: [{
       errorCode: 'BAD_REQUEST',

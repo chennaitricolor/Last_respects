@@ -1,5 +1,5 @@
 const {
-    health, inventory, burialSite, slots
+    health, inventory, burialSite, slots, zones, sites
   } = require('../service');
   
   
@@ -16,5 +16,9 @@ const {
     app.put('/slots/:slotId', slots.update);
 
     app.get('/slots/:slotId', slots.get)
+
+    app.get('/zones', zones.list)
+
+    app.get('/zones/:zoneId/sites', sites.list)
 
   };

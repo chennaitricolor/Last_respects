@@ -40,6 +40,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       field: 'zone_or_division'
     },
+    zoneOrDivisionId: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      field: 'zone_or_division_id'
+    },
     siteName: {
       type: DataTypes.STRING,
       allowNull: false,
