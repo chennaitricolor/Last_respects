@@ -201,28 +201,28 @@ const renderNumberInput = (label, value, id, handleOnChange, lengthAsMask, style
 
 const renderDropdownInput = (label, value, id, handleOnChange, list, styles, disabled, isRequired = false) => {
   return (
-    <div className ="col-md-6  col-sm-12 col-12">
-    <FormControl className={styles.dropDown}>
-      <Typography component={'div'} className={styles.fieldLabel}>
-        {label}
-        {isRequired && <RequiredFieldMarker />}
-      </Typography>
-      <Select
-        variant={'outlined'}
-        size={'small'}
-        className={clsx(styles.dropDownSelect, disabled ? styles.disabledField : '')}
-        value={value}
-        onChange={(e) => handleOnChange(e.target.value, id, 'dropdown')}
-      >
-        {list.map((item) => {
-          return (
-            <MenuItem disabled={disabled} key={item.id} value={item.id}>
-              {id === 'zone' ? `${item.id} - ${item.name}` : item.name || item.id}
-            </MenuItem>
-          );
-        })}
-      </Select>
-    </FormControl>
+    <div className="col-md-6  col-sm-12 col-12">
+      <FormControl className={styles.dropDown}>
+        <Typography component={'div'} className={styles.fieldLabel}>
+          {label}
+          {isRequired && <RequiredFieldMarker />}
+        </Typography>
+        <Select
+          variant={'outlined'}
+          size={'small'}
+          className={clsx(styles.dropDownSelect, disabled ? styles.disabledField : '')}
+          value={value}
+          onChange={(e) => handleOnChange(e.target.value, id, 'dropdown')}
+        >
+          {list.map((item) => {
+            return (
+              <MenuItem disabled={disabled} key={item.id} value={item.id}>
+                {id === 'zone' ? `${item.id} - ${item.name}` : item.name || item.id}
+              </MenuItem>
+            );
+          })}
+        </Select>
+      </FormControl>
     </div>
   );
 };
@@ -237,6 +237,8 @@ const initialState = {
   address: '',
   addressProof: '',
   status: '',
+  cancellationReason: '',
+  otherComments: ''
 };
 
 const LastRespectForm = (props) => {
@@ -299,6 +301,10 @@ const LastRespectForm = (props) => {
     { id: 'rationCard', name: 'Ration Card' },
   ];
 
+  const cancellationReason = [
+    { id: 'machinery issue', name: 'Machinery Issue' },
+  ];
+
   const enableSubmit = () => {
     const { deceasedName, isCovid19, deathCertificateNumber, attenderName, attenderContactNumber, attenderRelationship, address, addressProof, status } = details;
 
@@ -335,17 +341,19 @@ const LastRespectForm = (props) => {
             <Typography className={styles.headerValue} component={'div'} style={{ display: 'inline-block' }}>
               {'15th & 9:30 AM to 10:15 AM'}
             </Typography>
-           {/* {props.type === 'EDIT' && (
-              <Button variant="outlined" className={styles.reAssignButton} onClick={() => {setOpenDialog(!openDialog)}}>
+            {props.type === 'EDIT' && (
+              <Button variant="outlined" className={styles.reAssignButton} onClick={() => { setOpenDialog(!openDialog) }}>
                 Re-Assign
               </Button>
-           )}*/}
-           <Button variant="outlined" className={styles.reAssignButton} onClick={() => { 
-             console.log("opendialog state", openDialog); 
-             return setOpenDialog(!openDialog);}}>
-                Re-Assign
+            )}
+            {openDialog && <ModalDialog openDialog={openDialog} />}
+            <Button variant="outlined" className={styles.reAssignButton} onClick={() => {
+              console.log("opendialog state", openDialog);
+              return setOpenDialog(!openDialog);
+            }}>
+              Re-Assign
             </Button>
-            <ModalDialog openDialog={openDialog}/>
+
           </div>
           <Typography className={styles.header} component={'div'}>
             Details
@@ -376,6 +384,11 @@ const LastRespectForm = (props) => {
             {renderDropdownInput('Address Proof', details.addressProof, 'addressProof', handleOnChange, addressProof, styles, props.type === 'EDIT', true)}
           </div>
           {renderRadioButtonField('Status', details.status, 'status', status, handleOnChange, styles, false, true, true)}
+          {props.type === 'EDIT' && ( <div className="row ">
+            {renderDropdownInput('Reason for Cancellation', details.cancellationReason, 'cancellationReason', handleOnChange, cancellationReason, styles, props.type === 'EDIT', true)}
+            {renderTextInput('Other Comments', details.otherComments, 'otherComments', handleOnChange, styles, true, 3, props.type === 'EDIT', true)}
+          </div>
+          )}
         </form>
       </div>
       <div style={{ textAlign: 'center', marginTop: '10%' }}>
