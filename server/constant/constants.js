@@ -1,5 +1,10 @@
+const moment = require('moment');
+
 const errors = {
   // List of errors
+  USER_NOT_FOUND : {
+    message: 'user not found'
+  },
   SLOT_NOT_FOUND: {
     errors: [{
           errorCode: 'SLOT_NOT_FOUND',
@@ -39,7 +44,31 @@ const errors = {
   }
 }
 
+const success = {
+  USER_CREATION_SUCCESS: {
+    success: true,
+    message: 'User successfully created',
+    auth: true,
+  },
+  USER_UPDATION_SUCCESS: {
+    message: 'userDetails updated successfully'
+  },
+
+  USER_DELETED_SUCCESS: {
+    message: 'user deleted successfully'
+  }
+}
+
+const tokenExpiry = 86400;
+
+const refreshTokenExpiry = moment.duration(1, 'month').asSeconds();
+
+const secret = 'secret TN secret';
 module.exports = {
+  success,
+  refreshTokenExpiry,
+  secret,
+  tokenExpiry,
   DATE_RANGE: {
     VALUE: 4,
     UNIT: 'd'
