@@ -19,9 +19,9 @@ exports.bind = (app) => {
 
   app.put('/slots/:slotId', verifyToken,  slots.update);
 
-  app.get('/zones', zones.list)
+  app.get('/zones', verifyToken, zones.list)
 
-  app.get('/zones/:zoneId/sites', sites.list)
+  app.get('/zones/:zoneId/sites', verifyToken, sites.list)
 
   //users
 
