@@ -1,16 +1,67 @@
+const moment = require('moment');
+
 const errors = {
   // List of errors
+  USER_NOT_FOUND : {
+    message: 'user not found'
+  },
   SLOT_NOT_FOUND: {
-    errorCode: 'SLOT_NOT_FOUND',
-    message: 'Slot not found'
+    errors: [{
+          errorCode: 'SLOT_NOT_FOUND',
+          message: 'Slot not found'
+        }],
+      statusCode: 404
+  },
+  BAD_REQUEST: {
+    errors: [{
+      errorCode: 'BAD_REQUEST',
+      message: 'Please Check the Given Value'
+    }],
+    statusCode: 400
+
+  },
+  SLOT_UNAVAILABLE: {
+    errors: [{
+      errorCode: 'SLOT_UNAVAILABLE',
+      message: 'Requested slot is either booked or unavailable'
+    }],
+  statusCode: 400
+
   },
   SLOT_STATUS_TRANSITION_NOT_ALLOWED: {
-    errorCode: 'SLOT_STATUS_TRANSITION_NOT_ALLOWED',
-    message: 'Slot status transition not found'
+    errors: [{
+      errorCode: 'SLOT_STATUS_TRANSITION_NOT_ALLOWED',
+      message: 'Slot status transition not found'
+    }],
+  statusCode: 400
   }
 }
 
+const success = {
+  USER_CREATION_SUCCESS: {
+    success: true,
+    message: 'User successfully created',
+    auth: true,
+  },
+  USER_UPDATION_SUCCESS: {
+    message: 'userDetails updated successfully'
+  },
+
+  USER_DELETED_SUCCESS: {
+    message: 'user deleted successfully'
+  }
+}
+
+const tokenExpiry = 86400;
+
+const refreshTokenExpiry = moment.duration(1, 'month').asSeconds();
+
+const secret = 'secret TN secret';
 module.exports = {
+  success,
+  refreshTokenExpiry,
+  secret,
+  tokenExpiry,
   DATE_RANGE: {
     VALUE: 4,
     UNIT: 'd'

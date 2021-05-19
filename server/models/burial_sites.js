@@ -1,9 +1,13 @@
+const _ = require('lodash');
+const { SITE_STATUS } = require('../constant/enum');
+
 module.exports = function(sequelize, DataTypes) {
   const burial_sites =  sequelize.define('burialSites', {
     id: {
       type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true,
+      autoIncrement: true,
       field: 'id'
     },
     lat: {
@@ -17,9 +21,10 @@ module.exports = function(sequelize, DataTypes) {
       field: 'long'
     },
     status: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM,
       allowNull: false,
-      field: 'status'
+      field: 'status',
+      values: _.values(SITE_STATUS)
     },
     city: {
       type: DataTypes.STRING,

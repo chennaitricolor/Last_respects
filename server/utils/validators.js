@@ -12,8 +12,8 @@ module.exports = {
        if((type === SLOT_UPDATE_TYPE.CANCEL || type === SLOT_UPDATE_TYPE.REASSIGN) && _.isEmpty(reason) ) {
         errors.push({ message: 'reason missing' });
        } else if(type === SLOT_UPDATE_TYPE.REASSIGN) {
-         const { date, slot, site_id } = slotDetails;
-         if(_.isEmpty(date) || _.isEmpty(slot) || _.isEmpty(site_id)) {
+         const { dateOfCremation, slot, burialSiteId } = slotDetails;
+         if(_.isEmpty(dateOfCremation) || _.isEmpty(slot) || _.isEmpty(burialSiteId)) {
           errors.push({ message: 'slot_details.date or slot_details.slot or slot_details.site_id missing' });
          }
        }

@@ -1,10 +1,11 @@
 const models = require('../models');
 const { slots, slotMeta, Sequelize } = models;
 const moment = require('moment-timezone');
-const { DATE_RANGE, SLOT_NOT_FOUND } = require('../constant/constants');
+const { DATE_RANGE, SLOT_NOT_FOUND, SLOT_UNAVAILABLE, BAD_REQUEST } = require('../constant/constants');
 const { SLOT_STATUS, SLOT_UPDATE_TYPE } = require('../constant/enum');
 const { constructSlots, validateStateTransition } = require('../utils/helpers');
 const { slots: slotsValidator, validate, exceptionparser } = require('../utils/validators');
+const BurialSitesService = require('./burial_sites');
 const _ = require('lodash');
 
 class Slots {
@@ -66,11 +67,31 @@ class Slots {
         'status'
       ];
       const bookedSlots = await slots.findAll({ where: bookedSlotsWhere, attributes: bookedSlotsAttributes});
-      return constructSlots(slotDetails, bookedSlots, dates);
+      const result =  constructSlots(slotDetails, bookedSlots, dates);
+      res.status(200).send(result);
     } catch (e) {
       const { code, message } = exceptionparser(e);
       res.status(code).send({ error: message });
     }
+  }
+
+  static async get(req, res) {
+    const {slotId} = req.params;
+    try {
+      if (slotId) {
+        const slotDetails = slots.findByPk(slotId);
+        if(_.isEmpty(slotDetails)) {
+          throw SLOT_NOT_FOUND;
+        }
+        res.status(200).send(slotDetails)
+      } else {
+        res.status(400).send(BAD_REQUEST)
+      }
+    } catch (e) {
+      const { code, message } = exceptionparser(e);
+      res.status(code).send({ error: message });
+    }
+
   }
     /**
    * @swagger
@@ -92,9 +113,7 @@ class Slots {
         validate(slotsValidator.update({ slotId, slotDetails: slotDetailsParam, reason, type }));
         const slotDetails = slots.findByPk(slotId);
         if(_.isEmpty(slotDetails)) {
-          throw {
-            errors: [SLOT_NOT_FOUND]
-          };
+          throw SLOT_NOT_FOUND;
         }
         if(reason === SLOT_UPDATE_TYPE.COMPLETE) {
           await this.dbUpdateSlotData(slotDetails, { status: SLOT_STATUS.COMPLETED})
@@ -102,7 +121,13 @@ class Slots {
           await this.dbUpdateSlotData(slotDetails, { status: SLOT_STATUS.CANCELLED, reasonForCancellation: reason})
         } else if (reason === SLOT_UPDATE_TYPE.REASSIGN) {
           //TODO implement REASSIGN
+          await Sequelize.transaction(async transaction => {
+            const options = { transaction, lock: transaction.LOCK.UPDATE };
+            await this.bookSlot(slotDetailsParam, options);
+            await this.dbUpdateSlotData(slotDetails, { status: SLOT_STATUS.REASSIGNED, reasonForCancellation: reason }, options)
+          });
         }
+        res.status(200).send({ slotId });
 
       } catch (e) {
         const { code, message } = exceptionparser(e);
@@ -115,6 +140,39 @@ class Slots {
         validateStateTransition(slot.status, update.status);
       }
       await slot.update(update, { where: { id: slot.id, ...options }});
+    }
+
+    static async bookSlot(slotDetailsParam, options = {}) {
+      if(_.isEmpty(options.transaction)) {
+        await Sequelize.transaction(async transaction => {
+          const options = { transaction, lock: transaction.LOCK.UPDATE };
+          return await this.dBbookSlot(slotDetailsParam, options);
+        })
+      } else {
+        return await this.dBbookSlot(slotDetailsParam, { lock: options.transaction.LOCK.UPDATE, ...options })
+      }
+    }
+
+    static async dBbookSlot(slotDetailsParam, options = {}) {
+      const isSlotAvailable = this.isSlotAvailable(slotDetailsParam.burialSiteId, slotDetailsParam.slot, slotDetailsParam.dateOfCremation, options);
+      if(isSlotAvailable) {
+        const slotRecord = slots.create(slotDetailsParam, options);
+        return slotRecord
+      } else {
+        throw SLOT_UNAVAILABLE
+      }
+    }
+
+    static async isSlotAvailable(siteId, slot, date, options) {
+      const { isSiteAvailable } = await BurialSitesService.isSiteAvailable(siteId, options);
+      if(isSiteAvailable) {
+        const slotWhere = { burialSiteId: siteId, slot, dateOfCremation: date }
+        const slotDetails = slot.findOne({ where: slotWhere, ...options })
+        return _.isEmpty(slotDetails);
+      } else {
+        return false
+      }
+      
     }
 
 }
