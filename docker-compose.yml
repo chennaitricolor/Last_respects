@@ -1,17 +1,23 @@
 version: "3.7"
+
+networks:
+  default:
+  traefik:
+    external: true
+    name: ${TRAEFIK_NETWORK}
+
 services:
-  # db:
-  #   image: postgres:10.6
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - "./dbdata:/var/lib/postgresql/data"
-  #   environment:
-  #     POSTGRES_USER: dev
-  #     POSTGRES_PASSWORD: dev
-  #     POSTGRES_DB: last_respects_development
-  last_respects:
-    build:
-      context: .
-    ports:
-      - "3200:3200"
+  gcc_last_respects:
+    image: ${REGISTRY}/${IMAGETAG}:${GO_REVISION}
+    env_file: env_vars/${GO_STAGE_NAME}.env
+    environment:
+      SAMPLEENV: SAMPLEENV
+    networks:
+      - default
+      - traefik
+    deploy:
+      labels:
+        - traefik.frontend.rule=${TRAEFIK_FRONTEND_HOST}
+        - traefik.enable=true
+        - traefik.port=${TRAEFIK_PORT}
+        - traefik.docker.network=${TRAEFIK_NETWORK}

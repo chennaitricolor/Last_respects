@@ -14,5 +14,5 @@ module.exports = {
     REASSIGN: 'REASSIGN',
     COMPLETE: 'COMPLETE'
   }
-  
+
 }
