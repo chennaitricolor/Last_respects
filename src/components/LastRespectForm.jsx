@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import * as PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -13,6 +13,7 @@ import InputMask from 'react-input-mask';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import ModalDialog from './Dialog/ModalDialog';
 
 const useStyles = makeStyles({
   root: {
@@ -241,6 +242,7 @@ const initialState = {
 const LastRespectForm = (props) => {
   const styles = useStyles();
 
+
   const [details, setDetails] = useState(initialState);
 
   useEffect(() => {
@@ -314,6 +316,9 @@ const LastRespectForm = (props) => {
     );
   };
 
+  const modalRef = useRef();
+  const [openDialog, setOpenDialog] = useState(false);
+
   return (
     <div className={styles.root}>
       <div>
@@ -330,11 +335,15 @@ const LastRespectForm = (props) => {
             <Typography className={styles.headerValue} component={'div'} style={{ display: 'inline-block' }}>
               {'15th & 9:30 AM to 10:15 AM'}
             </Typography>
-            {props.type === 'EDIT' && (
+           {/* {props.type === 'EDIT' && (
               <Button variant="outlined" className={styles.reAssignButton} onClick={props.onCancel}>
                 Re-Assign
               </Button>
-            )}
+           )}*/}
+           <Button variant="outlined" className={styles.reAssignButton} onClick={() => {setOpenDialog(!openDialog)}}>
+                Re-Assign
+            </Button>
+            <ModalDialog openDialog={openDialog}/>
           </div>
           <Typography className={styles.header} component={'div'}>
             Details
