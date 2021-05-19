@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
-module.exports = function(sequelize, DataTypes) {
-  const user =  sequelize.define('user', {
+module.exports = function (sequelize, DataTypes) {
+  const user = sequelize.define('user', {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -30,7 +30,7 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     tableName: 'user',
-    timestamps:false
+    timestamps: false
   });
   return user;
 };

@@ -1,5 +1,5 @@
 const models = require('../models');
-const {inventory} = models;
+const { inventory } = models;
 
 class Inventory {
   /**

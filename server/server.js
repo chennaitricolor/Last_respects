@@ -37,29 +37,29 @@ app.use(
   }),
 );
 const swaggerDefinition = {
-    info: {
-      title: 'Last Respects Service',
-      version: '1.0.0-PreRelease',
-      description: 'Last Respects Service',
-    },
-  };
-  
-  const options = {
-    swaggerDefinition,
-    apis: [path.join(__dirname, '/service/*.js')],
-  };
-  
-  app.get('/swagger.json', (req, res) => {
-    try {
-      const swaggerSpec = swaggerJSDoc(options);
-      res.setHeader('Content-Type', 'application/json');
-      res.send(swaggerSpec);
-    } catch (err) {
-      console.log('Error in generating swagger');
-    }
-  });
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(options)));
-  
+  info: {
+    title: 'Last Respects Service',
+    version: '1.0.0-PreRelease',
+    description: 'Last Respects Service',
+  },
+};
+
+const options = {
+  swaggerDefinition,
+  apis: [path.join(__dirname, '/service/*.js')],
+};
+
+app.get('/swagger.json', (req, res) => {
+  try {
+    const swaggerSpec = swaggerJSDoc(options);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swaggerSpec);
+  } catch (err) {
+    console.log('Error in generating swagger');
+  }
+});
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(options)));
+
 
 app.use((req, res, next) => {
   res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
@@ -67,12 +67,12 @@ app.use((req, res, next) => {
   res.header('Pragma', 'no-cache');
   next();
 });
-routes.bind(app);
+app.use('/api', routes)
 
 app.use(express.static(path.join('build')));
 /* istanbul ignore next */
 app.get('/', function (request, response) {
-/* istanbul ignore next */
+  /* istanbul ignore next */
   response.redirect('index.html');
 });
 /* istanbul ignore next */

@@ -2,8 +2,8 @@
 const _ = require('lodash');
 const { SLOT_STATUS } = require('../constant/enum');
 
-module.exports = function(sequelize, DataTypes) {
-  const slots =  sequelize.define('slots', {
+module.exports = function (sequelize, DataTypes) {
+  const slots = sequelize.define('slots', {
     burialSiteId: {
       type: DataTypes.BIGINT,
       allowNull: false,
@@ -36,7 +36,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     reasonForCancellation: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       field: 'reason_for_cancellation'
     },
     dateOfCremation: {
@@ -84,17 +84,17 @@ module.exports = function(sequelize, DataTypes) {
     },
     createdTime: {
       type: DataTypes.DATE,
-      allowNull: true,
+      allowNull: false,
       field: 'created_time'
     },
     updatedTime: {
       type: DataTypes.DATE,
-      allowNull: true,
+      allowNull: false,
       field: 'updated_time'
     },
     slot: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
       field: 'slot',
       validate: {
         is: /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]-([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/
