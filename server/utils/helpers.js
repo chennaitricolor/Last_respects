@@ -31,10 +31,8 @@ module.exports = {
     }
     if(!_.includes(acceptedTransitions[next], prev)) {
       throw {
-        errors: [{
-            ...SLOT_STATUS_TRANSITION_NOT_ALLOWED,
-            transition: `${prev} -> ${next}`
-        }]
+        ...SLOT_STATUS_TRANSITION_NOT_ALLOWED,
+        transition: `${prev} -> ${next}`
       }
     }
   }
