@@ -336,11 +336,13 @@ const LastRespectForm = (props) => {
               {'15th & 9:30 AM to 10:15 AM'}
             </Typography>
            {/* {props.type === 'EDIT' && (
-              <Button variant="outlined" className={styles.reAssignButton} onClick={props.onCancel}>
+              <Button variant="outlined" className={styles.reAssignButton} onClick={() => {setOpenDialog(!openDialog)}}>
                 Re-Assign
               </Button>
            )}*/}
-           <Button variant="outlined" className={styles.reAssignButton} onClick={() => {setOpenDialog(!openDialog)}}>
+           <Button variant="outlined" className={styles.reAssignButton} onClick={() => { 
+             console.log("opendialog state", openDialog); 
+             return setOpenDialog(!openDialog);}}>
                 Re-Assign
             </Button>
             <ModalDialog openDialog={openDialog}/>

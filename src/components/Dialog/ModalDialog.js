@@ -1,3 +1,4 @@
+import 'date-fns';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import { makeStyles } from '@material-ui/core/styles';
@@ -6,7 +7,12 @@ import TextField from "@material-ui/core/TextField";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import DialogTitle from '@material-ui/core/DialogTitle';
-import React, { useEffect } from 'react';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
+import React, { useEffect, useState } from 'react';
 
 const useStyles = makeStyles({
     dropDown: {
@@ -40,8 +46,8 @@ const useStyles = makeStyles({
         fontSize: '14px',
         fontWeight: 'bold',
         padding: '10px 0',
-        margin : '15px auto 0',
-        width:  "80%"
+        margin: '15px auto 0',
+        width: "80%"
     },
     cancelButton: {
         border: '1px solid #E5E5E5',
@@ -49,21 +55,25 @@ const useStyles = makeStyles({
         fontSize: '14px',
         fontWeight: 'bold',
         padding: '10px 0',
-        margin : '15px auto 0',
-        width:  "80%"
+        margin: '15px auto 0',
+        width: "80%"
     },
     disabledField: {
         background: '#E0E0E0',
     },
-    reassignModal:{
-        padding:'15px 30px'
+    reassignModal: {
+        padding: '15px 30px'
     },
-    close:{
-        position:'absolute',
-        top:'10px',
-        right:'20px',
+    close: {
+        position: 'absolute',
+        top: '10px',
+        right: '20px',
         cursor: 'pointer'
-    }
+    },
+    datePickerRoot: {
+        width: '100%',
+        
+      }
 });
 
 const top100Films = [
@@ -76,12 +86,17 @@ const top100Films = [
 
 const ModalDialog = (props) => {
     const styles = useStyles();
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
+    const [selectedDate, setSelectedDate] = React.useState(new Date('2014-08-18T21:11:54'));
+
+    const handleDateChange = (date) => {
+        setSelectedDate(date);
+    };
+
     const handleClose = () => {
-        console.log("closed called")
         setOpen(false);
     };
 
@@ -103,7 +118,7 @@ const ModalDialog = (props) => {
                     <div className="row">
                         <div className="col-12 mb-4">
                             <Autocomplete
-                                id="combo-box-demo"
+                                id="zone-combo-box"
                                 options={top100Films}
                                 getOptionLabel={(option) => option.title}
                                 style={{ width: '100%' }}
@@ -114,7 +129,7 @@ const ModalDialog = (props) => {
                         </div>
                         <div className="col-12 mb-4 ">
                             <Autocomplete
-                                id="combo-box-demo"
+                                id="site-combo-box"
                                 options={top100Films}
                                 getOptionLabel={(option) => option.title}
                                 style={{ width: '100%' }}
@@ -124,8 +139,40 @@ const ModalDialog = (props) => {
                             />
                         </div>
                         <div className="col-12 mb-4">
+                            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                <KeyboardDatePicker
+                                    className={styles.datePickerRoot}
+                                    disableToolbar
+                                    disablePast
+                                    variant="inline"
+                                    format="MM/dd/yyyy"
+                                    inputVariant="outlined"
+                                    autoOk
+                                    margin="normal"
+                                    id="date-picker-inline"
+                                    label="Date picker inline"
+                                    value={selectedDate}
+                                    onChange={handleDateChange}
+                                    KeyboardButtonProps={{
+                                    "aria-label": "change date"
+                                    }}
+                                />
+                            </MuiPickersUtilsProvider>
+                        </div>
+                        <div className="col-12 mb-4">
                             <Autocomplete
-                                id="combo-box-demo"
+                                id="time-combo-box"
+                                options={top100Films}
+                                getOptionLabel={(option) => option.title}
+                                style={{ width: '100%' }}
+                                renderInput={(params) => (
+                                    <TextField {...params} label="Time" variant="outlined" />
+                                )}
+                            />
+                        </div>
+                        <div className="col-12 mb-4">
+                            <Autocomplete
+                                id="reassign-combo-box"
                                 options={top100Films}
                                 getOptionLabel={(option) => option.title}
                                 style={{ width: '100%' }}
