@@ -71,7 +71,8 @@ const useStyles = makeStyles({
     top: 101,
   },
   customContainer:{
-    maxWidth: 1500
+    maxWidth: 1500,
+    border: "1px solid #ccc",
   },
   slotheader : {
     display : "flex",
