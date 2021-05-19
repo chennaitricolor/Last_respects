@@ -1,5 +1,5 @@
 const models = require('../models');
-const {burialSites} = models;
+const { burialSites } = models;
 const _ = require('lodash');
 const { SITE_STATUS } = require('../constant/enum');
 class BurialSites {
@@ -24,10 +24,10 @@ class BurialSites {
 
   static async isSiteAvailable(siteId, options) {
     const site = burialSites.findByPk(siteId, options);
-    if(_.isEmpty(site) || site.status !== SITE_STATUS.AVAILABLE) {
-      return { isSiteAvailable: false, site};
+    if (_.isEmpty(site) || site.status !== SITE_STATUS.AVAILABLE) {
+      return { isSiteAvailable: false, site };
     } else {
-      return { isSiteAvailable: true, site};
+      return { isSiteAvailable: true, site };
     }
   }
 }

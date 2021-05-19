@@ -29,7 +29,7 @@ module.exports = {
       [SLOT_STATUS.CANCELLED]: [SLOT_STATUS.CANCELLED, SLOT_STATUS.BOOKED],
       [SLOT_STATUS.REASSIGNED]: [SLOT_STATUS.REASSIGNED, SLOT_STATUS.BOOKED],
     }
-    if(!_.includes(acceptedTransitions[next], prev)) {
+    if (!_.includes(acceptedTransitions[next], prev)) {
       throw {
         ...SLOT_STATUS_TRANSITION_NOT_ALLOWED,
         transition: `${prev} -> ${next}`

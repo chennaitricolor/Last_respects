@@ -1,5 +1,5 @@
-module.exports = function(sequelize, DataTypes) {
-  const inventory =  sequelize.define('inventory', {
+module.exports = function (sequelize, DataTypes) {
+  const inventory = sequelize.define('inventory', {
     id: {
       type: DataTypes.BIGINT,
       allowNull: false,

@@ -1,8 +1,8 @@
 const _ = require('lodash');
 const { SITE_STATUS } = require('../constant/enum');
 
-module.exports = function(sequelize, DataTypes) {
-  const burial_sites =  sequelize.define('burialSites', {
+module.exports = function (sequelize, DataTypes) {
+  const burial_sites = sequelize.define('burialSites', {
     id: {
       type: DataTypes.BIGINT,
       allowNull: false,
@@ -41,6 +41,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       field: 'zone_or_division'
     },
+    zoneOrDivisionId: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      field: 'zone_or_division_id'
+    },
     siteName: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -63,7 +68,7 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     tableName: 'burial_sites',
-    timestamps:false
+    timestamps: false
   });
   return burial_sites;
 };

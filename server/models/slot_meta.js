@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
-module.exports = function(sequelize, DataTypes) {
-  const slot_meta =  sequelize.define('slotMeta', {
+module.exports = function (sequelize, DataTypes) {
+  const slot_meta = sequelize.define('slotMeta', {
     burialSiteId: {
       type: DataTypes.BIGINT,
       allowNull: false,

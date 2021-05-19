@@ -1,0 +1,24 @@
+stackname: lastrespectsmodule
+env_folder: env_vars
+replicas:
+  dev: 1
+  qa: 1
+  uat: 1
+  prod: 10
+restart_policy: any
+max_mem: 1024M
+max_cpu: 1
+traefik_application_port: 8000
+traefik_https_enable: true
+traefik_ssl_provider: letsencrypt
+vault:
+  enabled: true
+  name: gcc-last-respects
+  envs:
+    - NODE_ENV
+    - DB_USER
+    - DB_PWD
+    - DB_NAME
+    - DB_HOST
+    - DB_SCHEMA
+    - DB_PORT
