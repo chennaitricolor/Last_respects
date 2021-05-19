@@ -1,3 +1,4 @@
+import React from 'react';
 import 'date-fns';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -12,7 +13,6 @@ import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker,
 } from '@material-ui/pickers';
-import React, { useEffect, useState } from 'react';
 
 const useStyles = makeStyles({
     dropDown: {
@@ -86,7 +86,6 @@ const top100Films = [
 
 const ModalDialog = (props) => {
     const styles = useStyles();
-    const [open, setOpen] = useState(false);
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -97,18 +96,14 @@ const ModalDialog = (props) => {
     };
 
     const handleClose = () => {
-        setOpen(false);
+        props.setOpenDialog(false);
     };
-
-    useEffect(() => {
-        setOpen(props.openDialog);
-    }, [props.openDialog]);
 
     return (
         <div >
             <Dialog
                 fullScreen={fullScreen}
-                open={open}
+                open={true}
                 onClose={handleClose}
                 aria-labelledby="dialog-title"
             >
