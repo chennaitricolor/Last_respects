@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import * as PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -316,6 +316,9 @@ const LastRespectForm = (props) => {
     );
   };
 
+  const modalRef = useRef();
+  const [openDialog, setOpenDialog] = useState(false);
+
   return (
     <div className={styles.root}>
       <div>
@@ -337,10 +340,10 @@ const LastRespectForm = (props) => {
                 Re-Assign
               </Button>
            )}*/}
-           <Button variant="outlined" className={styles.reAssignButton} onClick={props.onCancel}>
+           <Button variant="outlined" className={styles.reAssignButton} onClick={() => {setOpenDialog(!openDialog)}}>
                 Re-Assign
             </Button>
-            <ModalDialog />
+            <ModalDialog openDialog={openDialog}/>
           </div>
           <Typography className={styles.header} component={'div'}>
             Details
