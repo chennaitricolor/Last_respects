@@ -9,8 +9,8 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DateFnsUtils from '@date-io/date-fns';
 import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
+    MuiPickersUtilsProvider,
+    KeyboardDatePicker,
 } from '@material-ui/pickers';
 import React, { useEffect, useState } from 'react';
 
@@ -72,8 +72,8 @@ const useStyles = makeStyles({
     },
     datePickerRoot: {
         width: '100%',
-        
-      }
+
+    }
 });
 
 const top100Films = [
@@ -90,7 +90,7 @@ const ModalDialog = (props) => {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-    const [selectedDate, setSelectedDate] = React.useState(new Date('2014-08-18T21:11:54'));
+    const [selectedDate, setSelectedDate] = React.useState(new Date());
 
     const handleDateChange = (date) => {
         setSelectedDate(date);
@@ -154,7 +154,7 @@ const ModalDialog = (props) => {
                                     value={selectedDate}
                                     onChange={handleDateChange}
                                     KeyboardButtonProps={{
-                                    "aria-label": "change date"
+                                        "aria-label": "change date"
                                     }}
                                 />
                             </MuiPickersUtilsProvider>
