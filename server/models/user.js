@@ -33,6 +33,5 @@ module.exports = function (sequelize, DataTypes) {
     tableName: 'user',
     timestamps: false
   });
-  // user.schema(process.env.DB_SCHEMA);
   return user;
 };

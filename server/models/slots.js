@@ -109,6 +109,5 @@ module.exports = function (sequelize, DataTypes) {
     tableName: 'slots',
     timestamps: false
   });
-  slots.schema(process.env.DB_SCHEMA);
   return slots;
 };

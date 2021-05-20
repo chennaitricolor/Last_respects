@@ -71,6 +71,5 @@ module.exports = function (sequelize, DataTypes) {
     tableName: 'burial_sites',
     timestamps: false
   });
-  burial_sites.schema(process.env.DB_SCHEMA);
   return burial_sites;
 };

@@ -32,6 +32,5 @@ module.exports = function (sequelize, DataTypes) {
     timestamps: false
   });
   
-  inventory.schema(process.env.DB_SCHEMA);
   return inventory;
 };
