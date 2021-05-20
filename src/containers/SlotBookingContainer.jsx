@@ -15,6 +15,17 @@ const useStyles = makeStyles(() => ({
     fontSize: '18px',
     fontWeight: 'bold',
   },
+  slotData: {
+    background: "#EEFAFE",
+    padding:0
+  },
+  customContainer:{
+    maxWidth: 1500,
+    border: "1px solid #ccc",
+  },
+  overflowHidden:{
+    overflow:'hidden'
+  },
 }));
 
 const SlotBookingContainer = () => {
@@ -34,11 +45,25 @@ const SlotBookingContainer = () => {
   return (
     <>
       {!isFormOpen && (
-        <div className={styles.slotBookingDiv}>
+        <div className={`container ${styles.customContainer} ${styles.slotBookingDiv} mt-4`} >
           <ZoneSelection />
-          <div className={styles.slotBookingTitle}>Slot Booking</div>
-          <DateSelection selectedDate={selectedDate} selectDate={selectDate} />
-          <TimeSlotSelection />
+          <div className={`row slotContent `}>
+              <div className="col-12">
+                <h4> Slot Booking</h4>
+              </div>
+              <div className={`col-12 ${styles.overflowHidden}`}>
+                <DateSelection selectedDate={selectedDate} selectDate={selectDate} />
+               <div className='row'>
+                  <TimeSlotSelection />
+                  <div className={`col-9 ${styles.slotData}`}>
+                      <h4 className="col-12 displaydate"> Date & Time Slot : 15/12/2021 & 9.30am to 10.15 am </h4>
+                      <div className="form col-12">
+                          <LastRespectFormContainer/>
+                      </div>
+                  </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
       {isFormOpen && <LastRespectFormContainer onCancel={() => setFormOpen(false)} />}
