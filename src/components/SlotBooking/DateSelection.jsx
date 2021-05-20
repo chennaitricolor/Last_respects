@@ -1,7 +1,9 @@
 import React from 'react';
 import * as PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
-import { Card } from 'primereact/card';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
+import Card from '@material-ui/core/Card';
 
 const useStyles = makeStyles({
   dateSelectionDiv: {
@@ -83,11 +85,13 @@ const DateSelection = (props) => {
         {date.map((date, index) => {
           return (
             <div key={index} style={{ display: 'inline-block' }} onClick={() => props.selectDate(date)}>
-              <Card
-                title={date.date}
-                className={props.selectedDate === date.date ? styles.dateCardSelected : styles.dateCard}
-              >
-                <p>{date.available + ' Slots Available'}</p>
+              <Card className={props.selectedDate === date.date ? styles.dateCardSelected : styles.dateCard}>
+                <CardContent>
+                  <Typography variant={'h5'} component={'div'}>
+                    {date.date}
+                  </Typography>
+                  <Typography>{date.available + ' Slots Available'}</Typography>
+                </CardContent>
               </Card>
             </div>
           );

@@ -1,26 +1,18 @@
-import React, { lazy, Suspense } from 'react'
+import React, { lazy, Suspense } from 'react';
 import ReactDOM from 'react-dom';
-import Progress from './components/Progress';
-import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom'
+import { Provider } from 'react-redux';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import store, { sagaMiddleware } from './utils/store';
+import saga from './sagas/saga';
 import './index.css';
+import Routes from './routes/Routes';
 
-const App = lazy(() => import('./App'))
-
-const Routes = () => {
-    return (
-        <Router>
-            <Suspense fallback={<Progress />}>
-                <Switch>
-                    <Route path='/' component={App} />
-                </Switch>
-            </Suspense>
-        </Router>
-    )
-}
+sagaMiddleware.run(saga);
 
 ReactDOM.render(
-    <React.StrictMode>
-        <Routes />
-    </React.StrictMode>,
-    document.getElementById('root'),
+  <Provider store={store}>
+    <CssBaseline />
+    <Routes />
+  </Provider>,
+  document.getElementById('root'),
 );
