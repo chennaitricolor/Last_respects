@@ -142,7 +142,7 @@ class Slots {
     try {
       validate(slotsValidator.list({ slotDetails }));
       slotDetails = _.pick(slotDetails, expectedSlotKeys);
-      const bookedSlot = await this.bookSlot(slotDetails);
+      const bookedSlot = await this.bookSlot(slotDetails, req.userId);
       return bookedSlot.id
     } catch (e) {
       const { code, message } = exceptionparser(e);
