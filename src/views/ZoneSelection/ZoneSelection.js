@@ -1,74 +1,58 @@
-import React,{ useState }  from 'react';
-import { Dropdown } from 'primereact/dropdown';
+import React, { useState } from 'react';
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import { makeStyles } from '@material-ui/core/styles';
-import { getSiteList, getZoneList } from '../../utils/CommonUtils';
+
+const top100Films = [
+  { title: 'The Shawshank Redemption', year: 1994 },
+  { title: 'The Godfather', year: 1972 },
+  { title: 'The Godfather: Part II', year: 1974 },
+  { title: 'The Dark Knight', year: 2008 },
+  { title: '12 Angry Men', year: 1957 }
+];
 
 const useStyles = makeStyles(() => ({
-
+  slotheader: {
+    display: "flex",
+    alignItems: "center"
+}
 }));
 
 const ZoneSelection = () => {
 
-  const zoneList = getZoneList();
-  const siteList = getSiteList();
-  const [selectedZone, setZone] = useState(zoneList[0].value);
-  const [selectedSite, setSite] = useState(siteList[0].value);
-  const[isSiteDisabled, setSiteDisabled] = useState(true);
-
-  const handleZoneSelection = (e) => {
-    setZone(e.target.value);
-    setSiteDisabled(true);
-  }
-  const handleSiteSelection = (e) => {
-    setSite(e.target.value);
-
-  }
+  const classes = useStyles();
   
   return (
-    <div >
-      <div className="col-12 float-left mb-4">
-        <div className="col-6 float-left px-0">
-          <label>Zone Name</label>
-          <Dropdown
-            placeholder="Zone Name"
-            value={selectedZone}
-            options={zoneList}
-            className="graph-select"
-            onChange={(e) => handleZoneSelection(e)}
-          />
+      <div className={`row ${classes.slotheader} mb-4 mt-4`}>
+        <div className="col-6 col-md-3 dropdown">
+        <Autocomplete
+                id="zone-combo-box"
+                options={top100Films}
+                getOptionLabel={(option) => option.title}
+                style={{ width: '100%' }}
+                renderInput={(params) => <TextField {...params} label="Zone Name" variant="outlined" />}
+              />
         </div>
-        <div className="col-6 float-right px-0">
-          <label>Site Name</label>
-          <Dropdown
-            placeholder="Site Name"
-            value={selectedSite}
-            options={siteList}
-            disabled={isSiteDisabled}
-            className="graph-select"
-            onChange={(e) => handleSiteSelection(e)}
-          />
+        <div className="col-6 col-md-3 dropdown">
+          <Autocomplete
+                id="site-combo-box-demo"
+                options={top100Films}
+                getOptionLabel={(option) => option.title}
+                style={{ width: '100%' }}
+                renderInput={(params) => <TextField {...params} label="Site Name" variant="outlined" />}
+              />
         </div>
-        <div className="col-12 p-0 mt-3">
-          <label>Site Name : </label>
-          <div className="m-0 row">
-
-          </div>
+        <div className="col-12 col-md-2 text">
+          Name : {'Velankadu Buriel'}
         </div>
-        <div className="col-12 p-0 mt-3">
-          <label>Contact : </label>
-          <div className="m-0 row">
-
-          </div>
+        <div className="col-12 col-md-2 text">
+          Contact : {'123456789'}
         </div>
-        <div className="col-12 p-0 mt-3">
-          <label>Address : </label>
-          <div className="m-0 row">
-          </div>
+        <div className="col-12 col-md-2 text">
+          Address : {'Anna Nagar East'}
         </div>
       </div>
-    </div>
   )
-
 }
 
 export default ZoneSelection;
