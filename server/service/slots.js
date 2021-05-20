@@ -7,6 +7,7 @@ const { constructSlots, validateStateTransition } = require('../utils/helpers');
 const { slots: slotsValidator, validate, exceptionparser } = require('../utils/validators');
 const BurialSitesService = require('./burial_sites');
 const _ = require('lodash');
+const { sequelize } = require('../models');
 
 class Slots {
   /**
@@ -29,10 +30,10 @@ class Slots {
       validate(slotsValidator.list({ siteId }));
       const slotMetaDates = [];
       const dates = [];
-      let date = startDate.subtract(1, 'd');
+      let date = startDate.subtract(2, 'd');
       while (days--) {
         date = date.add(1, 'd');
-        dates.push(date);
+        dates.push(moment(date));
         slotMetaDates.push({
           validTill: {
             [Sequelize.Op.gte]: date
@@ -81,7 +82,7 @@ class Slots {
     const { slotId } = req.params;
     try {
       if (slotId) {
-        const slotDetails = slots.findByPk(slotId);
+        const slotDetails = await slots.findByPk(slotId);
         if (_.isEmpty(slotDetails)) {
           throw SLOT_NOT_FOUND;
         }
@@ -109,24 +110,24 @@ class Slots {
   static async update(req, res) {
     try {
       const slotId = _.get(req, 'params.slotId');
-      const slotDetailsParam = _.get(req, 'body.slot_details');
+      const slotDetailsParam = _.get(req, 'body.slotDetails');
       const reason = _.get(req, 'body.reason');
       const type = _.get(req, 'body.type');
       validate(slotsValidator.update({ slotId, slotDetails: slotDetailsParam, reason, type }));
-      const slotDetails = slots.findByPk(slotId);
+      const slotDetails = await slots.findByPk(slotId);
       if (_.isEmpty(slotDetails)) {
         throw SLOT_NOT_FOUND;
       }
-      if (reason === SLOT_UPDATE_TYPE.COMPLETE) {
-        await this.dbUpdateSlotData(slotDetails, { status: SLOT_STATUS.COMPLETED })
-      } else if (reason === SLOT_UPDATE_TYPE.CANCEL) {
-        await this.dbUpdateSlotData(slotDetails, { status: SLOT_STATUS.CANCELLED, reasonForCancellation: reason })
-      } else if (reason === SLOT_UPDATE_TYPE.REASSIGN) {
+      if (type === SLOT_UPDATE_TYPE.COMPLETE) {
+        await Slots.dbUpdateSlotData(slotDetails, { status: SLOT_STATUS.COMPLETED })
+      } else if (type === SLOT_UPDATE_TYPE.CANCEL) {
+        await Slots.dbUpdateSlotData(slotDetails, { status: SLOT_STATUS.CANCELLED, reasonForCancellation: reason })
+      } else if (type === SLOT_UPDATE_TYPE.REASSIGN) {
         //TODO implement REASSIGN
-        await Sequelize.transaction(async transaction => {
+        await sequelize.transaction(async function(transaction) {
           const options = { transaction, lock: transaction.LOCK.UPDATE };
-          await this.bookSlot(slotDetailsParam, options);
-          await this.dbUpdateSlotData(slotDetails, { status: SLOT_STATUS.REASSIGNED, reasonForCancellation: reason }, options)
+          await Slots.bookSlot(slotDetailsParam, req.userId, options);
+          await Slots.dbUpdateSlotData(slotDetails, { status: SLOT_STATUS.REASSIGNED, reasonForCancellation: reason }, options)
         });
       }
       res.status(200).send({ slotId });
@@ -140,11 +141,11 @@ class Slots {
   static async insert(req, res) {
     let { slotDetails } = req.body;
     try {
-      validate(slotsValidator.list({ slotDetails }));
+      validate(slotsValidator.insert({ slotDetails }));
       slotDetails = _.pick(slotDetails, expectedSlotKeys);
-      const bookedSlot = await this.bookSlot(slotDetails, req.userId);
-      return bookedSlot.id
-    } catch (e) {
+      const bookedSlot = await Slots.bookSlot(slotDetails, req.userId);
+      return res.status(200).send({ slotId: bookedSlot.id })
+  } catch (e) {
       const { code, message } = exceptionparser(e);
       res.status(code).send({ error: message });
     }
@@ -165,19 +166,19 @@ class Slots {
     slotDetailsParam.updatedBy = userId;
     slotDetailsParam.status = SLOT_STATUS.BOOKED;
     if (_.isEmpty(options.transaction)) {
-      await Sequelize.transaction(async transaction => {
+      return await sequelize.transaction(async transaction => {
         const options = { transaction, lock: transaction.LOCK.UPDATE };
-        return await this.dBbookSlot(slotDetailsParam, options);
+        return await Slots.dBbookSlot(slotDetailsParam, options);
       })
     } else {
-      return await this.dBbookSlot(slotDetailsParam, { lock: options.transaction.LOCK.UPDATE, ...options })
+      return await Slots.dBbookSlot(slotDetailsParam, { lock: options.transaction.LOCK.UPDATE, ...options })
     }
   }
 
   static async dBbookSlot(slotDetailsParam, options = {}) {
-    const isSlotAvailable = this.isSlotAvailable(slotDetailsParam.burialSiteId, slotDetailsParam.slot, slotDetailsParam.dateOfCremation, options);
+    const isSlotAvailable = await Slots.isSlotAvailable(slotDetailsParam.burialSiteId, slotDetailsParam.slot, slotDetailsParam.dateOfCremation, options);
     if (isSlotAvailable) {
-      const slotRecord = slots.create(slotDetailsParam, options);
+      const slotRecord = await slots.create(slotDetailsParam, options);
       return slotRecord
     } else {
       throw SLOT_UNAVAILABLE
@@ -188,7 +189,7 @@ class Slots {
     const { isSiteAvailable } = await BurialSitesService.isSiteAvailable(siteId, options);
     if (isSiteAvailable) {
       const slotWhere = { burialSiteId: siteId, slot, dateOfCremation: date }
-      const slotDetails = slot.findOne({ where: slotWhere, ...options })
+      const slotDetails = await slots.findOne({ where: slotWhere, ...options })
       return _.isEmpty(slotDetails);
     } else {
       return false

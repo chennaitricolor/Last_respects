@@ -96,18 +96,19 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
       field: 'slot',
-      validate: {
-        is: /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]-([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/
-      }
     },
     id: {
       type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true,
+      autoIncrement: true,
       field: 'id'
     }
   }, {
-    tableName: 'slots'
+    schema: process.env.DB_SCHEMA,
+    tableName: 'slots',
+    timestamps: false
   });
+  slots.schema(process.env.DB_SCHEMA);
   return slots;
 };

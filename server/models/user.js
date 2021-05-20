@@ -29,8 +29,10 @@ module.exports = function (sequelize, DataTypes) {
       field: 'id'
     }
   }, {
+    schema: process.env.DB_SCHEMA,
     tableName: 'user',
     timestamps: false
   });
+  // user.schema(process.env.DB_SCHEMA);
   return user;
 };

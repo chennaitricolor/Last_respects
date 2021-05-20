@@ -27,7 +27,11 @@ module.exports = function (sequelize, DataTypes) {
       field: 'status'
     }
   }, {
-    tableName: 'inventory'
+    schema: process.env.DB_SCHEMA,
+    tableName: 'inventory',
+    timestamps: false
   });
+  
+  inventory.schema(process.env.DB_SCHEMA);
   return inventory;
 };
