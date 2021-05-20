@@ -23,16 +23,16 @@ class Slots {
    */
   static async list(req, res) {
     try {
-      const startDate = moment();
-      const endDate = startDate.add(DATE_RANGE.VALUE, DATE_RANGE.UNIT | 'd');
+      const currentDate = moment();
+      const endDate = moment(currentDate).add(DATE_RANGE.VALUE, DATE_RANGE.UNIT || 'd');
       let days = DATE_RANGE.VALUE | 4;
       const siteId = _.get(req, 'params.siteId');
       validate(slotsValidator.list({ siteId }));
       const slotMetaDates = [];
       const dates = [];
-      let date = startDate.subtract(2, 'd');
+      let date = moment(currentDate).subtract(2, 'd');
       while (days--) {
-        date = date.add(1, 'd');
+        date.add(1, 'd');
         dates.push(moment(date));
         slotMetaDates.push({
           validTill: {
@@ -56,10 +56,10 @@ class Slots {
         [Sequelize.Op.and]: [
           {
             dateOfCremation: {
-              [Sequelize.Op.between]: [startDate, endDate]
+              [Sequelize.Op.between]: [currentDate, endDate]
             }
           },
-          { status: SLOT_STATUS.BOOKED }
+          { status: {[Sequelize.Op.or] : [SLOT_STATUS.BOOKED, SLOT_STATUS.COMPLETED]} }
         ]
 
       };

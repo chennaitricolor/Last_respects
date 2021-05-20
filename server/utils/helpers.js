@@ -7,7 +7,7 @@ const { SLOT_STATUS_TRANSITION_NOT_ALLOWED } = require('../constant/constants');
 const getSlotsForADate = (slotDetails, bookedSlots, date) => {
   return _.reduce(slotDetails, (acc, { slot }) => {
     acc[slot] = _.find(bookedSlots, ({ slot: booked_slot, dateOfCremation }) => {
-      return booked_slot === slot && moment(dateOfCremation).isSame(moment(date));
+      return booked_slot === slot && moment(dateOfCremation).isSame(moment(date), 'd');
     }) || {};
     return acc;
   }, {})
