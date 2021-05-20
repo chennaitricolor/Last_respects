@@ -9,6 +9,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DateFnsUtils from '@date-io/date-fns';
+
 import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker,
@@ -106,6 +107,7 @@ const ModalDialog = (props) => {
                 open={true}
                 onClose={handleClose}
                 aria-labelledby="dialog-title"
+                fullWidth
             >
                 <DialogTitle id="responsive-dialog-title">{"Re-Assign Booking"}</DialogTitle>
                 <div className={`container ${styles.reassignModal}`}>

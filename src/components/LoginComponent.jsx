@@ -1,4 +1,4 @@
-import React from 'react';
+import React ,{ useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import * as PropTypes from 'prop-types';
 import { Typography } from '@material-ui/core';
@@ -13,6 +13,14 @@ import { Helmet } from 'react-helmet';
 
 const useStyles = makeStyles(() => ({
   loginContainer: {
+    color: '#777',
+    height: '100%',
+    margin: 'auto',
+    width: '100%',
+    padding: '40px 0 0 0',
+    maxWidth: '600px'
+  },
+  mobileLoginContainer:{
     color: '#777',
     height: '100%',
     margin: 'auto',
@@ -72,9 +80,20 @@ const useStyles = makeStyles(() => ({
 }));
 
 export const LoginComponent = (props) => {
+
+  const [isMobile, setMobile] = useState(false);
+
+  useEffect(() => {
+    if (window.innerWidth > 768) {
+      setMobile(false);
+    } else {
+        setMobile(true);
+    }
+  },[]);
+
   const styles = useStyles();
   return (
-    <div className={styles.loginContainer}>
+    <div className={isMobile ? styles.mobileLoginContainer : styles.loginContainer}>
       <Helmet>
         <meta charSet="utf-8" />
         <title>{'Last Respects'}</title>
