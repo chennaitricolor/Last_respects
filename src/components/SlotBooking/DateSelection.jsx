@@ -79,12 +79,12 @@ const DateSelection = (props) => {
   console.log(props);
 
   return (
-    <div className={styles.dateSelectionDiv}>
-      <div className={styles.dateTitle}>Date</div>
+    <div className={` d-flex ${styles.dateSelectionDiv} `}>
+      <h6 className={styles.dateTitle}>Date</h6>
       <div style={{ margin: '2% 2% 0 0' }}>
         {date.map((date, index) => {
           return (
-            <div key={index} style={{ display: 'inline-block' }} onClick={() => props.selectDate(date)}>
+            <div  key={index} style={{ display: 'inline-block' }} onClick={() => props.selectDate(date)}>
               <Card className={props.selectedDate === date.date ? styles.dateCardSelected : styles.dateCard}>
                 <CardContent>
                   <Typography variant={'h5'} component={'div'}>

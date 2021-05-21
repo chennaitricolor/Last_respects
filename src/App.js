@@ -91,7 +91,7 @@ const App = () => {
               </div>
               <div className={`col-12 ${classes.overflowHidden}`}>
                 <h6>Date</h6>
-                <div className="d-flex">
+                {/* <div className="d-flex">
                   <Card className={classes.dateCard}>
                     <CardContent>
                       <Typography
@@ -106,7 +106,7 @@ const App = () => {
                       </Typography>
                     </CardContent>
                   </Card>
-                </div>
+                </div> */}
                 <h6 className="mt-4">Time</h6>
                 <div className="row">
                   <div className="col-xs-12 col-md-3 pr-0">
