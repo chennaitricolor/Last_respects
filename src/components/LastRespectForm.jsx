@@ -326,22 +326,15 @@ const LastRespectForm = (props) => {
   };
 
   const handleFormSubmit = () => {
-    if(enableSubmit() === true){
+    if(enableSubmit() === true) {
       let token = getCookie('lrToken');
-    if (token !== '' && isTokenAlive(token)) {
-      callFetchApi(apiUrls.slotbooking, null,'POST',details).then((response) => {
-          //set loader to false
-          console.log("slot booking triggered");
-      });
-
-    }
-      /* post(`${CSA_SERVICE_URL}fieldvisits/add`,null).then((res)=>{
-        console.log(res);
-      }).catch((err)=>{
-        console.log(err);
-      });*/
-    } 
-    
+      if (token !== '' && isTokenAlive(token)) {
+        callFetchApi(apiUrls.slotbooking, null,'POST',details).then((response) => {
+            //set loader to false
+            console.log("slot booking triggered");
+        });
+      }
+      } 
   }
   
 
