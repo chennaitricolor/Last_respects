@@ -10,10 +10,13 @@ const useStyles = makeStyles({
     marginTop: '2%',
   },
   dateTitle: {
-    color: '#000',
-    fontSize: '14px',
     lineHeight: '16px',
+    fontStyle: 'normal',
     fontWeight: 'bold',
+    color: '#000000',
+  },
+  dateCards : {
+    marginBottom : 20,
   },
   dateCard: {
     border: '1px solid #828282',
@@ -77,12 +80,12 @@ const DateSelection = (props) => {
   ];
 
   return (
-    <div className={styles.dateSelectionDiv}>
-      <div className={styles.dateTitle}>Date</div>
-      <div style={{ margin: '2% 2% 0 0' }}>
+    <div className={` ${styles.dateSelectionDiv} `}>
+      <h6 className={styles.dateTitle}>Date</h6>
+      <div className={styles.dateCards}>
         {date.map((date, index) => {
           return (
-            <div key={index} style={{ display: 'inline-block' }} onClick={() => props.selectDate(date)}>
+            <div  key={index} style={{ display: 'inline-block' }} onClick={() => props.selectDate(date)}>
               <Card className={props.selectedDate === date.date ? styles.dateCardSelected : styles.dateCard}>
                 <CardContent>
                   <Typography variant={'h5'} component={'div'}>

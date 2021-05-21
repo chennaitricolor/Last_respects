@@ -18,7 +18,7 @@ const LastRespectFormContainer = (props) => {
   };
 
   return (
-    <div style={{ height: '100%' }}>
+    <div style={{ height: '100%' }} className='col-12'>
       <LastRespectForm onCancel={props.onCancel} type={type} details={details} />
     </div>
   );

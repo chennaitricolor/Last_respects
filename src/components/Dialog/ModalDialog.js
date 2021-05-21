@@ -95,7 +95,6 @@ const time = [
     { title: '10:45 AM - 11:30 AM', year: 2008 },
 ];
 
-
 const reAssignReason = [
     { title: 'Did Not Arrive', year: 1994 },
     { title: 'Machinery Failure', year: 1972 },
