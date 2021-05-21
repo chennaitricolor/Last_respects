@@ -9,7 +9,6 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import { Helmet } from 'react-helmet';
 
 const useStyles = makeStyles(() => ({
   loginContainer: {
@@ -75,10 +74,6 @@ export const LoginComponent = (props) => {
   const styles = useStyles();
   return (
     <div className={styles.loginContainer}>
-      <Helmet>
-        <meta charSet="utf-8" />
-        <title>{'Last Respects'}</title>
-      </Helmet>
       <div className={styles.loginInformationContainer}>
         <Typography className={styles.agentXTitle}>Last Respects</Typography>
         <div style={{ textAlign: 'center' }}>
