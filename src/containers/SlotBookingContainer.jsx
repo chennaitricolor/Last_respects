@@ -4,6 +4,7 @@ import DateSelection from '../components/SlotBooking/DateSelection';
 import ZoneSelection from '../views/ZoneSelection/ZoneSelection';
 import TimeSlotSelection from '../components/SlotBooking/TimeSlotSelection';
 import LastRespectFormContainer from './LastRespectFormContainer';
+import Header from '../components/Header';
 
 const useStyles = makeStyles(() => ({
   slotBookingDiv: {
@@ -44,6 +45,7 @@ const SlotBookingContainer = () => {
 
   return (
     <>
+      <Header />
       {!isFormOpen && (
         <div className={`container ${styles.customContainer} ${styles.slotBookingDiv} mt-4`} >
           <ZoneSelection />

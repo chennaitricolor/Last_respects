@@ -1,10 +1,10 @@
-export NODE_ENV=development
-export DB_HOST=localhost
-export DB_PORT=5432
-export DB_NAME=last_respects_dev
-export DB_PWD=postgres
-export DB_USER=ppostgres
-export ENABLE_SSL=false
+export NODE_ENV
+export DB_HOST
+export DB_PORT
+export DB_NAME
+export DB_SCHEMA
+export DB_PWD
+export DB_USER
+export ENABLE_SSL
 
-npm run build
-num run serve:dev
+npm run serve

@@ -36,7 +36,9 @@ module.exports = function (sequelize, DataTypes) {
       field: 'id'
     }
   }, {
-    tableName: 'slot_meta'
+    schema: process.env.DB_SCHEMA,
+    tableName: 'slot_meta',
+    timestamps: false
   });
   return slot_meta;
 };

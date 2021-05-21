@@ -67,6 +67,7 @@ module.exports = function (sequelize, DataTypes) {
       field: 'site_type'
     }
   }, {
+    schema: process.env.DB_SCHEMA,
     tableName: 'burial_sites',
     timestamps: false
   });
