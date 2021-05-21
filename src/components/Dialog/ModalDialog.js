@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{ useState } from 'react';
 import 'date-fns';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -106,8 +106,9 @@ const ModalDialog = (props) => {
   const styles = useStyles();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
-
-  const [selectedDate, setSelectedDate] = React.useState(new Date());
+  let date = new Date();
+  const [selectedDate, setSelectedDate] = useState(date);
+ // const [maxDate, setMaxDate] = useState(date.setDate(date.getDate()+1))
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -119,7 +120,7 @@ const ModalDialog = (props) => {
 
   return (
     <div>
-      <Dialog fullScreen={fullScreen} open={true} onClose={handleClose} aria-labelledby="dialog-title">
+      <Dialog fullScreen={fullScreen} open={true} onClose={handleClose} aria-labelledby="dialog-title" disableBackdropClick >
         <DialogTitle id="responsive-dialog-title">{'Re-Assign Booking'}</DialogTitle>
         <div className={`container ${styles.reassignModal}`}>
           <span className={`${styles.close}`} onClick={handleClose}>
@@ -158,6 +159,7 @@ const ModalDialog = (props) => {
                   id="date-picker-inline"
                   label="Date picker inline"
                   value={selectedDate}
+                
                   onChange={handleDateChange}
                   KeyboardButtonProps={{
                     'aria-label': 'change date',
