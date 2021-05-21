@@ -1,12 +1,21 @@
 import axios from 'axios';
 
-function callFetchAxios(endpoint, params, method, reqbody = {}) {
+function callFetchAxios(endpoint, params, method, reqbody = {}, headerToken = null) {
   let axiosInstance;
-  axiosInstance = axios.create({
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  if (headerToken !== null) {
+    axiosInstance = axios.create({
+      headers: {
+        'x-access-token': headerToken,
+        'Content-Type': 'application/json',
+      },
+    });
+  } else {
+    axiosInstance = axios.create({
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  }
 
   switch (method) {
     case 'GET':

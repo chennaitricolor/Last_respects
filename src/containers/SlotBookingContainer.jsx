@@ -5,6 +5,8 @@ import ZoneSelection from '../views/ZoneSelection/ZoneSelection';
 import TimeSlotSelection from '../components/SlotBooking/TimeSlotSelection';
 import LastRespectFormContainer from './LastRespectFormContainer';
 import Header from '../components/Header';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionTypes } from '../utils/actionTypes';
 
 const useStyles = makeStyles(() => ({
   slotBookingDiv: {
@@ -20,12 +22,17 @@ const useStyles = makeStyles(() => ({
 
 const SlotBookingContainer = () => {
   const styles = useStyles();
+  const dispatch = useDispatch();
 
   const [isFormOpen, setFormOpen] = useState(true);
   const [selectedDate, setSelectedDate] = useState(new Date().getDate().toString());
 
+  const zoneList = useSelector((state) => state.getAllZoneReducer.zoneList);
+
   useEffect(() => {
-    console.log('Test');
+    dispatch({
+      type: actionTypes.GET_ALL_ZONES,
+    });
   }, []);
 
   const selectDate = (date) => {
