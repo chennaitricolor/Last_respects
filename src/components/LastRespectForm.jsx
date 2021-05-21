@@ -348,7 +348,6 @@ const LastRespectForm = (props) => {
             )}
             {openDialog && <ModalDialog setOpenDialog={setOpenDialog} />}
             <Button variant="outlined" className={styles.reAssignButton} onClick={() => {
-              console.log("opendialog state", openDialog);
               return setOpenDialog(!openDialog);
             }}>
               Re-Assign

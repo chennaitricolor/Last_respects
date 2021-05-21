@@ -76,8 +76,6 @@ const DateSelection = (props) => {
     },
   ];
 
-  console.log(props);
-
   return (
     <div className={styles.dateSelectionDiv}>
       <div className={styles.dateTitle}>Date</div>
