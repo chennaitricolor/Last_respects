@@ -10,8 +10,7 @@ RUN npm install --only=production
 
 COPY . .
 
-RUN sed -i 's/http:\/\//https:\/\//g' /etc/apk/repositories && \
-    apk add curl && \
+RUN apk add curl && \
     adduser -u 502 -h /Last_respects -D -H gcc && chown -R gcc /Last_respects && npm run build
 
 USER gcc
