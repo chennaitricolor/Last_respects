@@ -16,6 +16,8 @@ const useStyles = makeStyles(() => ({
     height: '100%',
     margin: 'auto',
     width: '100%',
+    padding: '40px 0 0 0',
+    maxWidth: '600px'
   },  
   mobileLoginContainer:{
     color: '#777',
