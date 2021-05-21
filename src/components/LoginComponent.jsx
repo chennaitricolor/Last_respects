@@ -16,8 +16,6 @@ const useStyles = makeStyles(() => ({
     height: '100%',
     margin: 'auto',
     width: '100%',
-    padding: '40px 0 0 0',
-    maxWidth: '600px'
   },  
   mobileLoginContainer:{
     color: '#777',
@@ -79,6 +77,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 export const LoginComponent = (props) => {
+  const styles = useStyles();
 
   const [isMobile, setMobile] = useState(false);
 
@@ -90,13 +89,8 @@ export const LoginComponent = (props) => {
     }
   },[]);
 
-  const styles = useStyles();
   return (
     <div className={isMobile ? styles.mobileLoginContainer : styles.loginContainer}>
-      <Helmet>
-        <meta charSet="utf-8" />
-        <title>{'Last Respects'}</title>
-      </Helmet>
       <div className={styles.loginInformationContainer}>
         <Typography className={styles.agentXTitle}>Last Respects</Typography>
         <div style={{ textAlign: 'center' }}>
