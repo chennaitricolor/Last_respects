@@ -79,7 +79,6 @@ const useStyles = makeStyles(() => ({
 }));
 
 export const LoginComponent = (props) => {
-  const styles = useStyles();
 
   const [isMobile, setMobile] = useState(false);
 
@@ -90,6 +89,8 @@ export const LoginComponent = (props) => {
         setMobile(true);
     }
   },[]);
+
+  const styles = useStyles();
 
   return (
     <div className={isMobile ? styles.mobileLoginContainer : styles.loginContainer}>
