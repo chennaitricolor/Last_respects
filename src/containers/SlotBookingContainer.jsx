@@ -13,22 +13,60 @@ const useStyles = makeStyles(() => ({
     marginTop: '2%',
     marginLeft: '2%',
   },
-  slotBookingTitle: {
-    color: '#466783',
-    fontSize: '18px',
+  slotTimeTitle: {
+    fontStyle: 'normal',
     fontWeight: 'bold',
+    color: '#000000',
+    fontSize: 16, 
   },
   slotData: {
     background: "#EEFAFE",
-    padding:0
+    padding: 0
   },
-  customContainer:{
+  customContainer: {
     maxWidth: 1500,
     border: "1px solid #ccc",
   },
-  overflowHidden:{
-    overflow:'hidden'
+  overflowHidden: {
+    overflow: 'hidden'
   },
+  legends: {
+    display: 'flex',
+    marginBottom : 15,
+  },
+  informationLegend: {
+    width: 40,
+    height: 8,
+    maxWidth: 100,
+    margin: '-2px 10px 0 15px',
+    borderRadius: 3,
+  },
+  legendWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    justifySelf: 'flex-end',
+  },
+  bookedColor: {
+    background: '#EB5757',
+  },
+  availableColor: {
+    background: '#219653',
+  },
+  rowFullWidth: {
+    width: "100%",
+  },
+  timeSlotTitle: {
+    fontSize: 14,
+    fontStyle: 'normal',
+    fontWeight: 'bold',
+    color: '#000000',
+  },
+  slotHeaderTitle:{
+    fontStyle: 'normal',
+    fontWeight: 'bold',
+    color: '#000000',
+    fontSize: 24,
+  }
 }));
 
 const SlotBookingContainer = () => {
@@ -57,19 +95,32 @@ const SlotBookingContainer = () => {
         <div className={`container ${styles.customContainer} ${styles.slotBookingDiv} mt-4`} >
           <ZoneSelection />
           <div className={`row slotContent `}>
-              <div className="col-12">
-                <h4> Slot Booking</h4>
-              </div>
-              <div className={`col-12 ${styles.overflowHidden}`}>
-                <DateSelection selectedDate={selectedDate} selectDate={selectDate} />
-               <div className='row'>
-                  <TimeSlotSelection />
-                  <div className={`col-9 ${styles.slotData}`}>
-                      <h4 className="col-12 displaydate"> Date & Time Slot : 15/12/2021 & 9.30am to 10.15 am </h4>
-                      <div className="form col-12">
-                          <LastRespectFormContainer/>
-                      </div>
+            <div className="col-12">
+              <h4 className={`${styles.slotHeaderTitle}`}> Slot Booking</h4>
+            </div>
+            <div className={`col-12 ${styles.overflowHidden}`}>
+              <DateSelection selectedDate={selectedDate} selectDate={selectDate} />
+              <div className={`row ${styles.rowFullWidth}`}>
+                <div className={`col-12 ${styles.legends}`}>
+                  <h6 className={`m-0 ${styles.slotTimeTitle}`}>Time Slots</h6>
+                  <div className={` ml-auto ${styles.legendWrapper}`}>
+                    <div item md={2} className={styles.informationLegend + ' ' + styles.bookedColor} />
+                    <span>{'Booked'}</span>
                   </div>
+                  <div className={` ${styles.legendWrapper}`}>
+                    <div item md={2} className={styles.informationLegend + ' ' + styles.availableColor} />
+                    <span>{'Available'}</span>
+                  </div>
+                </div>
+              </div>
+              <div className='row'>
+                <TimeSlotSelection />
+                <div className={`col-9 ${styles.slotData}`}>
+                  <h4 className="col-12 displaydate"> Date & Time Slot : 15/12/2021 & 9.30am to 10.15 am </h4>
+                  <div className="form col-12">
+                    <LastRespectFormContainer />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
