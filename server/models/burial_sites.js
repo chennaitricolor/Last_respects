@@ -61,6 +61,22 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: false,
       field: 'admin_type'
     },
+    owner: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      references: {
+        model: 'user',
+        key: 'id'
+      },
+      field: 'owner'
+    },
+    isActive: {
+      type: DataTypes.VIRTUAL,
+      get: function () {
+        return this.getDataValue('status') === SITE_STATUS.AVAILABLE
+      }
+    },
+
     siteType: {
       type: DataTypes.STRING,
       allowNull: false,

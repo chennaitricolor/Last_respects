@@ -19,6 +19,21 @@ module.exports = function (sequelize, DataTypes) {
       field: 'status',
       values: _.keys(SLOT_STATUS)
     },
+    actualArrivedTime: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'actual_arrived_time'
+    },
+    actualStartedTime: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'actual_start_time'
+    },
+    actualCompletedTime: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'actual_completed_time'
+    },
     covidRelated: {
       type: DataTypes.BOOLEAN,
       allowNull: false,

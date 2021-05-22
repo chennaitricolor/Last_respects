@@ -1,6 +1,5 @@
 const moment = require('moment-timezone');
 const _ = require('lodash');
-const helper = require('./helpers');
 const { SLOT_STATUS } = require('../constant/enum');
 const { SLOT_STATUS_TRANSITION_NOT_ALLOWED } = require('../constant/constants');
 
@@ -26,12 +25,22 @@ module.exports = {
     }, {});
     return result;
   },
+  getTimeField: (status) => {
+    return {
+      [SLOT_STATUS.COMPLETED]: 'actualCompletedTime',
+      [SLOT_STATUS.ARRIVED]: 'actualArrivedTime',
+      [SLOT_STATUS.STARTED]: 'actualStartedTime',
+    }[status];
+  },
   validateStateTransition: (prev = SLOT_STATUS.BOOKED, next) => {
     const acceptedTransitions = {
       [SLOT_STATUS.BOOKED]: [SLOT_STATUS.BOOKED],
-      [SLOT_STATUS.COMPLETED]: [SLOT_STATUS.COMPLETED, SLOT_STATUS.BOOKED],
-      [SLOT_STATUS.CANCELLED]: [SLOT_STATUS.CANCELLED, SLOT_STATUS.BOOKED],
-      [SLOT_STATUS.REASSIGNED]: [SLOT_STATUS.REASSIGNED, SLOT_STATUS.BOOKED],
+      [SLOT_STATUS.ARRIVED]: [SLOT_STATUS.ARRIVED, SLOT_STATUS.BOOKED],
+      [SLOT_STATUS.STARTED]: [SLOT_STATUS.STARTED, SLOT_STATUS.ARRIVED],
+      [SLOT_STATUS.COMPLETED]: [SLOT_STATUS.COMPLETED, SLOT_STATUS.STARTED],
+      [SLOT_STATUS.CANCELLED]: [SLOT_STATUS.CANCELLED, SLOT_STATUS.BOOKED, SLOT_STATUS.ARRIVED],
+      [SLOT_STATUS.REASSIGNED]: [SLOT_STATUS.REASSIGNED, SLOT_STATUS.BOOKED, SLOT_STATUS.ARRIVED],
+      [SLOT_STATUS.NOSHOW]: [SLOT_STATUS.NOSHOW, SLOT_STATUS.BOOKED, SLOT_STATUS.ARRIVED],
     }
     if (!_.includes(acceptedTransitions[next], prev)) {
       throw {
