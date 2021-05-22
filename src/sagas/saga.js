@@ -5,6 +5,7 @@ import routeURLSaga from './routeURLSaga';
 import getAllZoneSaga from './getAllZoneSaga';
 import getSitesBasedOnZoneIdSaga from './getSitesBasedOnZoneIdSaga';
 import getSlotsBasedOnSiteIdSaga from './getSlotsBasedOnSiteIdSaga';
+import getSlotDetailsBasedOnSlotIdSaga from './getSlotDetailsBasedOnSlotIdSaga';
 
 export default function* saga() {
   yield takeLatest(actionTypes.INITIATE_LOGIN, loginSaga);
@@ -12,4 +13,5 @@ export default function* saga() {
   yield takeLatest(actionTypes.GET_ALL_ZONES, getAllZoneSaga);
   yield takeLatest(actionTypes.GET_SITES_BASED_ZONE_ID, getSitesBasedOnZoneIdSaga);
   yield takeLatest(actionTypes.GET_SLOTS_BASED_SITE_ID, getSlotsBasedOnSiteIdSaga);
+  yield takeLatest(actionTypes.GET_SLOT_DETAILS_BASED_SLOT_ID, getSlotDetailsBasedOnSlotIdSaga);
 }
