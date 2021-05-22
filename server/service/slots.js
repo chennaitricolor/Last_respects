@@ -26,7 +26,7 @@ class Slots {
     try {
       const currentDate = moment();
       const endDate = moment(currentDate).add(DATE_RANGE.VALUE, DATE_RANGE.UNIT || 'd');
-      let days = DATE_RANGE.VALUE | 4;
+      let days = DATE_RANGE.VALUE || 4;
       const siteId = _.get(req, 'params.siteId');
       validate(slotsValidator.list({ siteId }));
       const site = await burialSites.findByPk(siteId);
@@ -53,7 +53,7 @@ class Slots {
       }
       const slotMetaWhere = {
         [Sequelize.Op.and]: [
-          { burialSiteId: siteId },
+          { burialSiteId: parseInt(siteId) },
           { [Sequelize.Op.or]: slotMetaDates }
         ]
       };
