@@ -62,7 +62,6 @@ const useStyles = makeStyles({
   },
   customContainer:{
     maxWidth: 1500,
-    border: "1px solid #ccc",
   },
  //card end
 });
@@ -74,7 +73,7 @@ const App = () => {
     <div className="App">
       <BaseContainer>
         <Switch>
-          <Route path="/slotbooking">
+          <Route path="/slotBooking">
             <SlotBookingContainer />
           </Route>
         </Switch>
