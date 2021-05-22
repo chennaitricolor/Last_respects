@@ -35,6 +35,25 @@ const errors = {
     statusCode: 400
 
   },
+
+  SLOT_ACCESS_DENIED: {
+    errors: [{
+      errorCode: 'SLOT_ACCESS_DENIED',
+      message: 'Not authorized to book in the site'
+    }],
+    statusCode: 403
+
+  },
+
+  SITE_ACCESS_DENIED: {
+    errors: [{
+      errorCode: 'SITE_ACCESS_DENIED',
+      message: 'Not authorized to update site'
+    }],
+    statusCode: 403
+
+  },
+
   SLOT_STATUS_TRANSITION_NOT_ALLOWED: {
     errors: [{
       errorCode: 'SLOT_STATUS_TRANSITION_NOT_ALLOWED',

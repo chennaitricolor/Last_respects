@@ -6,6 +6,9 @@ const { exceptionparser } = require('../utils/validators');
 
 const { user } = models;
 const { errors, refreshTokenExpiry, success, tokenExpiry, secret } = require('../constant/constants');
+const BurialSitesService = require('./burial_sites');
+const { SITE_STATUS } = require('../constant/enum');
+const _ = require('lodash');
 
 class User {
   /**
@@ -34,12 +37,11 @@ class User {
     try {
       const encryptedPassword = bcrypt.hashSync(req.body.password);
 
-      const { name, burialSiteId } = req.body;
+      const { name } = req.body;
 
       return user.create({
         name,
         password: encryptedPassword,
-        burialSiteId
       }).then((userResponse) => {
         const token = jwt.sign({ id: userResponse.id }, secret, {
           expiresIn: tokenExpiry, // expires in 24 hours
@@ -156,13 +158,23 @@ class User {
     }
   }
 
+  static async isMachineMeltDown(userId, options) {
+    let authorizedSites = options.authorizedSitesWithStatus
+    if(_.isEmpty(authorizedSites)) {
+      authorizedSites = await BurialSitesService.dbGetAuthorizedSites(userId);
+    } 
+    const isAnyOneMachineMeltDown = _.some(authorizedSites, ({ isActive }) => !isActive);
+    return isAnyOneMachineMeltDown
+  }
 
-  static async createToken(userId) {
-    const token = await jwt.sign({ id: userId }, secret, {
+
+  static async createToken({ id, zoneId }) {
+    const tokenObj = { id, zoneId }
+    const token = await jwt.sign(tokenObj, secret, {
       expiresIn: tokenExpiry,
     });
 
-    const refreshToken = await jwt.sign({ id: userId }, secret, {
+    const refreshToken = await jwt.sign(tokenObj, secret, {
       expiresIn: refreshTokenExpiry,
     });
     return { token, refreshToken };
@@ -174,8 +186,9 @@ class User {
       user
         .findOne({ where: { name: req.body.name } })
         .then((user) => {
-          return User.createToken(user.id).then(userToken => res.status(200).send({
+          return User.createToken(user).then(userToken => res.status(200).send({
             auth: true,
+            zone: user.zoneId,
             token: userToken.token,
             refreshToken: userToken.refreshToken,
           }));
@@ -192,21 +205,3 @@ class User {
 }
 
 module.exports = User;
-/**
-* @swagger
-*
-* definitions:
-*   UserDetails:
-*     type: object
-*     required:
-*       - name
-*       - password
-*       - burialSiteId
-*     properties:
-*       burialSiteId:
-*         type: number
-*       password:
-*         type: string
-*       name:
-*         type: string
-*/

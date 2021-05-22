@@ -12,15 +12,6 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: false,
       field: 'password'
     },
-    burialSiteId: {
-      type: DataTypes.BIGINT,
-      allowNull: false,
-      references: {
-        model: 'burial_sites',
-        key: 'id'
-      },
-      field: 'burial_site_id'
-    },
     id: {
       type: DataTypes.BIGINT,
       allowNull: false,

@@ -1,11 +1,12 @@
 const models = require('../models');
-const { slots, slotMeta, Sequelize } = models;
+const { slots, slotMeta, burialSites, Sequelize } = models;
 const moment = require('moment-timezone');
-const { DATE_RANGE, SLOT_NOT_FOUND, SLOT_UNAVAILABLE, BAD_REQUEST, expectedSlotKeys } = require('../constant/constants');
-const { SLOT_STATUS, SLOT_UPDATE_TYPE } = require('../constant/enum');
-const { constructSlots, validateStateTransition } = require('../utils/helpers');
+const { DATE_RANGE, SLOT_NOT_FOUND, SLOT_UNAVAILABLE, BAD_REQUEST, expectedSlotKeys, SLOT_ACCESS_DENIED, SITE_NOT_FOUND } = require('../constant/constants');
+const { SLOT_STATUS, SLOT_UPDATE_TYPE, SLOT_TYPE_STATUS_MAP } = require('../constant/enum');
+const { constructSlots, validateStateTransition, getTimeField } = require('../utils/helpers');
 const { slots: slotsValidator, validate, exceptionparser } = require('../utils/validators');
 const BurialSitesService = require('./burial_sites');
+const UserService = require('./user');
 const _ = require('lodash');
 const { sequelize } = require('../models');
 
@@ -28,6 +29,11 @@ class Slots {
       let days = DATE_RANGE.VALUE | 4;
       const siteId = _.get(req, 'params.siteId');
       validate(slotsValidator.list({ siteId }));
+      const site = await burialSites.findByPk(siteId);
+      if(_.isEmpty(site)) {
+        throw SITE_NOT_FOUND;
+      }
+
       const slotMetaDates = [];
       const dates = [];
       let date = moment(currentDate).subtract(2, 'd');
@@ -59,7 +65,7 @@ class Slots {
               [Sequelize.Op.between]: [currentDate, endDate]
             }
           },
-          { status: {[Sequelize.Op.or] : [SLOT_STATUS.BOOKED, SLOT_STATUS.COMPLETED]} }
+          // { status: {[Sequelize.Op.notIn] : [SLOT_STATUS.CANCELLED, SLOT_STATUS.NOSHOW, ]} }
         ]
 
       };
@@ -112,22 +118,25 @@ class Slots {
       const slotId = _.get(req, 'params.slotId');
       const slotDetailsParam = _.get(req, 'body.slotDetails');
       const reason = _.get(req, 'body.reason');
+      const updatedTime = _.get(req, 'body.updatedTime');
       const type = _.get(req, 'body.type');
-      validate(slotsValidator.update({ slotId, slotDetails: slotDetailsParam, reason, type }));
+      const userId = req.userId;
+      validate(slotsValidator.update({ slotId, slotDetails: slotDetailsParam, reason, type, updatedTime }));
       const slotDetails = await slots.findByPk(slotId);
       if (_.isEmpty(slotDetails)) {
         throw SLOT_NOT_FOUND;
       }
-      if (type === SLOT_UPDATE_TYPE.COMPLETE) {
-        await Slots.dbUpdateSlotData(slotDetails, { status: SLOT_STATUS.COMPLETED })
+      const toBeUpdatedStatus = SLOT_TYPE_STATUS_MAP[type];
+      if ([SLOT_UPDATE_TYPE.COMPLETE, SLOT_STATUS.ARRIVED, SLOT_STATUS.STARTED, SLOT_STATUS.NOSHOW ].includes(type)) {
+        await Slots.dbUpdateSlotData(slotDetails, userId, { status: toBeUpdatedStatus, statusUpdatedTime: updatedTime })
       } else if (type === SLOT_UPDATE_TYPE.CANCEL) {
-        await Slots.dbUpdateSlotData(slotDetails, { status: SLOT_STATUS.CANCELLED, reasonForCancellation: reason })
+        await Slots.dbUpdateSlotData(slotDetails, userId, { status: toBeUpdatedStatus, reasonForCancellation: reason })
       } else if (type === SLOT_UPDATE_TYPE.REASSIGN) {
         //TODO implement REASSIGN
         await sequelize.transaction(async function(transaction) {
           const options = { transaction, lock: transaction.LOCK.UPDATE };
-          await Slots.bookSlot(slotDetailsParam, req.userId, options);
-          await Slots.dbUpdateSlotData(slotDetails, { status: SLOT_STATUS.REASSIGNED, reasonForCancellation: reason }, options)
+          await Slots.bookSlot(slotDetailsParam, userId, true, options);
+          await Slots.dbUpdateSlotData(slotDetails, userId, { status: toBeUpdatedStatus, reasonForCancellation: reason }, options)
         });
       }
       res.status(200).send({ slotId });
@@ -143,7 +152,7 @@ class Slots {
     try {
       validate(slotsValidator.insert({ slotDetails }));
       slotDetails = _.pick(slotDetails, expectedSlotKeys);
-      const bookedSlot = await Slots.bookSlot(slotDetails, req.userId);
+      const bookedSlot = await Slots.bookSlot(slotDetails, req.userId, false);
       return res.status(200).send({ slotId: bookedSlot.id })
   } catch (e) {
       const { code, message } = exceptionparser(e);
@@ -151,14 +160,39 @@ class Slots {
     }
   }
 
-  static async dbUpdateSlotData(slot, update = {}, options) {
+  static async dbUpdateSlotData(slot, userId, update = {}, options) {
     if (!_.isEmpty(update.status)) {
       validateStateTransition(slot.status, update.status);
+    }
+    const currentDate = moment()
+    update.updatedTime = currentDate
+    update.updatedBy = userId
+    const relatedTimeField = getTimeField(update.status);
+    if(relatedTimeField) {
+      const updatedTime = moment(update.statusUpdatedTime);
+      update[relatedTimeField] = updatedTime
+      delete update.updatedTime;
     }
     await slot.update(update, { where: { id: slot.id, ...options } });
   }
 
-  static async bookSlot(slotDetailsParam, userId, options = {}) {
+
+
+  static async authorizeBooking(slotDetailsParam, userId, crossBookOverride) {
+    const authorizedSites = await BurialSitesService.dbGetAuthorizedSites(userId);
+    let canCrossBook = false;
+    const inAuthorizedList = !_.isEmpty(_.find(authorizedSites, (authorizedSite) => parseInt(authorizedSite.id) === slotDetailsParam.burialSiteId));
+    if(crossBookOverride && !inAuthorizedList) {
+      canCrossBook = await UserService.isMachineMeltDown(userId, { authorizedSites })
+    }
+    const isAuthorized = inAuthorizedList || canCrossBook;
+    if(!isAuthorized) {
+      throw  SLOT_ACCESS_DENIED;
+    }
+  }
+
+  static async bookSlot(slotDetailsParam, userId, crossBookOverride, options = {}) {
+    await Slots.authorizeBooking(slotDetailsParam, userId, crossBookOverride)
     const currentDate = moment()
     slotDetailsParam.createdTime = currentDate;
     slotDetailsParam.updatedTime = currentDate;
