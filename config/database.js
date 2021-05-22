@@ -1,9 +1,11 @@
 module.exports = {
     development: {
-        username: process.env.DB_USER || 'postgres',
-        password: process.env.DB_PWD || 'postgres',
-        database: process.env.DB_NAME || 'last_respects_dev',
-        host: process.env.DB_HOST || 'localhost',
+        username: process.env.DB_USER || 'rpt_isolation_dev_rw',
+        password: process.env.DB_PWD || 'n!w2<+wNYK',
+        database: process.env.DB_NAME || 'last_respects',
+        host: process.env.DB_HOST || 'sql.gcchqims.in',
+        schema: 'last_respects_dev',
+        port: 7001,
         dialect: 'postgres',
         operatorsAliases: false,
     },

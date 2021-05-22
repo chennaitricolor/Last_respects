@@ -14,7 +14,7 @@ module.exports = {
           errors.push({ message: 'reason missing' });
         } else if (type === SLOT_UPDATE_TYPE.REASSIGN) {
           const { dateOfCremation, slot, burialSiteId } = slotDetails;
-          if (_.isEmpty(dateOfCremation) || _.isEmpty(slot) || _.isEmpty(burialSiteId)) {
+          if (_.isEmpty(dateOfCremation) || _.isEmpty(slot) || !burialSiteId) {
             errors.push({ message: 'slot_details.date or slot_details.slot or slot_details.site_id missing' });
           }
         }
@@ -35,10 +35,10 @@ module.exports = {
       const errors = [];
       const slotKeys = _.keys(slotDetails);
       const missingKeys = _.difference(expectedSlotKeys, slotKeys);
-      const optionalKeys = ['proofId', 'proofType'];
+      const optionalKeys = ['proofId', 'proofType', 'reasonForCancellation', 'updatedTime', 'createdTime'];
       const validMissingKeys = _.difference(missingKeys, optionalKeys);
       if (validMissingKeys.length) {
-        errors.push({ message: `${validMissingKeys.toString} key(s) are missing` });
+        errors.push({ message: `${validMissingKeys.toString()} key(s) are missing` });
       }
       return errors;
     }
@@ -54,7 +54,7 @@ module.exports = {
   exceptionparser: (e) => {
     console.log(e);
     return {
-      errors: _.get(e, 'errors', [{ message: 'Unexpected error' }]),
+      message: _.get(e, 'errors', [{ message: 'Unexpected error' }]),
       code: _.get(e, 'statusCode', 500)
     }
   }

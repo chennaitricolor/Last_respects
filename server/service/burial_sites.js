@@ -23,7 +23,7 @@ class BurialSites {
   }
 
   static async isSiteAvailable(siteId, options) {
-    const site = burialSites.findByPk(siteId, options);
+    const site = await burialSites.findByPk(siteId, options);
     if (_.isEmpty(site) || site.status !== SITE_STATUS.AVAILABLE) {
       return { isSiteAvailable: false, site };
     } else {

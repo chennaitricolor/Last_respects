@@ -18,7 +18,7 @@ class Sites {
     try {
       const { zoneId } = req.params
       if (zoneId) {
-        return burialSites.findAll({ where: { zoneOrDivisionId: zoneId }, attributes: ['id', 'site_name'] })
+        return burialSites.findAll({ where: { zoneOrDivisionId: zoneId }, attributes: ['id', 'site_name', 'address','contact_no', 'city'] })
           .then(sites => res.status(200).send(sites));
       } else {
         res.status(400).send(SITE_NOT_FOUND)

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -14,6 +14,9 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import ModalDialog from './Dialog/ModalDialog';
+import { apiUrls } from '../utils/constants';
+import { callFetchApi } from '../services/api';
+import { getCookie, isTokenAlive } from '../utils/CommonUtils';
 
 const useStyles = makeStyles({
   root: {
@@ -314,7 +317,7 @@ const LastRespectForm = (props) => {
       deathCertificateNumber &&
       attenderName &&
       attenderContactNumber &&
-      attenderContactNumber.length == 10 &&
+      attenderContactNumber.length === 10 &&
       attenderRelationship &&
       address &&
       addressProof &&
@@ -322,7 +325,19 @@ const LastRespectForm = (props) => {
     );
   };
 
-  const modalRef = useRef();
+  const handleFormSubmit = () => {
+    if(enableSubmit() === true) {
+      let token = getCookie('lrToken');
+      if (token !== '' && isTokenAlive(token)) {
+        callFetchApi(apiUrls.slotbooking, null,'POST',details).then((response) => {
+            //set loader to false
+            console.log("slot booking triggered");
+        });
+      }
+      } 
+  }
+  
+
   const [openDialog, setOpenDialog] = useState(false);
 
   return (
@@ -347,8 +362,8 @@ const LastRespectForm = (props) => {
               </Button>
             )}
             {openDialog && <ModalDialog setOpenDialog={setOpenDialog} />}
+            {/** can be removed. Added just for demo purpose */}
             <Button variant="outlined" className={styles.reAssignButton} onClick={() => {
-              console.log("opendialog state", openDialog);
               return setOpenDialog(!openDialog);
             }}>
               Re-Assign
@@ -392,7 +407,7 @@ const LastRespectForm = (props) => {
         </form>
       </div>
       <div style={{ textAlign: 'center', marginTop: '10%' }}>
-        <Button variant="contained" className={styles.saveButton} disabled={!enableSubmit()}>
+        <Button variant="contained" className={styles.saveButton} disabled={!enableSubmit()} onClick={handleFormSubmit}>
           Save
         </Button>
         <Button variant="contained" className={styles.cancelButton} onClick={props.onCancel}>
