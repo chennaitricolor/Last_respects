@@ -1,8 +1,9 @@
-import React,{ useState } from 'react';
+import React,{ useState, useEffect } from 'react';
 import 'date-fns';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import { makeStyles } from '@material-ui/core/styles';
+import RequiredFieldMarker from '../RequiredFieldMarker';
 import { useTheme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
@@ -10,10 +11,24 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionTypes } from '../../utils/actionTypes';
+import Typography from '@material-ui/core/Typography';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import { getReassignReasons } from '../../utils/CommonUtils';
 
 const useStyles = makeStyles({
+
+  dropDownLabel: {
+    fontWeight: 'bold',
+    fontSize: '14px',
+    lineHeight: '16px',
+    color: '#000000',
+  },
   dropDown: {
-    width: '94%',
+    width: '100%',
     marginTop: '3%',
 
     '& label': {
@@ -70,23 +85,33 @@ const useStyles = makeStyles({
   datePickerRoot: {
     width: '100%',
   },
+  fieldLabel: {
+    fontSize: '16px',
+    fontWeight: 600,
+    color: '#151522 !important',
+  },
+  textField: {
+    width: '94%',
+    marginTop: '2%',
+    backgroundColor: '#fff',
+
+    '& label': {
+      color: '#707070 !important',
+      fontSize: '16px',
+      display: 'contents',
+    },
+
+    '& fieldset': {
+      border: '1px solid #707070 !important',
+    },
+
+    '& input': {
+      fontSize: '16px',
+      color: '#4F4F4F',
+    },
+  },
 });
 
-const zone = [
-  { title: 'Zone 1', year: 1994 },
-  { title: 'Zone 2', year: 1972 },
-  { title: 'Zone 3', year: 1974 },
-  { title: 'Zone 4', year: 2008 },
-  { title: 'Zone 5', year: 1957 },
-];
-
-const sites = [
-  { title: 'Site 1', year: 1994 },
-  { title: 'Site 2', year: 1972 },
-  { title: 'Site 3', year: 1974 },
-  { title: 'Site 4', year: 2008 },
-  { title: 'Site 5', year: 1957 },
-];
 
 const time = [
     { title: '8:30 AM - 9:15 AM', year: 1994 },
@@ -95,20 +120,27 @@ const time = [
     { title: '10:45 AM - 11:30 AM', year: 2008 },
 ];
 
-const reAssignReason = [
-    { title: 'Did Not Arrive', year: 1994 },
-    { title: 'Machinery Failure', year: 1972 },
-    { title: 'Rescheduled', year: 1974 },
-];
-
+const reAssignReasons = getReassignReasons();
 
 const ModalDialog = (props) => {
+
   const styles = useStyles();
   const theme = useTheme();
+  const dispatch = useDispatch();
+  const [siteDetails, setSiteDetails] = useState({
+    zoneName: '',
+    siteName: '',
+  });
+  const [reAssignVal, setReassignVal] = useState(reAssignReasons);
+  const [commentVal, setCommentVal] = useState();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   let date = new Date();
-  const [selectedDate, setSelectedDate] = useState(date);
- // const [maxDate, setMaxDate] = useState(date.setDate(date.getDate()+1))
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [maxDate, setMaxDate] = useState(date.setDate(date.getDate()+1))
+
+  const zoneList = useSelector((state) => state.getAllZoneReducer.zoneList);
+  const siteList = useSelector((state) => state.getSitesBasedOnZoneIdReducer.siteList);
+  const slotList = useSelector((state)=> state.getSlotsBasedOnSiteIdReducer);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -117,6 +149,62 @@ const ModalDialog = (props) => {
   const handleClose = () => {
     props.setOpenDialog(false);
   };
+
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.GET_ALL_ZONES,
+    });
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (siteDetails.zoneName !== '') {
+      let zoneId = zoneList.filter((zone) => zone.zone_or_division === siteDetails.zoneName)[0].zone_or_division_id;
+      dispatch({
+        type: actionTypes.GET_SITES_BASED_ZONE_ID,
+        payload: {
+          zoneId: zoneId,
+        },
+      });
+    }
+  }, [dispatch, siteDetails.zoneName]);
+
+  useEffect(() => {
+    if (siteDetails.zoneName !== '' && siteDetails.siteName !== '') {
+      let siteId = siteList.filter(site => site.site_name === siteDetails.siteName)[0].id
+      dispatch({
+        type: actionTypes.GET_SLOTS_BASED_SITE_ID,
+        payload: {
+          siteId: siteId,
+        },
+      });
+    }
+  }, [dispatch, siteDetails]);
+
+  const handleOnChange = (event, id) => {
+    if (event !== null) {
+      if (id === 'zoneName') {
+        setSiteDetails({
+          zoneName: event,
+          siteName: '',
+        });
+      }
+      if (id === 'siteName') {
+        setSiteDetails({
+          ...siteDetails,
+          siteName: event,
+        });
+      }
+      if (id  === 'text') {
+        if (event.target.value !== '') {
+          setCommentVal(event.target.value);
+        } 
+      }
+    }
+  }
+
+  const enableSubmit = () => {
+
+  }
 
   return (
     <div>
@@ -128,22 +216,48 @@ const ModalDialog = (props) => {
           </span>
           <div className="row">
             <div className="col-12 mb-4">
-              <Autocomplete
-                id="zone-combo-box"
-                options={zone}
-                getOptionLabel={(option) => option.title}
-                style={{ width: '100%' }}
-                renderInput={(params) => <TextField {...params} label="Zone Name" variant="outlined" />}
-              />
+              <Typography className={styles.dropDownLabel} component={'div'}>
+                Zone
+              </Typography>
+              <FormControl className={styles.dropDown}>
+                <Select
+                  variant={'outlined'}
+                  size={'small'}
+                  className={styles.dropDownSelect}
+                  value={siteDetails.zoneName}
+                  onChange={(e) => handleOnChange(e.target.value, 'zoneName')}
+                 >
+                  {zoneList.map((item) => {
+                    return (
+                      <MenuItem key={item.zone_or_division_id} value={item.zone_or_division}>
+                        {item.zone_or_division}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
             </div>
             <div className="col-12 mb-4 ">
-              <Autocomplete
-                id="site-combo-box"
-                options={sites}
-                getOptionLabel={(option) => option.title}
-                style={{ width: '100%' }}
-                renderInput={(params) => <TextField {...params} label="Site Name" variant="outlined" />}
-              />
+                <Typography className={styles.dropDownLabel} component={'div'}>
+                  Site
+                </Typography>
+                <FormControl className={styles.dropDown}>
+                  <Select
+                    variant={'outlined'}
+                    size={'small'}
+                    className={styles.dropDownSelect}
+                    value={siteDetails.siteName}
+                    onChange={(e) => handleOnChange(e.target.value, 'siteName')}
+                  >
+                    {siteList.map((item) => {
+                      return (
+                        <MenuItem key={item.id} value={item.site_name}>
+                          {item.site_name}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
             </div>
             <div className="col-12 mb-4">
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -159,7 +273,7 @@ const ModalDialog = (props) => {
                   id="date-picker-inline"
                   label="Date picker inline"
                   value={selectedDate}
-                
+                  maxDate={maxDate}
                   onChange={handleDateChange}
                   KeyboardButtonProps={{
                     'aria-label': 'change date',
@@ -177,16 +291,44 @@ const ModalDialog = (props) => {
               />
             </div>
             <div className="col-12 mb-4">
-              <Autocomplete
-                id="reassign-combo-box"
-                options={reAssignReason}
-                getOptionLabel={(option) => option.title}
-                style={{ width: '100%' }}
-                renderInput={(params) => <TextField {...params} label="Reassign Reason" variant="outlined" />}
-              />
+            <Typography className={styles.dropDownLabel} component={'div'}>
+                  Re-Assign Reason
+                </Typography>
+                <FormControl className={styles.dropDown}>
+                  <Select
+                    variant={'outlined'}
+                    size={'small'}
+                    className={styles.dropDownSelect}
+                    value={reAssignVal}
+                    onChange={(e) => handleOnChange(e.target.value, 'reAssignReasons')}
+                  >
+                    {reAssignReasons.map((item) => {
+                      return (
+                        <MenuItem key={item.id} value={item.reason}>
+                          {item.reason}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
+            </div>
+            <div className="col-12 mb-4">
+                <Typography component={'div'} className={styles.fieldLabel}>
+                  {'Reason'}
+                  <RequiredFieldMarker />
+                </Typography>
+                <TextField
+                  className={styles.textField}
+                  value={commentVal}
+                  size="small"
+                  variant={'outlined'}
+                  onChange={(event) => handleOnChange(event, 'text')}
+                  InputLabelProps={{ shrink: true }}
+                  autoComplete={'disabled'}
+                />
             </div>
             <div className="col-12 text-center">
-              <Button variant="contained" className={styles.saveButton}>
+              <Button variant="contained" className={styles.saveButton} >
                 Save
               </Button>
               <Button variant="contained" className={`${styles.cancelButton}`}>
