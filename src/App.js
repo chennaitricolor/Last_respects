@@ -9,6 +9,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import LastRespectFormContainer from "./containers/LastRespectFormContainer";
 import ZoneSelection from '../src/views/ZoneSelection/ZoneSelection';
+import MachineryManagementContainer from './containers/MachineryManagementContainer';
 
 const useStyles = makeStyles({
   //card start
@@ -80,6 +81,9 @@ const App = () => {
         <Switch>
           <Route path="/slotbooking">
             <SlotBookingContainer />
+          </Route>
+          <Route path="/machineryManagement">
+            <MachineryManagementContainer />
           </Route>
         </Switch>
 
