@@ -20,11 +20,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { getReassignReasons } from '../../utils/CommonUtils';
 
 const useStyles = makeStyles({
-
   dropDownLabel: {
     fontWeight: 'bold',
     fontSize: '14px',
-    lineHeight: '16px',
     color: '#000000',
   },
   dropDown: {
@@ -86,13 +84,13 @@ const useStyles = makeStyles({
     width: '100%',
   },
   fieldLabel: {
-    fontSize: '16px',
-    fontWeight: 600,
+    fontSize: '14px',
+    fontWeight: 'bold',
     color: '#151522 !important',
   },
   textField: {
-    width: '94%',
-    marginTop: '2%',
+    width: '100%',
+    marginTop: '5%',
     backgroundColor: '#fff',
 
     '& label': {
@@ -132,7 +130,8 @@ const ModalDialog = (props) => {
     siteName: '',
   });
   const [reAssignVal, setReassignVal] = useState(reAssignReasons);
-  const [commentVal, setCommentVal] = useState();
+  const [showReAssignComment, setShowReAssignComment] = useState(false);
+  const [commentVal, setCommentVal] = useState('');
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   let date = new Date();
   const [selectedDate, setSelectedDate] = useState(null);
@@ -141,6 +140,10 @@ const ModalDialog = (props) => {
   const zoneList = useSelector((state) => state.getAllZoneReducer.zoneList);
   const siteList = useSelector((state) => state.getSitesBasedOnZoneIdReducer.siteList);
   const slotList = useSelector((state)=> state.getSlotsBasedOnSiteIdReducer);
+  const zoneName = useSelector((state) => state.getAllZoneReducer.zoneName);
+  const isActive = useSelector((state) => state.getAllZoneReducer.isActive);
+  
+  //console.log('isActive', isActive);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -150,11 +153,24 @@ const ModalDialog = (props) => {
     props.setOpenDialog(false);
   };
 
+  useEffect(()=>{
+    setSiteDetails({
+      isActive: isActive,
+    });
+  },[isActive]);
+
+  useEffect(()=>{
+    setSiteDetails({
+      zoneName: zoneName,
+    });
+  },[zoneName]);
+
   useEffect(() => {
     dispatch({
       type: actionTypes.GET_ALL_ZONES,
     });
   }, [dispatch]);
+
 
   useEffect(() => {
     if (siteDetails.zoneName !== '') {
@@ -195,9 +211,11 @@ const ModalDialog = (props) => {
         });
       }
       if (id  === 'text') {
-        if (event.target.value !== '') {
-          setCommentVal(event.target.value);
-        } 
+        setCommentVal(event);
+      }
+      if(id === 'reAssignReason'){
+        event === 'Other' ? setShowReAssignComment(true) : setShowReAssignComment(false);
+        setReassignVal(event);
       }
     }
   }
@@ -291,7 +309,7 @@ const ModalDialog = (props) => {
               />
             </div>
             <div className="col-12 mb-4">
-            <Typography className={styles.dropDownLabel} component={'div'}>
+               <Typography className={styles.dropDownLabel} component={'div'}>
                   Re-Assign Reason
                 </Typography>
                 <FormControl className={styles.dropDown}>
@@ -300,7 +318,7 @@ const ModalDialog = (props) => {
                     size={'small'}
                     className={styles.dropDownSelect}
                     value={reAssignVal}
-                    onChange={(e) => handleOnChange(e.target.value, 'reAssignReasons')}
+                    onChange={(e) => handleOnChange(e.target.value, 'reAssignReason')}
                   >
                     {reAssignReasons.map((item) => {
                       return (
@@ -312,8 +330,8 @@ const ModalDialog = (props) => {
                   </Select>
                 </FormControl>
             </div>
-            <div className="col-12 mb-4">
-                <Typography component={'div'} className={styles.fieldLabel}>
+            {showReAssignComment ? (<div className="col-12 mb-4">
+                <Typography component={'div'} className={` ${styles.fieldLabel} `}>
                   {'Reason'}
                   <RequiredFieldMarker />
                 </Typography>
@@ -326,7 +344,7 @@ const ModalDialog = (props) => {
                   InputLabelProps={{ shrink: true }}
                   autoComplete={'disabled'}
                 />
-            </div>
+            </div>) : null }
             <div className="col-12 text-center">
               <Button variant="contained" className={styles.saveButton} >
                 Save

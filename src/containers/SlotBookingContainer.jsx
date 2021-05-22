@@ -69,7 +69,8 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const SlotBookingContainer = () => {
+const SlotBookingContainer = (props) => {
+
   const styles = useStyles();
   const dispatch = useDispatch();
 
@@ -124,11 +125,23 @@ const SlotBookingContainer = () => {
           zoneName: event,
           siteName: '',
         });
+        dispatch({
+          type: actionTypes.SET_ZONE_NAME,
+          payload: {
+            zoneName: event,
+          },
+        });
       }
       if (id === 'siteName') {
         setSiteDetails({
           ...siteDetails,
           siteName: event,
+        });
+        dispatch({
+          type: actionTypes.SET_ACTIVE_FLAG,
+          payload: {
+            isActive: false,
+          },
         });
       }
     }
