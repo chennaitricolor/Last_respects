@@ -1,4 +1,4 @@
-import React,{ useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'date-fns';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import RequiredFieldMarker from '../RequiredFieldMarker';
 import { useTheme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
+import clsx from 'clsx';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -112,10 +113,10 @@ const useStyles = makeStyles({
 
 
 const time = [
-    { title: '8:30 AM - 9:15 AM', year: 1994 },
-    { title: '9:15 AM - 10:00 AM', year: 1972 },
-    { title: '10:00 AM - 10:45 AM', year: 1974 },
-    { title: '10:45 AM - 11:30 AM', year: 2008 },
+  { title: '8:30 AM - 9:15 AM', year: 1994 },
+  { title: '9:15 AM - 10:00 AM', year: 1972 },
+  { title: '10:00 AM - 10:45 AM', year: 1974 },
+  { title: '10:45 AM - 11:30 AM', year: 2008 },
 ];
 
 const reAssignReasons = getReassignReasons();
@@ -135,16 +136,14 @@ const ModalDialog = (props) => {
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   let date = new Date();
   const [selectedDate, setSelectedDate] = useState(null);
-  const [maxDate, setMaxDate] = useState(date.setDate(date.getDate()+1))
+  const [maxDate, setMaxDate] = useState(date.setDate(date.getDate() + 1))
 
   const zoneList = useSelector((state) => state.getAllZoneReducer.zoneList);
   const siteList = useSelector((state) => state.getSitesBasedOnZoneIdReducer.siteList);
-  const slotList = useSelector((state)=> state.getSlotsBasedOnSiteIdReducer);
+  const slotList = useSelector((state) => state.getSlotsBasedOnSiteIdReducer);
   const zoneName = useSelector((state) => state.getAllZoneReducer.zoneName);
-  const isActive = useSelector((state) => state.getAllZoneReducer.isActive);
-  
-  //console.log('isActive', isActive);
-
+  const isActive = useSelector((state) => state.getSitesBasedOnZoneIdReducer.isActive);
+  console.log('isActive', isActive);
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
@@ -153,17 +152,17 @@ const ModalDialog = (props) => {
     props.setOpenDialog(false);
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     setSiteDetails({
       isActive: isActive,
     });
-  },[isActive]);
+  }, [isActive]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setSiteDetails({
       zoneName: zoneName,
     });
-  },[zoneName]);
+  }, [zoneName]);
 
   useEffect(() => {
     dispatch({
@@ -171,30 +170,34 @@ const ModalDialog = (props) => {
     });
   }, [dispatch]);
 
-
   useEffect(() => {
-    
     if (siteDetails.zoneName !== '') {
-      let zoneId = zoneList.filter((zone) => zone.zone_or_division === siteDetails.zoneName)[0].zone_or_division_id;
-      console.log('zoneId===>',zoneId);
-      dispatch({
-        type: actionTypes.GET_SITES_BASED_ZONE_ID,
-        payload: {
-          zoneId: zoneId,
-        },
-      });
+      const zoneFilterCdn = zoneList.filter((zone) => zone.zone_or_division === siteDetails.zoneName);
+      if (zoneFilterCdn.length > 0) {
+        let zoneId = zoneFilterCdn[0].zone_or_division_id;
+        console.log('filetCdn Passed',zoneId);
+        dispatch({
+          type: actionTypes.GET_SITES_BASED_ZONE_ID,
+          payload: {
+            zoneId: zoneId,
+          },
+        });
+      }
     }
   }, [dispatch, siteDetails.zoneName]);
 
   useEffect(() => {
     if (siteDetails.zoneName !== '' && siteDetails.siteName !== '') {
-      let siteId = siteList.filter(site => site.site_name === siteDetails.siteName)[0].id
-      dispatch({
-        type: actionTypes.GET_SLOTS_BASED_SITE_ID,
-        payload: {
-          siteId: siteId,
-        },
-      });
+      const siteFilterCdn = siteList.filter(site => site.site_name === siteDetails.siteName);
+      if (siteFilterCdn.length > 0) {
+        let siteId = siteFilterCdn[0].id
+        dispatch({
+          type: actionTypes.GET_SLOTS_BASED_SITE_ID,
+          payload: {
+            siteId: siteId,
+          },
+        });
+      }
     }
   }, [dispatch, siteDetails]);
 
@@ -212,10 +215,10 @@ const ModalDialog = (props) => {
           siteName: event,
         });
       }
-      if (id  === 'text') {
+      if (id === 'text') {
         setCommentVal(event);
       }
-      if(id === 'reAssignReason'){
+      if (id === 'reAssignReason') {
         event === 'Other' ? setShowReAssignComment(true) : setShowReAssignComment(false);
         setReassignVal(event);
       }
@@ -243,10 +246,10 @@ const ModalDialog = (props) => {
                 <Select
                   variant={'outlined'}
                   size={'small'}
-                  className={styles.dropDownSelect}
+                  className={clsx(styles.dropDownSelect)}
                   value={siteDetails.zoneName}
                   onChange={(e) => handleOnChange(e.target.value, 'zoneName')}
-                 >
+                >
                   {zoneList.map((item) => {
                     return (
                       <MenuItem key={item.zone_or_division_id} value={item.zone_or_division}>
@@ -258,26 +261,26 @@ const ModalDialog = (props) => {
               </FormControl>
             </div>
             <div className="col-12 mb-4 ">
-                <Typography className={styles.dropDownLabel} component={'div'}>
-                  Site
+              <Typography className={styles.dropDownLabel} component={'div'}>
+                Site
                 </Typography>
-                <FormControl className={styles.dropDown}>
-                  <Select
-                    variant={'outlined'}
-                    size={'small'}
-                    className={styles.dropDownSelect}
-                    value={siteDetails.siteName}
-                    onChange={(e) => handleOnChange(e.target.value, 'siteName')}
-                  >
-                    {siteList.map((item) => {
-                      return (
-                        <MenuItem key={item.id} value={item.site_name}>
-                          {item.site_name}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
-                </FormControl>
+              <FormControl className={styles.dropDown}>
+                <Select
+                  variant={'outlined'}
+                  size={'small'}
+                  className={styles.dropDownSelect}
+                  value={siteDetails.siteName}
+                  onChange={(e) => handleOnChange(e.target.value, 'siteName')}
+                >
+                  {siteList.map((item) => {
+                    return (
+                      <MenuItem key={item.id} value={item.site_name}>
+                        {item.site_name}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
             </div>
             <div className="col-12 mb-4">
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -311,42 +314,42 @@ const ModalDialog = (props) => {
               />
             </div>
             <div className="col-12 mb-4">
-               <Typography className={styles.dropDownLabel} component={'div'}>
-                  Re-Assign Reason
+              <Typography className={styles.dropDownLabel} component={'div'}>
+                Re-Assign Reason
                 </Typography>
-                <FormControl className={styles.dropDown}>
-                  <Select
-                    variant={'outlined'}
-                    size={'small'}
-                    className={styles.dropDownSelect}
-                    value={reAssignVal}
-                    onChange={(e) => handleOnChange(e.target.value, 'reAssignReason')}
-                  >
-                    {reAssignReasons.map((item) => {
-                      return (
-                        <MenuItem key={item.id} value={item.reason}>
-                          {item.reason}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
-                </FormControl>
+              <FormControl className={styles.dropDown}>
+                <Select
+                  variant={'outlined'}
+                  size={'small'}
+                  className={styles.dropDownSelect}
+                  value={reAssignVal}
+                  onChange={(e) => handleOnChange(e.target.value, 'reAssignReason')}
+                >
+                  {reAssignReasons.map((item) => {
+                    return (
+                      <MenuItem key={item.id} value={item.reason}>
+                        {item.reason}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
             </div>
             {showReAssignComment ? (<div className="col-12 mb-4">
-                <Typography component={'div'} className={` ${styles.fieldLabel} `}>
-                  {'Reason'}
-                  <RequiredFieldMarker />
-                </Typography>
-                <TextField
-                  className={styles.textField}
-                  value={commentVal}
-                  size="small"
-                  variant={'outlined'}
-                  onChange={(event) => handleOnChange(event, 'text')}
-                  InputLabelProps={{ shrink: true }}
-                  autoComplete={'disabled'}
-                />
-            </div>) : null }
+              <Typography component={'div'} className={` ${styles.fieldLabel} `}>
+                {'Reason'}
+                <RequiredFieldMarker />
+              </Typography>
+              <TextField
+                className={styles.textField}
+                value={commentVal}
+                size="small"
+                variant={'outlined'}
+                onChange={(event) => handleOnChange(event, 'text')}
+                InputLabelProps={{ shrink: true }}
+                autoComplete={'disabled'}
+              />
+            </div>) : null}
             <div className="col-12 text-center">
               <Button variant="contained" className={styles.saveButton} >
                 Save
