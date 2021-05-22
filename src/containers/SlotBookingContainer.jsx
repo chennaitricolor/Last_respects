@@ -69,7 +69,8 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const SlotBookingContainer = () => {
+const SlotBookingContainer = (props) => {
+
   const styles = useStyles();
   const dispatch = useDispatch();
 
@@ -129,13 +130,27 @@ const SlotBookingContainer = () => {
           siteName: '',
           siteId: '',
         });
+        dispatch({
+          type: actionTypes.SET_ZONE_NAME,
+          payload: {
+            zoneName: event,
+          },
+        });
       }
       if (id === 'siteName') {
+        console.log('siteDetails', siteDetails);
+        console.log('siteList', siteList)
         let siteId = siteList.filter((site) => site.siteName === event)[0].id;
         setSiteDetails({
           ...siteDetails,
           siteName: event,
           siteId: siteId,
+        });
+        dispatch({
+          type: actionTypes.SET_ACTIVE_FLAG,
+          payload: {
+            isActive: siteList[0].isActive,
+          },
         });
       }
     }

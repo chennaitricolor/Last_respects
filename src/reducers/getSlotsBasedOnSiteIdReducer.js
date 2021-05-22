@@ -2,6 +2,7 @@ import { actionTypes } from '../utils/actionTypes';
 
 const defaultState = {
   isLoading: false,
+  slotList: [],
   slotDetails: null,
   error: '',
 };

@@ -32,48 +32,17 @@ const isTokenAlive = (token) => {
   return currentTime <= expiryTime;
 };
 
-const getZoneList = () => {
-  const zones = [
-    {
-      label: 'Select',
-      value: 'Select',
-    },
-    {
-      label: 'South',
-      value: 'South',
-    },
-    {
-      label: 'Central',
-      value: 'Central',
-    },
-    {
-      label: 'North',
-      value: 'North',
-    },
+const getReassignReasons = () => {
+  const reAssignReasons = [
+    { reason: 'Attender Requested', id: 1 },
+    { reason: 'Machinery Failure', id: 2 },
+    { reason: 'Staff Not Available', id: 3 },
+    { reason: 'Requesting Time Availablity', id: 4 },
+    { reason: 'NA', id: 5 },
+    { reason: 'Other', id: 6 },
   ];
-  return zones;
+  return reAssignReasons;
 };
 
-const getSiteList = () => {
-  const sites = [
-    {
-      label: 'Select',
-      value: 'Select',
-    },
-    {
-      label: 'Ambattur',
-      value: 'Ambattur',
-    },
-    {
-      label: 'Ayanavaram',
-      value: 'Ayanavaram',
-    },
-    {
-      label: 'Egmore',
-      value: 'Egmore',
-    },
-  ];
-  return sites;
-};
 
-export { getCookie, setCookie, deleteCookie, isTokenAlive, getZoneList, getSiteList };
+export { getCookie, setCookie, deleteCookie, isTokenAlive, getReassignReasons};
