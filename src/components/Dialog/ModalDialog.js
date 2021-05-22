@@ -173,8 +173,10 @@ const ModalDialog = (props) => {
 
 
   useEffect(() => {
+    
     if (siteDetails.zoneName !== '') {
       let zoneId = zoneList.filter((zone) => zone.zone_or_division === siteDetails.zoneName)[0].zone_or_division_id;
+      console.log('zoneId===>',zoneId);
       dispatch({
         type: actionTypes.GET_SITES_BASED_ZONE_ID,
         payload: {

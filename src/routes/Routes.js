@@ -14,7 +14,6 @@ const Routes = () => (
         <Route exact path="/" component={Login} />
         <Route exact path="/slotBooking" component={SlotBookingContainer} />
       </Switch>
-      <SlotBookingContainer/>
     </Suspense>
   </Router>
 );
