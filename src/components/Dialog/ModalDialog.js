@@ -175,7 +175,6 @@ const ModalDialog = (props) => {
       const zoneFilterCdn = zoneList.filter((zone) => zone.zone_or_division === siteDetails.zoneName);
       if (zoneFilterCdn.length > 0) {
         let zoneId = zoneFilterCdn[0].zone_or_division_id;
-        console.log('filetCdn Passed',zoneId);
         dispatch({
           type: actionTypes.GET_SITES_BASED_ZONE_ID,
           payload: {
@@ -246,13 +245,14 @@ const ModalDialog = (props) => {
                 <Select
                   variant={'outlined'}
                   size={'small'}
-                  className={clsx(styles.dropDownSelect)}
+                  disabled={!isActive}
+                  className={clsx(styles.dropDownSelect, !isActive ? styles.disabledField : '')}
                   value={siteDetails.zoneName}
                   onChange={(e) => handleOnChange(e.target.value, 'zoneName')}
                 >
                   {zoneList.map((item) => {
                     return (
-                      <MenuItem key={item.zone_or_division_id} value={item.zone_or_division}>
+                      <MenuItem disabled={!isActive} key={item.zone_or_division_id} value={item.zone_or_division}>
                         {item.zone_or_division}
                       </MenuItem>
                     );
@@ -274,8 +274,8 @@ const ModalDialog = (props) => {
                 >
                   {siteList.map((item) => {
                     return (
-                      <MenuItem key={item.id} value={item.site_name}>
-                        {item.site_name}
+                      <MenuItem key={item.id} value={item.siteName}>
+                        {item.siteName}
                       </MenuItem>
                     );
                   })}
