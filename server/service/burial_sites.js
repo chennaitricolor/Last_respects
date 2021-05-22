@@ -29,14 +29,20 @@ class BurialSites {
           'status',
           'isActive',
           'owner',
+          'address',
+          'contactNo',
+          'city'
         ]
         const sites = await burialSites.findAll({ where: findSitesWhere, attributes: findSitesAttributes });
-        const result = sites.map(({ owner, isActive, id, siteName, status }) => {
+        const result = sites.map(({ owner, isActive, id, siteName, address, contactNo, city }) => {
           return {
             isOwner: parseInt(owner) === req.userId,
             isActive,
             siteName,
             id,
+            address,
+            contactNo,
+            city
           }
         })
         return res.status(200).send(result);
