@@ -14,12 +14,6 @@ const useStyles = makeStyles(() => ({
     position: 'relative',
     overflow: 'auto',
   },
-  slotTimeTitle: {
-    fontStyle: 'normal',
-    fontWeight: 'bold',
-    color: '#000000',
-    fontSize: 16,
-  },
   slotData: {
     background: '#EEFAFE',
     padding: 0,
@@ -29,31 +23,6 @@ const useStyles = makeStyles(() => ({
   },
   overflowHidden: {
     overflow: 'hidden',
-  },
-  legends: {
-    display: 'flex',
-    marginBottom: 15,
-  },
-  informationLegend: {
-    width: 40,
-    height: 8,
-    maxWidth: 100,
-    margin: '-2px 10px 0 15px',
-    borderRadius: 3,
-  },
-  legendWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    justifySelf: 'flex-end',
-  },
-  bookedColor: {
-    background: '#EB5757',
-  },
-  availableColor: {
-    background: '#219653',
-  },
-  rowFullWidth: {
-    width: '100%',
   },
   timeSlotTitle: {
     fontSize: 14,
@@ -96,11 +65,19 @@ const SlotBookingContainer = (props) => {
 
   useEffect(() => {
     return () => {
+      dispatch({
+        type: actionTypes.RESET_DATA_UNMOUNT_SLOT_BOOKING,
+      });
+
       setSiteDetails({
         zoneName: '',
         siteName: '',
         siteId: '',
       });
+      setType('ADD');
+      setSelectedDate(moment(new Date()).format('DD-MM-YYYY'));
+      setSelectedTimeSlot('');
+      setSelectedSlotDetails(null);
     };
   }, []);
 
@@ -134,6 +111,9 @@ const SlotBookingContainer = (props) => {
   const handleOnChangeForDropdown = (event, id) => {
     if (event !== null) {
       if (id === 'zoneName') {
+        dispatch({
+          type: actionTypes.CLEAR_DATA_ON_ZONE_SELECTION,
+        });
         setSiteDetails({
           zoneName: event,
           siteName: '',
@@ -182,19 +162,6 @@ const SlotBookingContainer = (props) => {
               </div>
               <div className={`col-12 ${styles.overflowHidden}`}>
                 <DateSelection dateTimeSlotDetails={dateTimeSlotDetails} selectedDate={selectedDate} selectDate={selectDate} />
-                <div className={`row ${styles.rowFullWidth}`}>
-                  <div className={`col-12 ${styles.legends}`}>
-                    <h6 className={`m-0 ${styles.slotTimeTitle}`}>Time Slots</h6>
-                    <div className={` ml-auto ${styles.legendWrapper}`}>
-                      <div md={2} className={styles.informationLegend + ' ' + styles.bookedColor} />
-                      <span>{'Booked'}</span>
-                    </div>
-                    <div className={` ${styles.legendWrapper}`}>
-                      <div md={2} className={styles.informationLegend + ' ' + styles.availableColor} />
-                      <span>{'Available'}</span>
-                    </div>
-                  </div>
-                </div>
                 <div className="row">
                   <TimeSlotSelection dateTimeSlotDetails={dateTimeSlotDetails} selectedDate={selectedDate} openSlotForm={openSlotForm} />
                 </div>
