@@ -44,6 +44,7 @@ const useStyles = makeStyles(() => ({
   contactDetails: {
     color: '#4F4F4F',
     fontSize: '16px',
+    marginTop: '2%',
   },
 }));
 
@@ -102,7 +103,7 @@ const ZoneSelection = (props) => {
           </Select>
         </FormControl>
       </div>
-      <div className={`col-12 col-md-2 text ${styles.contactDetails}`} style={{ marginTop: '16px' }}>
+      <div className={`col-12 col-md-2 text ${styles.contactDetails}`}>
         Site Name : {props.siteDetails.siteName}
       </div>
       <div className={`col-12 col-md-2 text ${styles.contactDetails}`}>Contact : {getSiteValueByKey('contact_no')}</div>

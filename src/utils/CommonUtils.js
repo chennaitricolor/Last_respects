@@ -38,8 +38,7 @@ const getReassignReasons = () => {
     { reason: 'Machinery Failure', id: 2 },
     { reason: 'Staff Not Available', id: 3 },
     { reason: 'Requesting Time Availablity', id: 4 },
-    { reason: 'NA', id: 5 },
-    { reason: 'Other', id: 6 },
+    { reason: 'Other', id: 5 },
   ];
   return reAssignReasons;
 };
