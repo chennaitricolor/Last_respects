@@ -8,7 +8,6 @@ import { useTheme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import clsx from 'clsx';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
@@ -19,6 +18,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { getReassignReasons } from '../../utils/CommonUtils';
+import moment from 'moment';
 
 const useStyles = makeStyles({
   dropDownLabel: {
@@ -136,8 +136,8 @@ const ModalDialog = (props) => {
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   let date = new Date();
   const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTime, setSelectedTime] = useState('');
   const [maxDate, setMaxDate] = useState(date.setDate(date.getDate() + 1))
-  const [availableTimeList, setAvailableTimeList] = useState([]);
 
   const zoneList = useSelector((state) => state.getAllZoneReducer.zoneList);
   const siteList = useSelector((state) => state.getSitesBasedOnZoneIdReducer.siteList);
@@ -147,33 +147,25 @@ const ModalDialog = (props) => {
   const isActive = payload.isActive;
   const isOwner = payload.isOwner;
   const siteId = payload.siteId;
+  let availableTimeSlots = [];
 
   const isSlotAvailable = (time) => {
     let timeSlots = dateTimeSlotDetails[selectedDate];
     return JSON.stringify(timeSlots[time]) === JSON.stringify({});
   };
 
-  const getAvailableTimeSlots = () => {
-    const timeSlotArray = dateTimeSlotDetails !== null && selectedDate !== null
-      ? Object.keys(dateTimeSlotDetails[selectedDate]) : [];
-    let availableTimeSlots = [];
-    timeSlotArray.map((time, index) => {
-      console.log('time==>',time);
-      if(isSlotAvailable(time))
-      availableTimeSlots.push(time);
-      console.log('available time slots ==>',availableTimeSlots);
-    });
-    return availableTimeSlots;
-  }
-
-
   const handleDateChange = (date) => {
+    debugger;
     setSelectedDate(date);
+    let selectedDateString = moment(date).format('DD-MM-YYYY');
+    console.log('date string', selectedDateString);
+    
   };
 
   const handleClose = () => {
     props.setOpenDialog(false);
   };
+
 
   useEffect(() => {
     setSiteDetails({
@@ -244,6 +236,10 @@ const ModalDialog = (props) => {
         event === 'Other' ? setShowReAssignComment(true) : setShowReAssignComment(false);
         setReassignVal(event);
       }
+      if(id === 'time'){
+        console.log('time in handle function ==>',time);
+        setSelectedTime(event);
+      }
     }
   }
 
@@ -312,7 +308,7 @@ const ModalDialog = (props) => {
                   disableToolbar
                   disablePast
                   variant="inline"
-                  format="MM/dd/yyyy"
+                  format="dd-MM-yyyy"
                   inputVariant="outlined"
                   autoOk
                   margin="normal"
@@ -328,13 +324,27 @@ const ModalDialog = (props) => {
               </MuiPickersUtilsProvider>
             </div>
             <div className="col-12 mb-4">
-              <Autocomplete
-                id="time-combo-box"
-                options={time}
-                getOptionLabel={(option) => option.title}
-                style={{ width: '100%' }}
-                renderInput={(params) => <TextField {...params} label="Time" variant="outlined" />}
-              />
+                <Typography className={styles.dropDownLabel} component={'div'}>
+                Time
+                </Typography>
+                <FormControl className={styles.dropDown}>
+                <Select
+                  variant={'outlined'}
+                  size={'small'}
+                  className={styles.dropDownSelect}
+                  value={selectedTime}
+                  onChange={(e) => handleOnChange(e.target.value, 'time')}
+                >
+                  {availableTimeSlots.map((item) => {
+                    return (
+                      <MenuItem key={item} value={item}>
+                        {item}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            
             </div>
             <div className="col-12 mb-4">
               <Typography className={styles.dropDownLabel} component={'div'}>
