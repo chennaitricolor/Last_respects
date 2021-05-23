@@ -1,4 +1,6 @@
 import { get as getlodash } from 'lodash';
+import moment from 'moment';
+
 const jwt = require('jsonwebtoken');
 
 const setCookie = (key, value, expMinutes = 120) => {
@@ -90,4 +92,8 @@ const getReassignReasons = () => {
   return reAssignReasons;
 };
 
-export { getCookie, setCookie, deleteCookie, isTokenAlive, getReassignReasons };
+const getMomentDateStr = (date, format) => {
+  return moment(date).format(format);
+}
+
+export { getCookie, setCookie, deleteCookie, isTokenAlive, getReassignReasons, getMomentDateStr};

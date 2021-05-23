@@ -4,13 +4,16 @@ import { callFetchApi } from '../services/api';
 import { apiUrls } from '../utils/constants';
 import { getCookie, isTokenAlive } from '../utils/commonUtils';
 
-export default function* getAllZoneSaga() {
+export default function* getAvailableSlotDetailsBasedOnSiteIdSaga(action) {
   try {
     let token = getCookie('lrToken');
     if (token !== '' && isTokenAlive(token)) {
-      const response = yield call(callFetchApi, apiUrls.allZones, {}, 'GET', {}, token);
+      let api = apiUrls.getAvailableSlotDetailsBasedOnSiteId.replace(':siteId', action.payload.siteId)
+                .replace(':date',action.payload.date ).replace(':availableFlag',action.payload.availableFlag );
+      const response = yield call(callFetchApi, api, {}, 'GET', {}, token);
+      console.log('available slot response ==>',response);
       yield put({
-        type: actionTypes.GET_ALL_ZONES_SUCCESS,
+        type: actionTypes.GET_AVAILABLE_SLOT_DETAILS_BASED_SITE_ID_SUCCESS,
         response: response.data,
       });
     } else {
@@ -21,7 +24,7 @@ export default function* getAllZoneSaga() {
     }
   } catch (e) {
     yield put({
-      type: actionTypes.GET_ALL_ZONES_FAILURE,
+      type: actionTypes.GET_AVAILABLE_SLOT_DETAILS_BASED_SITE_ID_FAILURE,
       error: e,
     });
   }

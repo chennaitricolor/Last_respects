@@ -145,6 +145,8 @@ const SlotBookingContainer = (props) => {
           type: actionTypes.SET_ACTIVE_FLAG,
           payload: {
             isActive: siteList[0].isActive,
+            isOwner: siteList[0].isOwner,
+            siteId: siteId,
           },
         });
       }
