@@ -6,6 +6,8 @@ import moment from 'moment';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 
 const useStyles = makeStyles({
   rowFullWidth: {
@@ -93,6 +95,16 @@ const TimeSlotSelection = (props) => {
     return timeSlots[time].id === undefined;
   };
 
+  const isTimeSlotCompleted = (time) => {
+    let timeSlots = props.dateTimeSlotDetails[props.selectedDate];
+    return timeSlots[time].id !== undefined && timeSlots[time].status === 'COMPLETED';
+  };
+
+  const isTimeSlotInProgress = (time) => {
+    let timeSlots = props.dateTimeSlotDetails[props.selectedDate];
+    return timeSlots[time].id !== undefined && timeSlots[time].status !== 'COMPLETED';
+  };
+
   const selectTime = (time) => {
     let type = isSlotAvailable(time) ? 'ADD' : 'EDIT';
     let slotDetails = null;
@@ -112,12 +124,41 @@ const TimeSlotSelection = (props) => {
     props.openSlotForm(openSlotForm);
   };
 
+  const isCurrentTimeCrossedSlotTime = (time) => {
+    let currentDate = moment().format('DD-MM-YYYY');
+    if (currentDate === props.selectedDate) {
+      let timeArray = time.split('-');
+      let trimmedTimeArray = [];
+
+      timeArray.forEach((timeValue) => {
+        trimmedTimeArray.push(timeValue.trim());
+      });
+
+      if (trimmedTimeArray.length === 2) {
+        if (moment(trimmedTimeArray[1], 'hh:mm A').isBefore(moment().format('hh:mm A'))) return true;
+      }
+      return false;
+    }
+    return false;
+  };
+
   const getClassesForTimeSlot = (time) => {
     let yesterdayDate = moment().subtract(1, 'days').format('DD-MM-YYYY');
     let slotAvailable = isSlotAvailable(time);
+    let timeSlotCompleted = isTimeSlotCompleted(time);
+
     if (yesterdayDate === props.selectedDate) {
       return slotAvailable ? clsx(styles.timeSlot, styles.timeSlotBlocked) : clsx(styles.timeSlot, styles.timeSlotBooked);
     }
+
+    if (slotAvailable) return clsx(styles.timeSlot, styles.timeSlotAvailable);
+
+    if (isCurrentTimeCrossedSlotTime(time)) return clsx(styles.timeSlot, styles.timeSlotBlocked);
+
+    if (timeSlotCompleted) {
+      return clsx(styles.timeSlot, styles.timeSlotBlocked);
+    }
+
     return slotAvailable ? clsx(styles.timeSlot, styles.timeSlotAvailable) : clsx(styles.timeSlot, styles.timeSlotBooked);
   };
 
@@ -153,7 +194,15 @@ const TimeSlotSelection = (props) => {
         {timeSlotArray.map((time, index) => {
           return (
             <ListItem key={index} button disabled={isDisabledTime(time)} onClick={() => selectTime(time)} style={{ padding: 0 }}>
-              <ListItemText className={getClassesForTimeSlot(time)}>{time}</ListItemText>
+              <ListItemText className={getClassesForTimeSlot(time)}>
+                {time}
+                {isTimeSlotCompleted(time) && (
+                  <CheckCircleOutlineIcon style={{ background: '#219653', color: '#fff', borderRadius: '50%', float: 'right' }} />
+                )}
+                {isCurrentTimeCrossedSlotTime(time) && isTimeSlotInProgress(time) && (
+                  <ErrorOutlineIcon style={{ background: '#F2994A', color: '#fff', borderRadius: '50%', float: 'right' }} />
+                )}
+              </ListItemText>
             </ListItem>
           );
         })}
