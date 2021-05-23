@@ -6,4 +6,5 @@ export const apiUrls = {
   getSitesBasedOnZoneId: '/api/zones/:zoneId/sites',
   getSlotsBasedOnSiteId: '/api/sites/:siteId/slots',
   getSlotDetailsBasedOnSlotId: '/api/slots/:slotId',
+  getAvailableSlotDetailsBasedOnSiteId: '/api/sites/:siteId/slots?date=:date&onlyFreeSlots=:availableFlag',
 };

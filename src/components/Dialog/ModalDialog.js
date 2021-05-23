@@ -17,8 +17,9 @@ import Typography from '@material-ui/core/Typography';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import { getReassignReasons } from '../../utils/CommonUtils';
-import moment from 'moment';
+import { getReassignReasons, getMomentDateStr, getCookie, isTokenAlive  } from '../../utils/CommonUtils';
+import { apiUrls } from '../../utils/constants';
+import { callFetchApi } from '../../services/api';
 
 const useStyles = makeStyles({
   dropDownLabel: {
@@ -111,14 +112,6 @@ const useStyles = makeStyles({
   },
 });
 
-
-const time = [
-  { title: '8:30 AM - 9:15 AM', year: 1994 },
-  { title: '9:15 AM - 10:00 AM', year: 1972 },
-  { title: '10:00 AM - 10:45 AM', year: 1974 },
-  { title: '10:45 AM - 11:30 AM', year: 2008 },
-];
-
 const reAssignReasons = getReassignReasons();
 
 const ModalDialog = (props) => {
@@ -143,29 +136,28 @@ const ModalDialog = (props) => {
   const siteList = useSelector((state) => state.getSitesBasedOnZoneIdReducer.siteList);
   const zoneName = useSelector((state) => state.getAllZoneReducer.zoneName);
   const payload = useSelector((state) => state.getSitesBasedOnZoneIdReducer.payload);
-  const dateTimeSlotDetails = useSelector((state) => state.getSlotsBasedOnSiteIdReducer.slotDetails);
+  const availableSlotDetails = useSelector((state) => state.getAvailableSlotDetailsBasedOnSiteIdReducer.slotDetails);
+  console.log('availableSlotDetails', availableSlotDetails);
   const isActive = payload.isActive;
   const isOwner = payload.isOwner;
   const siteId = payload.siteId;
-  let availableTimeSlots = [];
-
-  const isSlotAvailable = (time) => {
-    let timeSlots = dateTimeSlotDetails[selectedDate];
-    return JSON.stringify(timeSlots[time]) === JSON.stringify({});
-  };
+  let availableTimeSlots = availableSlotDetails!=null ? Object.keys(availableSlotDetails[Object.keys(availableSlotDetails)[0]]) : [];
 
   const handleDateChange = (date) => {
-    debugger;
     setSelectedDate(date);
-    let selectedDateString = moment(date).format('DD-MM-YYYY');
-    console.log('date string', selectedDateString);
-    
+    dispatch({
+      type: actionTypes.GET_AVAILABLE_SLOT_DETAILS_BASED_SITE_ID,
+      payload: {
+        siteId: siteId,
+        availableFlag: true,
+        date: getMomentDateStr(date,'YYYY-MM-DD'),
+      },
+    });
   };
 
   const handleClose = () => {
     props.setOpenDialog(false);
   };
-
 
   useEffect(() => {
     setSiteDetails({
@@ -236,15 +228,45 @@ const ModalDialog = (props) => {
         event === 'Other' ? setShowReAssignComment(true) : setShowReAssignComment(false);
         setReassignVal(event);
       }
-      if(id === 'time'){
-        console.log('time in handle function ==>',time);
+      if (id === 'time') {
+        console.log('time in handle function ==>', event);
         setSelectedTime(event);
       }
     }
   }
 
-  const enableSubmit = () => {
+  const handleSubmit = () =>{
+    let token = getCookie('lrToken');
 
+    if (token !== '' && isTokenAlive(token)) {
+      let api = apiUrls.updateSlotStatus.replace(':slotId', 'slotId');
+      let slotDetails = {
+        slot : selectedTime,
+        dateOfCremation: getMomentDateStr(selectedDate, ),
+        burialSiteId: siteId,
+      }
+      slotDetails.type = '';
+      slotDetails.reason = '';
+
+      const payload = {
+        slotDetails : slotDetails
+      }
+
+      callFetchApi(api, null, 'POST', payload, token).then((response) => {
+        if (response.status == 200) {
+
+        } else {
+
+        }
+      });
+
+    }
+  }
+
+  const enableSubmit = () => {
+    let result;
+    result = zoneName!=='' && siteDetails.siteName!=='' && selectedDate!=null && selectedDate!='' &&  selectedTime!='' ;
+    return result;
   }
 
   return (
@@ -324,10 +346,10 @@ const ModalDialog = (props) => {
               </MuiPickersUtilsProvider>
             </div>
             <div className="col-12 mb-4">
-                <Typography className={styles.dropDownLabel} component={'div'}>
+              <Typography className={styles.dropDownLabel} component={'div'}>
                 Time
                 </Typography>
-                <FormControl className={styles.dropDown}>
+              <FormControl className={styles.dropDown}>
                 <Select
                   variant={'outlined'}
                   size={'small'}
@@ -335,16 +357,16 @@ const ModalDialog = (props) => {
                   value={selectedTime}
                   onChange={(e) => handleOnChange(e.target.value, 'time')}
                 >
-                  {availableTimeSlots.map((item) => {
+                  {availableTimeSlots.map((item,i) => {
                     return (
-                      <MenuItem key={item} value={item}>
+                      <MenuItem key={`item${i}`} value={item}>
                         {item}
                       </MenuItem>
                     );
                   })}
                 </Select>
               </FormControl>
-            
+
             </div>
             <div className="col-12 mb-4">
               <Typography className={styles.dropDownLabel} component={'div'}>
@@ -384,10 +406,10 @@ const ModalDialog = (props) => {
               />
             </div>) : null}
             <div className="col-12 text-center">
-              <Button variant="contained" className={styles.saveButton} >
+              <Button variant="contained" className={styles.saveButton} disabled={(enableSubmit)} onClick={handleSubmit}>
                 Save
               </Button>
-              <Button variant="contained" className={`${styles.cancelButton}`}>
+              <Button variant="contained" className={`${styles.cancelButton}`} onClick={handleClose}>
                 Cancel
               </Button>
             </div>
