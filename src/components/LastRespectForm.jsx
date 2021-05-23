@@ -428,7 +428,7 @@ const LastRespectForm = (props) => {
             <Typography className={styles.headerValue} component={'div'} style={{ display: 'inline-block' }}>
               {moment(props.selectedDate, 'DD-MM-YYYY').format('MMM-DD') + ' ' + props.selectedTime}
             </Typography>
-            {props.type !== 'EDIT' && (
+            {props.type === 'EDIT' && (
               <div style={{ display: 'inline-block', float: 'right' }}>
                 {openDialog && <ModalDialog setOpenDialog={setOpenDialog} />}
                 <Button
