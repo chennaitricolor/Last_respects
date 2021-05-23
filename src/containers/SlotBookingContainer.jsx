@@ -70,7 +70,6 @@ const useStyles = makeStyles(() => ({
 }));
 
 const SlotBookingContainer = (props) => {
-
   const styles = useStyles();
   const dispatch = useDispatch();
 
@@ -94,6 +93,16 @@ const SlotBookingContainer = (props) => {
       type: actionTypes.GET_ALL_ZONES,
     });
   }, [dispatch]);
+
+  useEffect(() => {
+    return () => {
+      setSiteDetails({
+        zoneName: '',
+        siteName: '',
+        siteId: '',
+      });
+    };
+  }, []);
 
   useEffect(() => {
     if (siteDetails.zoneName !== '') {

@@ -20,6 +20,7 @@ const useStyles = makeStyles({
   },
   dateCards: {
     marginBottom: '16px',
+    cursor: 'pointer',
   },
   dateCard: {
     border: '1px solid #828282',
@@ -31,6 +32,10 @@ const useStyles = makeStyles({
     border: '1px solid #466783',
     background: '#466783',
   },
+  yesterdayDateCard: {
+    border: '1px solid #828282',
+    background: '#828282',
+  },
   dateText: {
     fontWeight: 'bold',
     fontSize: '20px',
@@ -39,12 +44,18 @@ const useStyles = makeStyles({
   dateTextSelected: {
     color: '#fff',
   },
+  yesterdayDateText: {
+    color: '#fff',
+  },
   slotText: {
     paddingTop: '8px',
     fontSize: '16px',
     color: '#828282',
   },
   slotTextSelected: {
+    color: '#fff',
+  },
+  yesterdaySlotText: {
     color: '#fff',
   },
 });
@@ -56,11 +67,31 @@ const DateSelection = (props) => {
     return moment(dateString, 'DD-MM-YYYY').format('MMM-DD');
   };
 
-  const getSlotsAvailable = () => {
-    return '2';
+  let dateArray = props.dateTimeSlotDetails !== null ? Object.keys(props.dateTimeSlotDetails) : null;
+
+  const getAvailableSlotCount = (date) => {
+    let yesterdayDate = moment().subtract(1, 'days').format('DD-MM-YYYY');
+    let availableCount = 0;
+    let dateSlots = props.dateTimeSlotDetails[date];
+
+    if (yesterdayDate === date) return 'Previous Date';
+
+    Object.values(dateSlots).forEach((value) => {
+      if (value.id === undefined) availableCount++;
+    });
+
+    return `${availableCount} Slots Available`;
   };
 
-  let dateArray = props.dateTimeSlotDetails !== null ? Object.keys(props.dateTimeSlotDetails) : null;
+  const getClassesForDateSlot = (date, yesterdayStyle, style, selectedStyle) => {
+    let yesterdayDate = moment().subtract(1, 'days').format('DD-MM-YYYY');
+
+    if (props.selectedDate === date) return clsx(style, selectedStyle);
+
+    if (yesterdayDate === date) return clsx(yesterdayStyle, style);
+
+    return clsx(style);
+  };
 
   return (
     <div className={` ${styles.dateSelectionDiv} `}>
@@ -71,13 +102,13 @@ const DateSelection = (props) => {
           dateArray.map((date, index) => {
             return (
               <div key={index} style={{ display: 'inline-block', marginRight: '8px' }} onClick={() => props.selectDate(date)}>
-                <Card className={props.selectedDate === date ? clsx(styles.dateCard, styles.dateCardSelected) : styles.dateCard}>
+                <Card className={getClassesForDateSlot(date, styles.yesterdayDateCard, styles.dateCard, styles.dateCardSelected)}>
                   <CardContent>
-                    <Typography className={props.selectedDate === date ? clsx(styles.dateText, styles.dateTextSelected) : styles.dateText} variant={'h5'} component={'div'}>
+                    <Typography className={getClassesForDateSlot(date, styles.yesterdayDateText, styles.dateText, styles.dateTextSelected)} variant={'h5'} component={'div'}>
                       {formatDate(date)}
                     </Typography>
-                    <Typography className={props.selectedDate === date ? clsx(styles.slotText, styles.slotTextSelected) : styles.slotText} component={'div'}>
-                      {`${getSlotsAvailable()} Slots Available`}
+                    <Typography className={getClassesForDateSlot(date, styles.yesterdaySlotText, styles.slotText, styles.slotTextSelected)} component={'div'}>
+                      {`${getAvailableSlotCount(date)}`}
                     </Typography>
                   </CardContent>
                 </Card>

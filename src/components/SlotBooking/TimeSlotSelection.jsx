@@ -2,6 +2,10 @@ import React from 'react';
 import * as PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import moment from 'moment';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 
 const useStyles = makeStyles({
   timeSlotDiv: {
@@ -17,6 +21,7 @@ const useStyles = makeStyles({
     height: '100%',
     maxHeight: 1000,
     overflow: 'auto',
+    cursor: 'pointer',
   },
   timeSlot: {
     padding: '10px 15px',
@@ -36,6 +41,11 @@ const useStyles = makeStyles({
     border: '1px solid #27AE60',
     background: '#27AE60',
   },
+  timeSlotBlocked: {
+    border: '1px solid #828282',
+    background: '#828282',
+    cursor: 'not-allowed',
+  },
 });
 
 const TimeSlotSelection = (props) => {
@@ -46,7 +56,7 @@ const TimeSlotSelection = (props) => {
 
   const isSlotAvailable = (time) => {
     let timeSlots = props.dateTimeSlotDetails[props.selectedDate];
-    return JSON.stringify(timeSlots[time]) === JSON.stringify({});
+    return timeSlots[time].id === undefined;
   };
 
   const selectTime = (time) => {
@@ -68,21 +78,35 @@ const TimeSlotSelection = (props) => {
     props.openSlotForm(openSlotForm);
   };
 
+  const getClassesForTimeSlot = (time) => {
+    let yesterdayDate = moment().subtract(1, 'days').format('DD-MM-YYYY');
+    let slotAvailable = isSlotAvailable(time);
+    if (yesterdayDate === props.selectedDate) {
+      return slotAvailable ? clsx(styles.timeSlot, styles.timeSlotBlocked) : clsx(styles.timeSlot, styles.timeSlotBooked);
+    }
+    return slotAvailable ? clsx(styles.timeSlot, styles.timeSlotAvailable) : clsx(styles.timeSlot, styles.timeSlotBooked);
+  };
+
+  const isDisabledTime = (time) => {
+    let yesterdayDate = moment().subtract(1, 'days').format('DD-MM-YYYY');
+    let slotAvailable = isSlotAvailable(time);
+    if (yesterdayDate === props.selectedDate) {
+      if (slotAvailable) return true;
+    }
+    return false;
+  };
+
   return (
     <div className="col-xs-12 col-md-3 pr-0">
-      <ul className={`${styles.timeSlotWrapper}`}>
+      <List disablePadding={true} className={`${styles.timeSlotWrapper}`}>
         {timeSlotArray.map((time, index) => {
           return (
-            <li
-              key={index}
-              className={clsx(styles.timeSlot, isSlotAvailable(time) ? styles.timeSlotAvailable : styles.timeSlotBooked)}
-              onClick={() => selectTime(time)}
-            >
-              {time}
-            </li>
+            <ListItem key={index} button disabled={isDisabledTime(time)} onClick={() => selectTime(time)} style={{ padding: 0 }}>
+              <ListItemText className={getClassesForTimeSlot(time)}>{time}</ListItemText>
+            </ListItem>
           );
         })}
-      </ul>
+      </List>
     </div>
   );
 };
