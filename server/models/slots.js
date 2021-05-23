@@ -118,6 +118,16 @@ module.exports = function (sequelize, DataTypes) {
       primaryKey: true,
       autoIncrement: true,
       field: 'id'
+    },
+    attenderType: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: 'attender_type',
+    },
+    attenderAddress: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: 'attender_address',
     }
   }, {
     schema: process.env.DB_SCHEMA,
