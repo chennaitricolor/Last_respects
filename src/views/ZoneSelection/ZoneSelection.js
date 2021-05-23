@@ -44,7 +44,7 @@ const useStyles = makeStyles(() => ({
   contactDetails: {
     color: '#4F4F4F',
     fontSize: '16px',
-    marginTop: '2%',
+    marginTop: '16px',
   },
 }));
 

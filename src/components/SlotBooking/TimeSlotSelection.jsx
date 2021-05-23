@@ -77,8 +77,16 @@ const useStyles = makeStyles({
 const TimeSlotSelection = (props) => {
   const styles = useStyles();
 
-  let timeSlotArray =
-    props.dateTimeSlotDetails !== null && props.selectedDate !== null ? Object.keys(props.dateTimeSlotDetails[props.selectedDate]) : [];
+  let timeSlotArray = [];
+
+  if (props.dateTimeSlotDetails !== null && props.selectedDate !== null) {
+    timeSlotArray = [];
+    let currentTimeSlotDetails = props.dateTimeSlotDetails[props.selectedDate];
+    let sortedTimeSlot = Object.entries(currentTimeSlotDetails).sort((a, b) => a[1].slotDetails.slotOrder - b[1].slotDetails.slotOrder);
+    sortedTimeSlot.map((time) => {
+      timeSlotArray.push(time[0]);
+    });
+  }
 
   const isSlotAvailable = (time) => {
     let timeSlots = props.dateTimeSlotDetails[props.selectedDate];
