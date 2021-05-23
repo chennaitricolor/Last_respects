@@ -163,7 +163,6 @@ const SlotBookingContainer = (props) => {
       {!isFormOpen && (
         <div className={`container ${styles.customContainer} ${styles.slotBookingDiv}`}>
           <ZoneSelection siteDetails={siteDetails} zoneList={zoneList} siteList={siteList} handleOnChangeForDropdown={handleOnChangeForDropdown} />
-
           <div className={`row slotContent `}>
             <div className="col-12">
               <h4 className={`${styles.slotHeaderTitle}`}> Slot Booking</h4>
@@ -172,7 +171,13 @@ const SlotBookingContainer = (props) => {
               <div className={`col-12 ${styles.overflowHidden}`}>
                 <DateSelection dateTimeSlotDetails={dateTimeSlotDetails} selectedDate={selectedDate} selectDate={selectDate} />
                 <div className="row">
-                  <TimeSlotSelection dateTimeSlotDetails={dateTimeSlotDetails} selectedDate={selectedDate} openSlotForm={openSlotForm} />
+                  <TimeSlotSelection
+                    dateTimeSlotDetails={dateTimeSlotDetails}
+                    selectedDate={selectedDate}
+                    siteDetails={siteDetails}
+                    siteList={siteList}
+                    openSlotForm={openSlotForm}
+                  />
                 </div>
               </div>
             ) : (
@@ -191,6 +196,7 @@ const SlotBookingContainer = (props) => {
         <LastRespectFormContainer
           date={selectedDate}
           time={selectedTimeSlot}
+          siteList={siteList}
           siteId={siteDetails.siteId}
           type={type}
           editSlotDetails={selectedSlotDetails}

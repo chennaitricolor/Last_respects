@@ -124,10 +124,14 @@ const TimeSlotSelection = (props) => {
   const isDisabledTime = (time) => {
     let yesterdayDate = moment().subtract(1, 'days').format('DD-MM-YYYY');
     let slotAvailable = isSlotAvailable(time);
+
     if (yesterdayDate === props.selectedDate) {
       if (slotAvailable) return true;
     }
-    return false;
+
+    let currentSiteDetails = props.siteList.filter((site) => site.id === props.siteDetails.siteId);
+    let isOwner = currentSiteDetails.length != 0 ? currentSiteDetails[0].isOwner : false;
+    return !isOwner && slotAvailable;
   };
 
   return (

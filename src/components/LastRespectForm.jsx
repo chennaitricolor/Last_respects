@@ -355,11 +355,22 @@ const LastRespectForm = (props) => {
     }
 
     if (props.type === 'EDIT') {
+      if (!isOwnerForSelectedSite()) return false;
+
       let statusCheck = false;
       if (status !== 'BOOKED') statusCheck = true;
       if (status === 'CANCEL' && !reasonForCancellation) statusCheck = false;
       return statusCheck;
     }
+  };
+
+  const enableReAssignButton = () => {
+    return isOwnerForSelectedSite();
+  };
+
+  const isOwnerForSelectedSite = () => {
+    let currentSiteDetails = props.siteList.filter((site) => site.id === props.siteId);
+    return currentSiteDetails.length != 0 ? currentSiteDetails[0].isOwner : false;
   };
 
   const handleFormSubmit = () => {
@@ -437,6 +448,7 @@ const LastRespectForm = (props) => {
                 <Button
                   variant="outlined"
                   className={styles.reAssignButton}
+                  disabled={!enableReAssignButton()}
                   onClick={() => {
                     setOpenDialog(!openDialog);
                   }}
@@ -512,7 +524,7 @@ const LastRespectForm = (props) => {
               props.type === 'ADD' ? bookingStatus['NEW'] : props.details.status !== '' ? bookingStatus[props.details.status] : [],
               handleOnChange,
               styles,
-              false,
+              !isOwnerForSelectedSite(),
               true,
               true,
               'radioButton',
