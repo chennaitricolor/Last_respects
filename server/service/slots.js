@@ -1,7 +1,7 @@
 const models = require('../models');
 const { slots, slotMeta, burialSites, Sequelize } = models;
 const moment = require('moment-timezone');
-const { DATE_RANGE, SLOT_NOT_FOUND, SLOT_UNAVAILABLE, BAD_REQUEST, expectedSlotKeys, SLOT_ACCESS_DENIED, SITE_NOT_FOUND } = require('../constant/constants');
+const { DATE_RANGE, SLOT_NOT_FOUND, SLOT_UNAVAILABLE, BAD_REQUEST, expectedSlotKeys, SLOT_ACCESS_DENIED, SITE_NOT_FOUND, blockedSlots } = require('../constant/constants');
 const { SLOT_STATUS, SLOT_UPDATE_TYPE, SLOT_TYPE_STATUS_MAP } = require('../constant/enum');
 const { constructSlots, validateStateTransition, getTimeField } = require('../utils/helpers');
 const { slots: slotsValidator, validate, exceptionparser } = require('../utils/validators');
@@ -24,22 +24,7 @@ class Slots {
    */
   static async list(req, res) {
     try {
-      const currentDate = moment();
-      const endDate = moment(currentDate).add(DATE_RANGE.VALUE, DATE_RANGE.UNIT || 'd');
-      let days = DATE_RANGE.VALUE || 4;
-      const siteId = _.get(req, 'params.siteId');
-      validate(slotsValidator.list({ siteId }));
-      const site = await burialSites.findByPk(siteId);
-      if(_.isEmpty(site)) {
-        throw SITE_NOT_FOUND;
-      }
-
-      const slotMetaDates = [];
-      const dates = [];
-      let date = moment(currentDate).subtract(2, 'd');
-      while (days--) {
-        date.add(1, 'd');
-        dates.push(moment(date));
+      const constructSLotMetaDateWhere = (slotMetaDates, date) => {
         slotMetaDates.push({
           validTill: {
             [Sequelize.Op.gte]: date
@@ -50,7 +35,35 @@ class Slots {
             [Sequelize.Op.lte]: date
           }
         });
+        return slotMetaDates;
       }
+      const currentDate = moment();
+      const endDate = moment(currentDate).add(DATE_RANGE.VALUE, DATE_RANGE.UNIT || 'd');
+      let days = DATE_RANGE.VALUE || 4;
+      const siteId = _.get(req, 'params.siteId');
+      const dateFilter = _.get(req, 'query.date');
+      const momentDateFilter = moment(dateFilter);
+      const onlyFreeSlots = _.get(req, 'query.onlyFreeSlots') === 'true';
+      validate(slotsValidator.list({ siteId }));
+      const site = await burialSites.findByPk(siteId);
+      if(_.isEmpty(site)) {
+        throw SITE_NOT_FOUND;
+      }
+
+      const slotMetaDates = [];
+      const dates = [];
+      if(!_.isEmpty(dateFilter) && momentDateFilter.isValid()){
+        dates.push(momentDateFilter);
+        constructSLotMetaDateWhere(slotMetaDates, momentDateFilter);
+      } else {
+        let date = moment(currentDate).subtract(2, 'd');
+        while (days--) {
+          date.add(1, 'd');
+          dates.push(moment(date));
+          constructSLotMetaDateWhere(slotMetaDates, date);
+        }
+      }
+
       const slotMetaWhere = {
         [Sequelize.Op.and]: [
           { burialSiteId: parseInt(siteId) },
@@ -65,6 +78,9 @@ class Slots {
               [Sequelize.Op.between]: [currentDate, endDate]
             }
           },
+          {
+            burialSiteId: siteId
+          },
           // { status: {[Sequelize.Op.notIn] : [SLOT_STATUS.CANCELLED, SLOT_STATUS.NOSHOW, ]} }
         ]
 
@@ -76,7 +92,7 @@ class Slots {
         'status'
       ];
       const bookedSlots = await slots.findAll({ where: bookedSlotsWhere, attributes: bookedSlotsAttributes });
-      const result = constructSlots(slotDetails, bookedSlots, dates);
+      const result = constructSlots(slotDetails, bookedSlots, dates, onlyFreeSlots);
       res.status(200).send(result);
     } catch (e) {
       const { code, message } = exceptionparser(e);
@@ -222,7 +238,12 @@ class Slots {
   static async isSlotAvailable(siteId, slot, date, options) {
     const { isSiteAvailable } = await BurialSitesService.isSiteAvailable(siteId, options);
     if (isSiteAvailable) {
-      const slotWhere = { burialSiteId: siteId, slot, dateOfCremation: date }
+      const slotMetaWhere = { burialSiteId: siteId, slot }
+      const slotConfigured = await slotMeta.findOne({ where: slotMetaWhere });
+      if(_.isEmpty(slotConfigured)) {
+        return false;
+      } 
+      const slotWhere = { burialSiteId: siteId, slot, dateOfCremation: date, status: { [Sequelize.Op.in]: blockedSlots } }
       const slotDetails = await slots.findOne({ where: slotWhere, ...options })
       return _.isEmpty(slotDetails);
     } else {
