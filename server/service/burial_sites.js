@@ -1,9 +1,9 @@
 const models = require('../models');
-const { burialSites } = models;
+const { burialSites, machineryDowntimeAudit, Sequelize, sequelize } = models;
 const _ = require('lodash');
 const { SITE_NOT_FOUND, SITE_ACCESS_DENIED } = require('../constant/constants');
 const { exceptionparser, validate, burialSites: burialSitesValidator } = require('../utils/validators');
-const { sequelize } = require('../models');
+const moment = require('moment-timezone');
 class BurialSites {
   /**
    * @swagger
@@ -84,13 +84,36 @@ class BurialSites {
       await sequelize.transaction(async transaction => {
         const options = { transaction, lock: transaction.LOCK.UPDATE };
         if(!_.isEmpty(site) && parseInt(site.owner) === req.userId) {
-          site.update({ status }, {id: parseInt(siteId), ...options});
-
+          await site.update({ status }, {id: parseInt(siteId), ...options});
+          const machineryDowntimeWhere = {
+            [Sequelize.Op.and]: [
+              { burialSiteId: parseInt(siteId) },
+              { statusEndTime: {
+                [Sequelize.Op.is]: null
+              } }
+            ]
+          }
+          const currentTime = moment();
+          const machineryDowntimeAuditCurrentRecords = await machineryDowntimeAudit.findAll({ where: machineryDowntimeWhere  });
+          if(!_.isEmpty(machineryDowntimeAuditCurrentRecords)) {
+            for(const machineryDowntimeAuditCurrentRecord of machineryDowntimeAuditCurrentRecords) {
+              await machineryDowntimeAuditCurrentRecord.update({ statusEndTime: currentTime }, {
+                id: parseInt(machineryDowntimeAuditCurrentRecord.id),
+                ...options
+              });
+            }
+          }
+          const machineryDowntimeAuditRecord = {
+            burialSiteId: siteId,
+            status,
+            statusStartTime: currentTime
+          }
+          await machineryDowntimeAudit.create(machineryDowntimeAuditRecord, options)
+          return res.status(200).send({ id: siteId }); ;
         } else {
           throw SITE_ACCESS_DENIED;
         }
       })
-      return res.status(200).send({ id: siteId }); ;
     } catch(e) {
       const { code, message } = exceptionparser(e);
       res.status(code).send({ error: message });

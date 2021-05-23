@@ -29,6 +29,11 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: false,
       field: 'valid_till'
     },
+    slotOrder: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      field: 'slot_order'
+    },
     id: {
       type: DataTypes.BIGINT,
       allowNull: false,

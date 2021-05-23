@@ -91,7 +91,7 @@ module.exports = {
   tokenExpiry,
   expectedSlotKeys,
   DATE_RANGE: {
-    VALUE: 5,
+    VALUE: 3,
     UNIT: 'd'
   },
   ...errors

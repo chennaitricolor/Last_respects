@@ -4,12 +4,15 @@ const { SLOT_STATUS } = require('../constant/enum');
 const { SLOT_STATUS_TRANSITION_NOT_ALLOWED } = require('../constant/constants');
 
 const getSlotsForADate = (slotDetails, bookedSlots, date) => {
-  return _.reduce(slotDetails, (acc, { slot }) => {
+  const slots = _.reduce(slotDetails, (acc, { slot, slotOrder }) => {
     acc[slot] = _.find(bookedSlots, ({ slot: booked_slot, dateOfCremation }) => {
       return booked_slot === slot && moment(dateOfCremation).isSame(moment(date), 'd');
     }) || {};
+    acc[slot].slotDetails = { slotOrder: parseInt(slotOrder) }
     return acc;
-  }, {})
+  }, {});
+  const sorted = new Map(_.entries(slots).sort((a, b) => _.get(a, '1.slotDetails.slotOrder') - _.get(b, '1.slotDetails.slotOrder')));
+  return sorted
 }
 
 
@@ -20,7 +23,7 @@ module.exports = {
       const validSlotDetails = _.filter(slotDetails, ({ validFrom, validTill }) => {
         return moment(date).isBetween(moment(validFrom), moment(validTill), 'd', '[]');
       });
-      acc[date.format('DD-MM-YYYY')] = getSlotsForADate(validSlotDetails, bookedSlots, date);
+      acc[date.format('DD-MM-YYYY')] = Object.fromEntries(getSlotsForADate(validSlotDetails, bookedSlots, date));
       return acc;
     }, {});
     return result;
