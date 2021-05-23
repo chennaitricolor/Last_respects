@@ -22,3 +22,4 @@ vault:
     - DB_HOST
     - DB_SCHEMA
     - DB_PORT
+    - JWT_TOKEN_SECRET
