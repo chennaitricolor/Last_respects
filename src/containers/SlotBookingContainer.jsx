@@ -194,7 +194,7 @@ const SlotBookingContainer = (props) => {
           </div>
         </div>
       )}
-      {!isFormOpen && (
+      {isFormOpen && (
         <LastRespectFormContainer
           date={selectedDate}
           time={selectedTimeSlot}

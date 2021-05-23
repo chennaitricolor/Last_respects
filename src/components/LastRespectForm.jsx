@@ -27,7 +27,7 @@ import {
   getCookie,
   isTokenAlive,
   yesNoRadioButton,
-} from '../utils/CommonUtils';
+} from '../utils/commonUtils';
 import moment from 'moment';
 import momentTimeZone from 'moment-timezone';
 import { actionTypes } from '../utils/actionTypes';

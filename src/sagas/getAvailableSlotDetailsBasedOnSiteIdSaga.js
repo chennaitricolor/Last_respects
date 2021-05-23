@@ -2,7 +2,7 @@ import { put, call } from 'redux-saga/effects';
 import { actionTypes } from '../utils/actionTypes';
 import { callFetchApi } from '../services/api';
 import { apiUrls } from '../utils/constants';
-import { getCookie, isTokenAlive } from '../utils/CommonUtils';
+import { getCookie, isTokenAlive } from '../utils/commonUtils';
 
 export default function* getAvailableSlotDetailsBasedOnSiteIdSaga(action) {
   try {
