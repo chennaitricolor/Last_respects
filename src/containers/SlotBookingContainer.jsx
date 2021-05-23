@@ -138,8 +138,6 @@ const SlotBookingContainer = (props) => {
         });
       }
       if (id === 'siteName') {
-        console.log('siteDetails', siteDetails);
-        console.log('siteList', siteList)
         let siteId = siteList.filter((site) => site.siteName === event)[0].id;
         setSiteDetails({
           ...siteDetails,
@@ -150,6 +148,8 @@ const SlotBookingContainer = (props) => {
           type: actionTypes.SET_ACTIVE_FLAG,
           payload: {
             isActive: siteList[0].isActive,
+            isOwner: siteList[0].isOwner,
+            siteId: siteId,
           },
         });
       }

@@ -137,13 +137,36 @@ const ModalDialog = (props) => {
   let date = new Date();
   const [selectedDate, setSelectedDate] = useState(null);
   const [maxDate, setMaxDate] = useState(date.setDate(date.getDate() + 1))
+  const [availableTimeList, setAvailableTimeList] = useState([]);
 
   const zoneList = useSelector((state) => state.getAllZoneReducer.zoneList);
   const siteList = useSelector((state) => state.getSitesBasedOnZoneIdReducer.siteList);
-  const slotList = useSelector((state) => state.getSlotsBasedOnSiteIdReducer);
   const zoneName = useSelector((state) => state.getAllZoneReducer.zoneName);
-  const isActive = useSelector((state) => state.getSitesBasedOnZoneIdReducer.isActive);
-  console.log('isActive', isActive);
+  const payload = useSelector((state) => state.getSitesBasedOnZoneIdReducer.payload);
+  const dateTimeSlotDetails = useSelector((state) => state.getSlotsBasedOnSiteIdReducer.slotDetails);
+  const isActive = payload.isActive;
+  const isOwner = payload.isOwner;
+  const siteId = payload.siteId;
+
+  const isSlotAvailable = (time) => {
+    let timeSlots = dateTimeSlotDetails[selectedDate];
+    return JSON.stringify(timeSlots[time]) === JSON.stringify({});
+  };
+
+  const getAvailableTimeSlots = () => {
+    const timeSlotArray = dateTimeSlotDetails !== null && selectedDate !== null
+      ? Object.keys(dateTimeSlotDetails[selectedDate]) : [];
+    let availableTimeSlots = [];
+    timeSlotArray.map((time, index) => {
+      console.log('time==>',time);
+      if(isSlotAvailable(time))
+      availableTimeSlots.push(time);
+      console.log('available time slots ==>',availableTimeSlots);
+    });
+    return availableTimeSlots;
+  }
+
+
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
