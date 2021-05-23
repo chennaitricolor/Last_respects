@@ -70,7 +70,6 @@ const useStyles = makeStyles(() => ({
 }));
 
 const SlotBookingContainer = (props) => {
-
   const styles = useStyles();
   const dispatch = useDispatch();
 
@@ -94,6 +93,16 @@ const SlotBookingContainer = (props) => {
       type: actionTypes.GET_ALL_ZONES,
     });
   }, [dispatch]);
+
+  useEffect(() => {
+    return () => {
+      setSiteDetails({
+        zoneName: '',
+        siteName: '',
+        siteId: '',
+      });
+    };
+  }, []);
 
   useEffect(() => {
     if (siteDetails.zoneName !== '') {
@@ -138,8 +147,6 @@ const SlotBookingContainer = (props) => {
         });
       }
       if (id === 'siteName') {
-        console.log('siteDetails', siteDetails);
-        console.log('siteList', siteList)
         let siteId = siteList.filter((site) => site.siteName === event)[0].id;
         setSiteDetails({
           ...siteDetails,

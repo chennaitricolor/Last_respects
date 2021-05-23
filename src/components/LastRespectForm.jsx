@@ -19,6 +19,7 @@ import { apiUrls } from '../utils/constants';
 import { callFetchApi } from '../services/api';
 import { getCookie, isTokenAlive } from '../utils/CommonUtils';
 import moment from 'moment';
+import momentTimeZone from 'moment-timezone';
 import { actionTypes } from '../utils/actionTypes';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -48,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '16px',
     color: '#4F4F4F',
     fontWeight: 'bold',
-    marginTop: '16px',
+    marginTop: '8px',
   },
   fieldLabel: {
     fontSize: '16px',
@@ -323,10 +324,11 @@ const LastRespectForm = (props) => {
     { id: false, value: 'No' },
   ];
 
+  // CANCEL,REASSIGN,COMPLETE,ARRIVED,STARTED,NOSHOW
   const status = [
     { id: 'BOOKED', value: 'Booked' },
-    { id: 'COMPLETED', value: 'Completed' },
-    { id: 'CANCELLED', value: 'Cancelled Booking' },
+    { id: 'COMPLETE', value: 'Completed' },
+    { id: 'CANCEL', value: 'Cancelled Booking' },
     { id: 'NOSHOW', value: 'No Show' },
   ];
 
@@ -362,31 +364,49 @@ const LastRespectForm = (props) => {
   const handleFormSubmit = () => {
     setSaveLoader(true);
     let token = getCookie('lrToken');
+
     if (token !== '' && isTokenAlive(token)) {
+      let api, payload, requestMethod = 'POST';
       let slotDetails = details;
+      slotDetails.slot = props.selectedTime;
+      slotDetails.burialSiteId = parseInt(props.siteId);
+      slotDetails.dateOfCremation = moment(props.selectedDate, 'DD-MM-YYYY').format('MM-DD-YYYY');
 
       if (props.type === 'ADD') {
-        slotDetails.slot = props.selectedTime;
-        slotDetails.burialSiteId = parseInt(props.siteId);
-        slotDetails.dateOfCremation = moment(props.selectedDate, 'DD-MM-YYYY').format('MM-DD-YYYY');
-        let payload = {
+        payload = {
           slotDetails: slotDetails,
         };
-        callFetchApi(apiUrls.postSlot, null, 'POST', payload, token).then((response) => {
-          if (response.status == 200) {
-            setSaveLoader(false);
-            dispatch({
-              type: actionTypes.GET_SLOTS_BASED_SITE_ID,
-              payload: {
-                siteId: props.siteId,
-              },
-            });
-            props.onCancel();
-          } else {
-            setSaveLoader(false);
-          }
-        });
+        api = apiUrls.postSlot;
       }
+
+      if (props.type === 'EDIT') {
+        payload = {
+          slotDetails: slotDetails,
+        };
+
+        payload.type = details.status;
+        payload.updatedTime = momentTimeZone().tz('Asia/Kolkata').format();
+
+        if (details.status === 'CANCELLED') payload.reason = details.reasonForCancellation;
+
+        api = apiUrls.updateSlotStatus.replace(':slotId', props.details.id);
+        requestMethod = 'PUT';
+      }
+
+      callFetchApi(api, null, requestMethod, payload, token).then((response) => {
+        if (response.status == 200) {
+          setSaveLoader(false);
+          dispatch({
+            type: actionTypes.GET_SLOTS_BASED_SITE_ID,
+            payload: {
+              siteId: props.siteId,
+            },
+          });
+          props.onCancel();
+        } else {
+          setSaveLoader(false);
+        }
+      });
     }
   };
 
@@ -408,7 +428,7 @@ const LastRespectForm = (props) => {
             <Typography className={styles.headerValue} component={'div'} style={{ display: 'inline-block' }}>
               {moment(props.selectedDate, 'DD-MM-YYYY').format('MMM-DD') + ' ' + props.selectedTime}
             </Typography>
-            {props.type !== 'EDIT' && (
+            {props.type === 'EDIT' && (
               <div style={{ display: 'inline-block', float: 'right' }}>
                 {openDialog && <ModalDialog setOpenDialog={setOpenDialog} />}
                 <Button
