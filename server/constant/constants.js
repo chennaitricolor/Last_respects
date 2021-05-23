@@ -1,4 +1,5 @@
 const moment = require('moment');
+const { SLOT_STATUS } = require('./enum');
 
 const errors = {
   // List of errors
@@ -84,11 +85,15 @@ const refreshTokenExpiry = moment.duration(1, 'month').asSeconds();
 
 const expectedSlotKeys = ['slot', 'updatedTime', 'createdTime', 'proofId', 'proofType', 'deathCertNo', 'deceasedName', 'dateOfCremation', 'reasonForCancellation', 'attenderContact', 'attenderName', 'covidRelated', 'burialSiteId'];
 const secret = process.env.JWT_TOKEN_SECRET;
+
+const blockedSlots = [ SLOT_STATUS.BOOKED, SLOT_STATUS.ARRIVED, SLOT_STATUS.STARTED, SLOT_STATUS.COMPLETED ]
+
 module.exports = {
   success,
   refreshTokenExpiry,
   secret,
   tokenExpiry,
+  blockedSlots,
   expectedSlotKeys,
   DATE_RANGE: {
     VALUE: 3,
