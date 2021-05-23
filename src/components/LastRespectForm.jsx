@@ -312,7 +312,7 @@ const LastRespectForm = (props) => {
       if (event !== null) {
         setDetails({
           ...details,
-          [id]: radioValue.length != 0 ? radioValue[0].value : '',
+          [id]: radioValue.length != 0 ? radioValue[0].id : '',
         });
       }
     }
@@ -339,10 +339,19 @@ const LastRespectForm = (props) => {
       return false;
     }
 
-    const { deceasedName, covidRelated, attenderName, attenderContact, status, reasonForCancellation } = details;
+    const { deceasedName, covidRelated, attenderName, attenderContact, status, reasonForCancellation, attenderAddress, attenderType } = details;
 
     if (props.type === 'ADD') {
-      return deceasedName && covidRelated !== '' && attenderName && attenderContact && attenderContact.length === 10 && status;
+      return (
+        deceasedName &&
+        covidRelated !== '' &&
+        attenderName &&
+        attenderContact &&
+        attenderContact.length === 10 &&
+        attenderType &&
+        attenderAddress &&
+        status
+      );
     }
 
     if (props.type === 'EDIT') {
