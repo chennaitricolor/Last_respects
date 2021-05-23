@@ -14,6 +14,10 @@ const getSlotDetailsBasedOnSlotIdReducer = (state = defaultState, action) => {
       return Object.assign({}, state, { isLoading: false, slotDetails: action.response, error: '' });
     case actionTypes.GET_SLOT_DETAILS_BASED_SLOT_ID_FAILURE:
       return Object.assign({}, state, { isLoading: false, slotDetails: null, error: action.error });
+    case actionTypes.CLEAR_DATA_ON_ZONE_SELECTION:
+      return Object.assign({}, state, defaultState);
+    case actionTypes.RESET_DATA_UNMOUNT_SLOT_BOOKING:
+      return Object.assign({}, state, defaultState);
     default:
       return state;
   }

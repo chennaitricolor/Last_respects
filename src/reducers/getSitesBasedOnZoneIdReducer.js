@@ -20,7 +20,9 @@ const getSitesBasedOnZoneIdReducer = (state = defaultState, action) => {
     case actionTypes.GET_SITES_BASED_ZONE_ID_FAILURE:
       return Object.assign({}, state, { isLoading: false, siteList: [], error: action.error });
     case actionTypes.SET_ACTIVE_FLAG:
-      return Object.assign({}, state, { isLoading: false, payload: action.payload });
+      return Object.assign({}, state, { isLoading: false, payload: action.payload  });
+    case actionTypes.RESET_DATA_UNMOUNT_SLOT_BOOKING:
+      return Object.assign({}, state, defaultState);
     default:
       return state;
   }

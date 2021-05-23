@@ -8,11 +8,37 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
 const useStyles = makeStyles({
-  timeSlotDiv: {
-    marginTop: '5%',
+  rowFullWidth: {
+    width: '100%',
   },
-  marginRight: {
-    marginRight: '2%',
+  legends: {
+    display: 'flex',
+    marginBottom: 15,
+  },
+  slotTimeTitle: {
+    fontStyle: 'normal',
+    fontWeight: 'bold',
+    color: '#000000',
+    fontSize: 16,
+  },
+  legendWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    justifySelf: 'flex-end',
+  },
+  informationLegend: {
+    width: 40,
+    height: 8,
+    maxWidth: 100,
+    margin: '-2px 10px 0 15px',
+    borderRadius: 3,
+  },
+
+  bookedColor: {
+    background: '#EB5757',
+  },
+  availableColor: {
+    background: '#219653',
   },
   timeSlotWrapper: {
     listStyleType: 'none',
@@ -98,6 +124,19 @@ const TimeSlotSelection = (props) => {
 
   return (
     <div className="col-xs-12 col-md-3 pr-0">
+      <div className={`row ${styles.rowFullWidth}`}>
+        <div className={`col-12 ${styles.legends}`}>
+          <h6 className={`m-0 ${styles.slotTimeTitle}`}>Time Slots</h6>
+          <div className={` ml-auto ${styles.legendWrapper}`}>
+            <div md={2} className={styles.informationLegend + ' ' + styles.bookedColor} />
+            <span>{'Booked'}</span>
+          </div>
+          <div className={` ${styles.legendWrapper}`}>
+            <div md={2} className={styles.informationLegend + ' ' + styles.availableColor} />
+            <span>{'Available'}</span>
+          </div>
+        </div>
+      </div>
       <List disablePadding={true} className={`${styles.timeSlotWrapper}`}>
         {timeSlotArray.map((time, index) => {
           return (

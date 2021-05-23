@@ -83,7 +83,7 @@ const tokenExpiry = 86400;
 const refreshTokenExpiry = moment.duration(1, 'month').asSeconds();
 
 const expectedSlotKeys = ['slot', 'updatedTime', 'createdTime', 'proofId', 'proofType', 'deathCertNo', 'deceasedName', 'dateOfCremation', 'reasonForCancellation', 'attenderContact', 'attenderName', 'covidRelated', 'burialSiteId'];
-const secret = 'secret TN secret';
+const secret = process.env.JWT_TOKEN_SECRET;
 module.exports = {
   success,
   refreshTokenExpiry,

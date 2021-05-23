@@ -8,6 +8,9 @@ const getSlotsForADate = (slotDetails, bookedSlots, date) => {
     acc[slot] = _.find(bookedSlots, ({ slot: booked_slot, dateOfCremation }) => {
       return booked_slot === slot && moment(dateOfCremation).isSame(moment(date), 'd');
     }) || {};
+    if(!_.isEmpty(acc[slot])) {
+      acc[slot] = acc[slot].toJSON();
+    }
     acc[slot].slotDetails = { slotOrder: parseInt(slotOrder) }
     return acc;
   }, {});

@@ -106,7 +106,7 @@ const ZoneSelection = (props) => {
       <div className={`col-12 col-md-2 text ${styles.contactDetails}`}>
         Site Name : {props.siteDetails.siteName}
       </div>
-      <div className={`col-12 col-md-2 text ${styles.contactDetails}`}>Contact : {getSiteValueByKey('contact_no')}</div>
+      <div className={`col-12 col-md-2 text ${styles.contactDetails}`}>Contact : {getSiteValueByKey('contactNo')}</div>
       <div className={`col-12 col-md-2 text ${styles.contactDetails}`}>Address : {getSiteValueByKey('address')}</div>
     </div>
   );

@@ -6,5 +6,6 @@ export DB_SCHEMA
 export DB_PWD
 export DB_USER
 export ENABLE_SSL
+export JWT_TOKEN_SECRET
 
 npm run serve
