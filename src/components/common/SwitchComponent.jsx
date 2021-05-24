@@ -21,7 +21,7 @@ const SwitchComponent = ({ isOn, showLabels, offLabelText = 'OFF', onLabelText =
     checked: {},
     track: {},
     label: {
-      fontSize: 16,
+      fontSize: 14,
     },
   });
 
@@ -59,6 +59,7 @@ const SwitchComponent = ({ isOn, showLabels, offLabelText = 'OFF', onLabelText =
               }}
               onChange={handleChange}
               checked={switchChecked}
+              size="small"
             />
           </Grid>
           <Grid item>

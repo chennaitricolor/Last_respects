@@ -5,6 +5,8 @@ import BackButtonComponent from '../components/common/BackButtonComponent';
 import SwitchComponent from './../components/common/SwitchComponent';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import { grey, red } from '@material-ui/core/colors';
+import TableComponent from './../components/common/TableComponent';
 
 //styles
 const useStyles = makeStyles(() => ({
@@ -32,6 +34,16 @@ const useStyles = makeStyles(() => ({
   switchColumn: {
     display: 'flex',
     justifyContent: 'center',
+    marginTop: 10,
+  },
+  reAssignBtnBase: {
+    fontSize: '14px',
+    width: '103px',
+    height: '30px',
+    borderRadius: '3px',
+    textTransform: 'none',
+    boxSizing: 'border-box',
+    borderRadius: '3px',
   },
   notificationDiv: {
     marginTop: 10,
@@ -43,7 +55,7 @@ const useStyles = makeStyles(() => ({
     border: 1,
     borderRadius: 10,
     backgroundColor: '#EFDDC8',
-    height: 74,
+    height: 84,
     display: 'flex',
     justifyContent: 'center',
     alignContent: 'center',
@@ -61,6 +73,9 @@ const useStyles = makeStyles(() => ({
   },
   activityText: {
     paddingLeft: 20,
+    marginTop: 20,
+  },
+  tableDiv: {
     marginTop: 20,
   },
 }));
@@ -88,6 +103,7 @@ const MachineryManagementContainer = () => {
 
   const [machineryManagementStatus, SetMachineryManagementStatus] = useState(true); //TODO: get status from db ?
   const [machineryManageNotification, SetMachineryManageNotification] = useState(machineryManageOnNotification);
+  const [reAssignBtnDisabled, setReAssignBtnDisabled] = useState(true);
 
   const onSwitchChange = (switchValue) => {
     SetMachineryManagementStatus(switchValue);
@@ -95,6 +111,7 @@ const MachineryManagementContainer = () => {
 
   useEffect(() => {
     SetMachineryManageNotification(machineryManagementStatus ? machineryManageOnNotification : machineryManageOffNotification);
+    setReAssignBtnDisabled(machineryManagementStatus);
   }, [machineryManagementStatus]);
 
   return (
@@ -112,7 +129,26 @@ const MachineryManagementContainer = () => {
               <span className={styles.infoStatusText}>Status</span>
             </div>
             <div className={'col-6 col-md-3 ' + styles.switchColumn}>
-              <SwitchComponent isOn={machineryManagementStatus} onSwitchChangeCallback={onSwitchChange} />
+              <div>
+                <SwitchComponent isOn={machineryManagementStatus} onSwitchChangeCallback={onSwitchChange} />
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className={'col-6 col-md-9 '}></div>
+            <div className={'col-6 col-md-3 ' + styles.switchColumn}>
+              <Button
+                variant={'text'}
+                className={styles.reAssignBtnBase}
+                disabled={reAssignBtnDisabled}
+                style={{
+                  color: `${reAssignBtnDisabled ? '' : '#FFFFFF'}`,
+                  background: `${reAssignBtnDisabled ? '' : '#00AB88'}`,
+                  border: `${reAssignBtnDisabled ? '1px solid #C4C4C4' : '1px solid #00AB88'}`,
+                }}
+              >
+                Re-Assign
+              </Button>
             </div>
           </div>
         </div>
@@ -121,6 +157,9 @@ const MachineryManagementContainer = () => {
       </div>
       <div className={styles.activityDiv}>
         <strong>Last 5 activities</strong>
+      </div>
+      <div className={styles.tableDiv}>
+        <TableComponent />
       </div>
     </>
   );
