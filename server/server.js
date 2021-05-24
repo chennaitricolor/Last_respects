@@ -1,26 +1,21 @@
-
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-
 const routes = require('./routes');
 const path = require('path');
-
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
-
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const winston = require('winston');
 const expressWinston = require('express-winston');
 const moment = require('moment-timezone');
+const port = process.env.PORT || 3200;
 
-moment.tz.setDefault("Asia/Kolkata");
+moment.tz.setDefault('Asia/Kolkata');
 
 // var cors = require('cors')
-
-
-// app.options('*', cors()) // include before other routes 
+// app.options('*', cors()) // include before other routes
 // app.use(cors())
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -64,8 +59,8 @@ app.get('/swagger.json', (req, res) => {
     console.log('Error in generating swagger');
   }
 });
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(options)));
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(options)));
 
 app.use((req, res, next) => {
   res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
@@ -73,18 +68,19 @@ app.use((req, res, next) => {
   res.header('Pragma', 'no-cache');
   next();
 });
-app.use('/api', routes)
+
+app.use('/api', routes);
+
+app.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname, '../build', 'index.html'));
+});
+
+app.get('/slotBooking', function (req, res) {
+    res.sendFile(path.join(__dirname, '../build', 'index.html'));
+});
 
 app.use(express.static(path.join('build')));
-/* istanbul ignore next */
-app.get('/', function (request, response) {
-  /* istanbul ignore next */
-  response.redirect('index.html');
-});
-/* istanbul ignore next */
-const port = process.env.PORT || 3200;
+
 app.listen(port, function () {
   console.log(`Application listening on port ${port}`);
 });
-// app.use('/recommend_taxonomy', api_route);
-module.exports = app;

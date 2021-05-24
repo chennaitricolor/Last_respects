@@ -18,7 +18,7 @@ import Typography from '@material-ui/core/Typography';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import { getReassignReasons, getMomentDateStr, getCookie, isTokenAlive } from '../../utils/commonUtils';
+import { getReassignReasons, getMomentDateStr, getCookie, isTokenAlive } from '../../utils/CommonUtils';
 import { apiUrls } from '../../utils/constants';
 import { callFetchApi } from '../../services/api';
 import moment from 'moment';
@@ -117,7 +117,6 @@ const useStyles = makeStyles({
 const reAssignReasons = getReassignReasons();
 
 const ModalDialog = (props) => {
-
   const styles = useStyles();
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -196,9 +195,9 @@ const ModalDialog = (props) => {
 
   useEffect(() => {
     if (siteDetails.zoneName !== '' && siteDetails.siteName !== '') {
-      const siteFilterCdn = siteList.filter(site => site.site_name === siteDetails.siteName);
+      const siteFilterCdn = siteList.filter((site) => site.site_name === siteDetails.siteName);
       if (siteFilterCdn.length > 0) {
-        let siteId = siteFilterCdn[0].id
+        let siteId = siteFilterCdn[0].id;
         dispatch({
           type: actionTypes.GET_SLOTS_BASED_SITE_ID,
           payload: {
@@ -235,7 +234,7 @@ const ModalDialog = (props) => {
         setSelectedTime(event);
       }
     }
-  }
+  };
 
   const handleSubmit = () => {
     setShowError(false);
@@ -246,13 +245,13 @@ const ModalDialog = (props) => {
         slot: selectedTime,
         dateOfCremation: moment(selectedDate, 'DD-MM-YYYY').format('YYYY-MM-DD'),
         burialSiteId: siteId,
-      }
+      };
 
       let reAssignPayload = {
         slotDetails: slotDetails,
         type: 'REASSIGN',
-        reason: showReAssignComment ? reAssignReason + ' - ' + commentVal : reAssignReason
-      }
+        reason: showReAssignComment ? reAssignReason + ' - ' + commentVal : reAssignReason,
+      };
 
       callFetchApi(api, null, 'PUT', reAssignPayload, token).then((response) => {
         if (response.status == 200) {
@@ -263,33 +262,40 @@ const ModalDialog = (props) => {
             },
           });
         } else {
-            setShowError(true);
+          setShowError(true);
         }
       });
     }
-  }
+  };
 
   const enableSubmit = () => {
     debugger;
     let result;
-    result = zoneName !== '' && siteDetails.siteName !== '' && selectedDate != null && selectedDate != ''
-      && selectedTime != '' && reAssignReason != '' && (showReAssignComment && commentVal != '');
+    result =
+      zoneName !== '' &&
+      siteDetails.siteName !== '' &&
+      selectedDate != null &&
+      selectedDate != '' &&
+      selectedTime != '' &&
+      reAssignReason != '' &&
+      showReAssignComment &&
+      commentVal != '';
 
     result = showReAssignComment ? commentVal != '' : result;
     console.log('result value => ', result);
     return result;
-  }
+  };
 
   return (
     <div>
-      <Dialog fullScreen={fullScreen} open={true} onClose={handleClose} aria-labelledby="dialog-title" disableBackdropClick >
+      <Dialog fullScreen={fullScreen} open={true} onClose={handleClose} aria-labelledby="dialog-title" disableBackdropClick>
         <DialogTitle id="responsive-dialog-title">{'Re-Assign Booking'}</DialogTitle>
         <div className={`container ${styles.reassignModal}`}>
           <span className={`${styles.close}`} onClick={handleClose}>
             X Close
           </span>
           <div className="row">
-            {showError && <ErrorMessage/>}
+            {showError && <ErrorMessage />}
             <div className="col-12 mb-4">
               <Typography className={styles.dropDownLabel} component={'div'}>
                 Zone
@@ -316,7 +322,7 @@ const ModalDialog = (props) => {
             <div className="col-12 mb-4 ">
               <Typography className={styles.dropDownLabel} component={'div'}>
                 Site
-                </Typography>
+              </Typography>
               <FormControl className={styles.dropDown}>
                 <Select
                   variant={'outlined'}
@@ -360,7 +366,7 @@ const ModalDialog = (props) => {
             <div className="col-12 mb-4">
               <Typography className={styles.dropDownLabel} component={'div'}>
                 Time
-                </Typography>
+              </Typography>
               <FormControl className={styles.dropDown}>
                 <Select
                   variant={'outlined'}
@@ -378,12 +384,11 @@ const ModalDialog = (props) => {
                   })}
                 </Select>
               </FormControl>
-
             </div>
             <div className="col-12 mb-4">
               <Typography className={styles.dropDownLabel} component={'div'}>
                 Re-Assign Reason
-                </Typography>
+              </Typography>
               <FormControl className={styles.dropDown}>
                 <Select
                   variant={'outlined'}
@@ -402,23 +407,25 @@ const ModalDialog = (props) => {
                 </Select>
               </FormControl>
             </div>
-            {showReAssignComment ? (<div className="col-12 mb-4">
-              <Typography component={'div'} className={` ${styles.fieldLabel} `}>
-                {'Reason'}
-                <RequiredFieldMarker />
-              </Typography>
-              <TextField
-                className={styles.textField}
-                value={commentVal}
-                size="small"
-                variant={'outlined'}
-                onChange={(event) => handleOnChange(event, 'text')}
-                InputLabelProps={{ shrink: true }}
-                autoComplete={'disabled'}
-              />
-            </div>) : null}
+            {showReAssignComment ? (
+              <div className="col-12 mb-4">
+                <Typography component={'div'} className={` ${styles.fieldLabel} `}>
+                  {'Reason'}
+                  <RequiredFieldMarker />
+                </Typography>
+                <TextField
+                  className={styles.textField}
+                  value={commentVal}
+                  size="small"
+                  variant={'outlined'}
+                  onChange={(event) => handleOnChange(event, 'text')}
+                  InputLabelProps={{ shrink: true }}
+                  autoComplete={'disabled'}
+                />
+              </div>
+            ) : null}
             <div className="col-12 text-center">
-              <Button variant="contained" className={styles.saveButton} disabled={!(enableSubmit) /* && isOwner */} onClick={handleSubmit}>
+              <Button variant="contained" className={styles.saveButton} disabled={!enableSubmit /* && isOwner */} onClick={handleSubmit}>
                 Save
               </Button>
               <Button variant="contained" className={`${styles.cancelButton}`} onClick={handleClose}>
