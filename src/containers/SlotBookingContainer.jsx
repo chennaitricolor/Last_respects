@@ -7,10 +7,11 @@ import LastRespectFormContainer from './LastRespectFormContainer';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionTypes } from '../utils/actionTypes';
 import moment from 'moment';
+import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles(() => ({
   slotBookingDiv: {
-    height: '88%',
+    height: '90%',
     position: 'relative',
     overflow: 'auto',
   },
@@ -35,6 +36,13 @@ const useStyles = makeStyles(() => ({
     fontWeight: 'bold',
     color: '#000000',
     fontSize: 24,
+  },
+  selectZoneSiteMessage: {
+    color: '#000',
+    fontSize: '18px',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: '32px',
   },
 }));
 
@@ -137,6 +145,8 @@ const SlotBookingContainer = (props) => {
           type: actionTypes.SET_ACTIVE_FLAG,
           payload: {
             isActive: siteList[0].isActive,
+            isOwner: siteList[0].isOwner,
+            siteId: siteId,
           },
         });
       }
@@ -155,25 +165,40 @@ const SlotBookingContainer = (props) => {
       {!isFormOpen && (
         <div className={`container ${styles.customContainer} ${styles.slotBookingDiv}`}>
           <ZoneSelection siteDetails={siteDetails} zoneList={zoneList} siteList={siteList} handleOnChangeForDropdown={handleOnChangeForDropdown} />
-          {dateTimeSlotDetails !== null && (
-            <div className={`row slotContent `}>
-              <div className="col-12">
-                <h4 className={`${styles.slotHeaderTitle}`}> Slot Booking</h4>
-              </div>
+          <div className={`row slotContent `}>
+            <div className="col-12">
+              <h4 className={`${styles.slotHeaderTitle}`}> Slot Booking</h4>
+            </div>
+            {dateTimeSlotDetails !== null && siteDetails.siteName !== '' ? (
               <div className={`col-12 ${styles.overflowHidden}`}>
                 <DateSelection dateTimeSlotDetails={dateTimeSlotDetails} selectedDate={selectedDate} selectDate={selectDate} />
                 <div className="row">
-                  <TimeSlotSelection dateTimeSlotDetails={dateTimeSlotDetails} selectedDate={selectedDate} openSlotForm={openSlotForm} />
+                  <TimeSlotSelection
+                    dateTimeSlotDetails={dateTimeSlotDetails}
+                    selectedDate={selectedDate}
+                    siteDetails={siteDetails}
+                    siteList={siteList}
+                    openSlotForm={openSlotForm}
+                  />
                 </div>
               </div>
-            </div>
-          )}
+            ) : (
+              <div className={`row slotContent `}>
+                <div className="col-12">
+                  <Typography className={styles.selectZoneSiteMessage} component={'h3'}>
+                    Please Select Zone & Site Name to View Slot Details
+                  </Typography>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
       {isFormOpen && (
         <LastRespectFormContainer
           date={selectedDate}
           time={selectedTimeSlot}
+          siteList={siteList}
           siteId={siteDetails.siteId}
           type={type}
           editSlotDetails={selectedSlotDetails}

@@ -4,6 +4,7 @@ import getAllZoneReducer from './getAllZoneReducer';
 import getSitesBasedOnZoneIdReducer from './getSitesBasedOnZoneIdReducer';
 import getSlotsBasedOnSiteIdReducer from './getSlotsBasedOnSiteIdReducer';
 import getSlotDetailsBasedOnSlotIdReducer from './getSlotDetailsBasedOnSlotIdReducer';
+import getAvailableSlotDetailsBasedOnSiteIdReducer from './getAvailableSlotDetailsBasedOnSiteIdReducer';
 
 const reducers = combineReducers({
   loginResponse,
@@ -11,6 +12,7 @@ const reducers = combineReducers({
   getSitesBasedOnZoneIdReducer,
   getSlotsBasedOnSiteIdReducer,
   getSlotDetailsBasedOnSlotIdReducer,
+  getAvailableSlotDetailsBasedOnSiteIdReducer,
 });
 
 export default reducers;

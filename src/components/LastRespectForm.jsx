@@ -17,7 +17,17 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ModalDialog from './Dialog/ModalDialog';
 import { apiUrls } from '../utils/constants';
 import { callFetchApi } from '../services/api';
-import { getCookie, isTokenAlive } from '../utils/CommonUtils';
+import {
+  addressProof,
+  alwaysDisableSaveButton,
+  attenderRelationship,
+  bookingStatus,
+  cancellationReason,
+  enableReassignButtonStatus,
+  getCookie,
+  isTokenAlive,
+  yesNoRadioButton,
+} from '../utils/CommonUtils';
 import moment from 'moment';
 import momentTimeZone from 'moment-timezone';
 import { actionTypes } from '../utils/actionTypes';
@@ -169,6 +179,7 @@ const renderTextInput = (label, value, id, handleOnChange, styles, multiline, ro
 };
 
 const renderRadioButtonField = (label, value, id, radioButtonList, handleOnChange, styles, disabled, isRequired, isFullwidth, type) => {
+  let radioValue = value !== undefined && value !== '' && radioButtonList.length !== 0 ? radioButtonList.filter((values) => values.id === value) : [];
   const lastForm = clsx(`last-respect-form-${id}`);
   const formLabel = clsx(`last-respect-form-${id}-label`, styles.radioButton);
   const radioClass = isFullwidth ? `col-12 ${lastForm}` : `col-md-6  col-sm-12 col-12 ${lastForm}`;
@@ -181,7 +192,7 @@ const renderRadioButtonField = (label, value, id, radioButtonList, handleOnChang
       <RadioGroup
         className={`last-respect-form-${id}-radio-value`}
         style={{ display: 'inline-block' }}
-        value={value !== undefined && value !== '' ? radioButtonList.filter((values) => values.id === value)[0].value : ''}
+        value={radioValue.length != 0 ? radioValue[0].value : ''}
         onChange={(event) => handleOnChange(event, id, type)}
       >
         {radioButtonList.map((radioButton, index) => {
@@ -256,8 +267,8 @@ const initialState = {
   deathCertNo: '',
   attenderName: '',
   attenderContact: '',
-  attenderRelationship: '',
-  address: '',
+  attenderType: '',
+  attenderAddress: '',
   proofType: '',
   status: 'BOOKED',
   reasonForCancellation: '',
@@ -277,7 +288,7 @@ const LastRespectForm = (props) => {
     } else {
       setDetails(initialState);
     }
-  }, [props.type]);
+  }, [props.type, props.details]);
 
   const handleOnChange = (event, id, type) => {
     if (type === 'text') {
@@ -294,10 +305,14 @@ const LastRespectForm = (props) => {
       }
     }
     if (type === 'radioButton') {
+      let radioValue =
+        bookingStatus[props.details.status] !== undefined
+          ? bookingStatus[props.details.status].filter((status) => status.value === event.target.value)
+          : [];
       if (event !== null) {
         setDetails({
           ...details,
-          [id]: status.filter((status) => status.value === event.target.value)[0].id,
+          [id]: radioValue.length != 0 ? radioValue[0].id : '',
         });
       }
     }
@@ -319,46 +334,43 @@ const LastRespectForm = (props) => {
     }
   };
 
-  const yesNoRadioButton = [
-    { id: true, value: 'Yes' },
-    { id: false, value: 'No' },
-  ];
-
-  // CANCEL,REASSIGN,COMPLETE,ARRIVED,STARTED,NOSHOW
-  const status = [
-    { id: 'BOOKED', value: 'Booked' },
-    { id: 'COMPLETE', value: 'Completed' },
-    { id: 'CANCEL', value: 'Cancelled Booking' },
-    { id: 'NOSHOW', value: 'No Show' },
-  ];
-
-  const attenderRelationship = [
-    { id: 'family', name: 'Family' },
-    { id: 'ngo', name: 'NGO' },
-    { id: 'relative', name: 'Relative' },
-  ];
-
-  const addressProof = [
-    { id: 'aadharCard', name: 'Aadhar Card' },
-    { id: 'drivingLicense', name: 'Driving License' },
-    { id: 'rationCard', name: 'Ration Card' },
-  ];
-
-  const cancellationReason = [{ id: 'machinery issue', name: 'Machinery Issue' }];
-
   const enableSubmit = () => {
-    const { deceasedName, covidRelated, attenderName, attenderContact, status, reasonForCancellation } = details;
+    if (props.type === 'EDIT' && alwaysDisableSaveButton.includes(props.details.status)) {
+      return false;
+    }
+
+    const { deceasedName, covidRelated, attenderName, attenderContact, status, reasonForCancellation, attenderAddress, attenderType } = details;
 
     if (props.type === 'ADD') {
-      return deceasedName && covidRelated !== '' && attenderName && attenderContact && attenderContact.length === 10 && status;
+      return (
+        deceasedName &&
+        covidRelated !== '' &&
+        attenderName &&
+        attenderContact &&
+        attenderContact.length === 10 &&
+        attenderType &&
+        attenderAddress &&
+        status
+      );
     }
 
     if (props.type === 'EDIT') {
+      if (!isOwnerForSelectedSite()) return false;
+
       let statusCheck = false;
       if (status !== 'BOOKED') statusCheck = true;
-      if (status === 'CANCELLED' && !reasonForCancellation) statusCheck = false;
+      if (status === 'CANCEL' && !reasonForCancellation) statusCheck = false;
       return statusCheck;
     }
+  };
+
+  const enableReAssignButton = () => {
+    return isOwnerForSelectedSite();
+  };
+
+  const isOwnerForSelectedSite = () => {
+    let currentSiteDetails = props.siteList.filter((site) => site.id === props.siteId);
+    return currentSiteDetails.length != 0 ? currentSiteDetails[0].isOwner : false;
   };
 
   const handleFormSubmit = () => {
@@ -366,7 +378,9 @@ const LastRespectForm = (props) => {
     let token = getCookie('lrToken');
 
     if (token !== '' && isTokenAlive(token)) {
-      let api, payload, requestMethod = 'POST';
+      let api,
+        payload,
+        requestMethod = 'POST';
       let slotDetails = details;
       slotDetails.slot = props.selectedTime;
       slotDetails.burialSiteId = parseInt(props.siteId);
@@ -387,7 +401,7 @@ const LastRespectForm = (props) => {
         payload.type = details.status;
         payload.updatedTime = momentTimeZone().tz('Asia/Kolkata').format();
 
-        if (details.status === 'CANCELLED') payload.reason = details.reasonForCancellation;
+        if (details.status === 'CANCEL') payload.reason = details.reasonForCancellation;
 
         api = apiUrls.updateSlotStatus.replace(':slotId', props.details.id);
         requestMethod = 'PUT';
@@ -428,12 +442,13 @@ const LastRespectForm = (props) => {
             <Typography className={styles.headerValue} component={'div'} style={{ display: 'inline-block' }}>
               {moment(props.selectedDate, 'DD-MM-YYYY').format('MMM-DD') + ' ' + props.selectedTime}
             </Typography>
-            {props.type === 'EDIT' && (
+            {props.type === 'EDIT' && enableReassignButtonStatus.includes(props.details.status) && (
               <div style={{ display: 'inline-block', float: 'right' }}>
                 {openDialog && <ModalDialog setOpenDialog={setOpenDialog} />}
                 <Button
                   variant="outlined"
                   className={styles.reAssignButton}
+                  disabled={!enableReAssignButton()}
                   onClick={() => {
                     setOpenDialog(!openDialog);
                   }}
@@ -488,25 +503,36 @@ const LastRespectForm = (props) => {
             )}
             {renderDropdownInput(
               'Attender Relationship',
-              details.attenderRelationship,
-              'attenderRelationship',
+              details.attenderType,
+              'attenderType',
               handleOnChange,
               attenderRelationship,
               styles,
               props.type === 'EDIT',
-              false,
+              true,
             )}
           </div>
           <div className="row ">
-            {renderTextInput('Address', details.address, 'address', handleOnChange, styles, true, 3, props.type === 'EDIT', false)}
+            {renderTextInput('Address', details.attenderAddress, 'attenderAddress', handleOnChange, styles, true, 3, props.type === 'EDIT', true)}
             {renderDropdownInput('Address Proof', details.proofType, 'proofType', handleOnChange, addressProof, styles, props.type === 'EDIT', false)}
           </div>
           <div className="row ">
-            {renderRadioButtonField('Status', details.status, 'status', status, handleOnChange, styles, false, true, true, 'radioButton')}
+            {renderRadioButtonField(
+              'Status',
+              details.status,
+              'status',
+              props.type === 'ADD' ? bookingStatus['NEW'] : props.details.status !== '' ? bookingStatus[props.details.status] : [],
+              handleOnChange,
+              styles,
+              !isOwnerForSelectedSite(),
+              true,
+              true,
+              'radioButton',
+            )}
           </div>
           {props.type === 'EDIT' && (
             <div className="row ">
-              {details.status === 'CANCELLED' &&
+              {details.status === 'CANCEL' &&
                 renderDropdownInput(
                   'Reason for Cancellation',
                   details.reasonForCancellation,

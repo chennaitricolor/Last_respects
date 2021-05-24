@@ -2,7 +2,7 @@ import { put, call } from 'redux-saga/effects';
 import { actionTypes } from '../utils/actionTypes';
 import { callFetchApi } from '../services/api';
 import { apiUrls } from '../utils/constants';
-import {setCookie} from "../utils/CommonUtils";
+import { setCookie } from '../utils/CommonUtils';
 
 export default function* loginSaga(action) {
   try {

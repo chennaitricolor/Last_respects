@@ -29,9 +29,25 @@ const LastRespectFormContainer = (props) => {
   return (
     <div style={{ height: '92%' }} className="col-12">
       {props.type === 'ADD' ? (
-        <LastRespectForm selectedDate={props.date} selectedTime={props.time} siteId={props.siteId} onCancel={props.onCancel} type={props.type} details={details} />
+        <LastRespectForm
+          selectedDate={props.date}
+          selectedTime={props.time}
+          siteList={props.siteList}
+          siteId={props.siteId}
+          onCancel={props.onCancel}
+          type={props.type}
+          details={details}
+        />
       ) : props.type === 'EDIT' && details !== null ? (
-        <LastRespectForm selectedDate={props.date} selectedTime={props.time} siteId={props.siteId} onCancel={props.onCancel} type={props.type} details={details} />
+        <LastRespectForm
+          selectedDate={props.date}
+          selectedTime={props.time}
+          siteList={props.siteList}
+          siteId={props.siteId}
+          onCancel={props.onCancel}
+          type={props.type}
+          details={details}
+        />
       ) : (
         <div />
       )}
