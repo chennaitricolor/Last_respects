@@ -1,4 +1,5 @@
 const moment = require('moment');
+const { SLOT_STATUS } = require('./enum');
 
 const errors = {
   // List of errors
@@ -35,6 +36,25 @@ const errors = {
     statusCode: 400
 
   },
+
+  SLOT_ACCESS_DENIED: {
+    errors: [{
+      errorCode: 'SLOT_ACCESS_DENIED',
+      message: 'Not authorized to book in the site'
+    }],
+    statusCode: 403
+
+  },
+
+  SITE_ACCESS_DENIED: {
+    errors: [{
+      errorCode: 'SITE_ACCESS_DENIED',
+      message: 'Not authorized to update site'
+    }],
+    statusCode: 403
+
+  },
+
   SLOT_STATUS_TRANSITION_NOT_ALLOWED: {
     errors: [{
       errorCode: 'SLOT_STATUS_TRANSITION_NOT_ALLOWED',
@@ -63,16 +83,20 @@ const tokenExpiry = 86400;
 
 const refreshTokenExpiry = moment.duration(1, 'month').asSeconds();
 
-const expectedSlotKeys = ['slot', 'updatedTime', 'createdTime', 'proofId', 'proofType', 'deathCertNo', 'deceasedName', 'dateOfCremation', 'reasonForCancellation', 'attenderContact', 'attenderName', 'covidRelated', 'burialSiteId'];
-const secret = 'secret TN secret';
+const expectedSlotKeys = ['slot', 'updatedTime', 'createdTime', 'proofId', 'proofType', 'deathCertNo', 'deceasedName', 'dateOfCremation', 'attenderType','attenderAddress', 'reasonForCancellation', 'attenderContact', 'attenderName', 'covidRelated', 'burialSiteId'];
+const secret = process.env.JWT_TOKEN_SECRET;
+
+const blockedSlots = [ SLOT_STATUS.BOOKED, SLOT_STATUS.ARRIVED, SLOT_STATUS.STARTED, SLOT_STATUS.COMPLETED ]
+
 module.exports = {
   success,
   refreshTokenExpiry,
   secret,
   tokenExpiry,
+  blockedSlots,
   expectedSlotKeys,
   DATE_RANGE: {
-    VALUE: 5,
+    VALUE: 3,
     UNIT: 'd'
   },
   ...errors

@@ -11,6 +11,7 @@ function verifyToken(req, res, next) {
     if (err) return res.status(403).send({ auth: false, message: 'Failed to authenticate token.' });
     console.log("token", token, decoded.id)
     req.userId = parseInt(decoded.id);
+    req.zoneId = decoded.zoneId;
     next();
   });
 }

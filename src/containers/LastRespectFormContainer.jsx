@@ -1,25 +1,56 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import * as PropTypes from 'prop-types';
 import LastRespectForm from '../components/LastRespectForm';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionTypes } from '../utils/actionTypes';
 
 const LastRespectFormContainer = (props) => {
-  let type = 'ADD';
+  const dispatch = useDispatch();
 
-  let details = {
-    deceasedName: 'Test',
-    isCovid19: 'No',
-    deathCertificateNumber: '12312321',
-    attenderName: 'test',
-    attenderContactNumber: '1232131222',
-    attenderRelationship: 'relative',
-    address: '123213',
-    addressProof: 'drivingLicense',
-    status: 'Booked',
-  };
+  const [details, setDetails] = useState(null);
+
+  const slotDetails = useSelector((state) => state.getSlotDetailsBasedOnSlotIdReducer.slotDetails);
+
+  useEffect(() => {
+    if (props.type === 'EDIT' && props.editSlotDetails !== null) {
+      dispatch({
+        type: actionTypes.GET_SLOT_DETAILS_BASED_SLOT_ID,
+        payload: {
+          slotId: props.editSlotDetails.id,
+        },
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    setDetails(slotDetails);
+  }, [slotDetails]);
 
   return (
-    <div style={{ height: '100%' }} className='col-12'>
-      <LastRespectForm onCancel={props.onCancel} type={type} details={details} />
+    <div style={{ height: '92%' }} className="col-12">
+      {props.type === 'ADD' ? (
+        <LastRespectForm
+          selectedDate={props.date}
+          selectedTime={props.time}
+          siteList={props.siteList}
+          siteId={props.siteId}
+          onCancel={props.onCancel}
+          type={props.type}
+          details={details}
+        />
+      ) : props.type === 'EDIT' && details !== null ? (
+        <LastRespectForm
+          selectedDate={props.date}
+          selectedTime={props.time}
+          siteList={props.siteList}
+          siteId={props.siteId}
+          onCancel={props.onCancel}
+          type={props.type}
+          details={details}
+        />
+      ) : (
+        <div />
+      )}
     </div>
   );
 };

@@ -1,19 +1,36 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import 'date-fns';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import { makeStyles } from '@material-ui/core/styles';
+import RequiredFieldMarker from '../RequiredFieldMarker';
+import ErrorMessage from '../ErrorMessage';
 import { useTheme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
+import clsx from 'clsx';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionTypes } from '../../utils/actionTypes';
+import Typography from '@material-ui/core/Typography';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import { getReassignReasons, getMomentDateStr, getCookie, isTokenAlive } from '../../utils/CommonUtils';
+import { apiUrls } from '../../utils/constants';
+import { callFetchApi } from '../../services/api';
+import moment from 'moment';
 
 const useStyles = makeStyles({
+  dropDownLabel: {
+    fontWeight: 'bold',
+    fontSize: '14px',
+    color: '#000000',
+  },
   dropDown: {
-    width: '94%',
+    width: '100%',
     marginTop: '3%',
 
     '& label': {
@@ -70,79 +87,259 @@ const useStyles = makeStyles({
   datePickerRoot: {
     width: '100%',
   },
+  fieldLabel: {
+    fontSize: '14px',
+    fontWeight: 'bold',
+    color: '#151522 !important',
+  },
+  textField: {
+    width: '100%',
+    marginTop: '5%',
+    backgroundColor: '#fff',
+
+    '& label': {
+      color: '#707070 !important',
+      fontSize: '16px',
+      display: 'contents',
+    },
+
+    '& fieldset': {
+      border: '1px solid #707070 !important',
+    },
+
+    '& input': {
+      fontSize: '16px',
+      color: '#4F4F4F',
+    },
+  },
 });
 
-const zone = [
-  { title: 'Zone 1', year: 1994 },
-  { title: 'Zone 2', year: 1972 },
-  { title: 'Zone 3', year: 1974 },
-  { title: 'Zone 4', year: 2008 },
-  { title: 'Zone 5', year: 1957 },
-];
-
-const sites = [
-  { title: 'Site 1', year: 1994 },
-  { title: 'Site 2', year: 1972 },
-  { title: 'Site 3', year: 1974 },
-  { title: 'Site 4', year: 2008 },
-  { title: 'Site 5', year: 1957 },
-];
-
-const time = [
-    { title: '8:30 AM - 9:15 AM', year: 1994 },
-    { title: '9:15 AM - 10:00 AM', year: 1972 },
-    { title: '10:00 AM - 10:45 AM', year: 1974 },
-    { title: '10:45 AM - 11:30 AM', year: 2008 },
-];
-
-const reAssignReason = [
-    { title: 'Did Not Arrive', year: 1994 },
-    { title: 'Machinery Failure', year: 1972 },
-    { title: 'Rescheduled', year: 1974 },
-];
-
+const reAssignReasons = getReassignReasons();
 
 const ModalDialog = (props) => {
   const styles = useStyles();
   const theme = useTheme();
+  const dispatch = useDispatch();
+  const [siteDetails, setSiteDetails] = useState({
+    zoneName: '',
+    siteName: '',
+  });
+  const [reAssignReason, setReassignReason] = useState(reAssignReasons);
+  const [showReAssignComment, setShowReAssignComment] = useState(false);
+  const [commentVal, setCommentVal] = useState('');
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  let date = new Date();
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTime, setSelectedTime] = useState('');
+  const [maxDate, setMaxDate] = useState(date.setDate(date.getDate() + 1));
+  const [showError, setShowError] = useState(false);
 
-  const [selectedDate, setSelectedDate] = React.useState(new Date());
+  const zoneList = useSelector((state) => state.getAllZoneReducer.zoneList);
+  const siteList = useSelector((state) => state.getSitesBasedOnZoneIdReducer.siteList);
+  const zoneName = useSelector((state) => state.getAllZoneReducer.zoneName);
+  const payload = useSelector((state) => state.getSitesBasedOnZoneIdReducer.payload);
+  const availableSlotDetails = useSelector((state) => state.getAvailableSlotDetailsBasedOnSiteIdReducer.slotDetails);
+  const isActive = payload.isActive;
+  const isOwner = payload.isOwner;
+  const siteId = payload.siteId;
+  let availableTimeSlots = availableSlotDetails != null ? Object.keys(availableSlotDetails[Object.keys(availableSlotDetails)[0]]) : [];
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
+    dispatch({
+      type: actionTypes.GET_AVAILABLE_SLOT_DETAILS_BASED_SITE_ID,
+      payload: {
+        siteId: siteId,
+        availableFlag: true,
+        date: getMomentDateStr(date, 'YYYY-MM-DD'),
+      },
+    });
   };
 
   const handleClose = () => {
     props.setOpenDialog(false);
   };
 
+  useEffect(() => {
+    setSiteDetails({
+      isActive: isActive,
+    });
+  }, [isActive]);
+
+  useEffect(() => {
+    setSiteDetails({
+      zoneName: zoneName,
+    });
+  }, [zoneName]);
+
+  useEffect(() => {
+    dispatch({
+      type: actionTypes.GET_ALL_ZONES,
+    });
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (siteDetails.zoneName !== '') {
+      const zoneFilterCdn = zoneList.filter((zone) => zone.zone_or_division === siteDetails.zoneName);
+      if (zoneFilterCdn.length > 0) {
+        let zoneId = zoneFilterCdn[0].zone_or_division_id;
+        dispatch({
+          type: actionTypes.GET_SITES_BASED_ZONE_ID,
+          payload: {
+            zoneId: zoneId,
+          },
+        });
+      }
+    }
+  }, [dispatch, siteDetails.zoneName]);
+
+  useEffect(() => {
+    if (siteDetails.zoneName !== '' && siteDetails.siteName !== '') {
+      const siteFilterCdn = siteList.filter((site) => site.site_name === siteDetails.siteName);
+      if (siteFilterCdn.length > 0) {
+        let siteId = siteFilterCdn[0].id;
+        dispatch({
+          type: actionTypes.GET_SLOTS_BASED_SITE_ID,
+          payload: {
+            siteId: siteId,
+          },
+        });
+      }
+    }
+  }, [dispatch, siteDetails]);
+
+  const handleOnChange = (event, id) => {
+    if (event !== null) {
+      if (id === 'zoneName') {
+        setSiteDetails({
+          zoneName: event,
+          siteName: '',
+        });
+      }
+      if (id === 'siteName') {
+        setSiteDetails({
+          ...siteDetails,
+          siteName: event,
+        });
+      }
+      if (id === 'text') {
+        setCommentVal(event);
+      }
+      if (id === 'reAssignReason') {
+        event === 'Other' ? setShowReAssignComment(true) : setShowReAssignComment(false);
+        setReassignReason(event);
+      }
+      if (id === 'time') {
+        console.log('time in handle function ==>', event);
+        setSelectedTime(event);
+      }
+    }
+  };
+
+  const handleSubmit = () => {
+    setShowError(false);
+    let token = getCookie('lrToken');
+    if (token !== '' && isTokenAlive(token)) {
+      let api = apiUrls.updateSlotStatus.replace(':slotId', 'slotId');
+      let slotDetails = {
+        slot: selectedTime,
+        dateOfCremation: moment(selectedDate, 'DD-MM-YYYY').format('YYYY-MM-DD'),
+        burialSiteId: siteId,
+      };
+
+      let reAssignPayload = {
+        slotDetails: slotDetails,
+        type: 'REASSIGN',
+        reason: showReAssignComment ? reAssignReason + ' - ' + commentVal : reAssignReason,
+      };
+
+      callFetchApi(api, null, 'PUT', reAssignPayload, token).then((response) => {
+        if (response.status == 200) {
+          dispatch({
+            type: actionTypes.GET_SLOTS_BASED_SITE_ID,
+            payload: {
+              siteId: props.siteId,
+            },
+          });
+        } else {
+          setShowError(true);
+        }
+      });
+    }
+  };
+
+  const enableSubmit = () => {
+    debugger;
+    let result;
+    result =
+      zoneName !== '' &&
+      siteDetails.siteName !== '' &&
+      selectedDate != null &&
+      selectedDate != '' &&
+      selectedTime != '' &&
+      reAssignReason != '' &&
+      showReAssignComment &&
+      commentVal != '';
+
+    result = showReAssignComment ? commentVal != '' : result;
+    console.log('result value => ', result);
+    return result;
+  };
+
   return (
     <div>
-      <Dialog fullScreen={fullScreen} open={true} onClose={handleClose} aria-labelledby="dialog-title">
+      <Dialog fullScreen={fullScreen} open={true} onClose={handleClose} aria-labelledby="dialog-title" disableBackdropClick>
         <DialogTitle id="responsive-dialog-title">{'Re-Assign Booking'}</DialogTitle>
         <div className={`container ${styles.reassignModal}`}>
           <span className={`${styles.close}`} onClick={handleClose}>
             X Close
           </span>
           <div className="row">
+            {showError && <ErrorMessage />}
             <div className="col-12 mb-4">
-              <Autocomplete
-                id="zone-combo-box"
-                options={zone}
-                getOptionLabel={(option) => option.title}
-                style={{ width: '100%' }}
-                renderInput={(params) => <TextField {...params} label="Zone Name" variant="outlined" />}
-              />
+              <Typography className={styles.dropDownLabel} component={'div'}>
+                Zone
+              </Typography>
+              <FormControl className={styles.dropDown}>
+                <Select
+                  variant={'outlined'}
+                  size={'small'}
+                  disabled={!isActive}
+                  className={clsx(styles.dropDownSelect, !isActive ? styles.disabledField : '')}
+                  value={siteDetails.zoneName}
+                  onChange={(e) => handleOnChange(e.target.value, 'zoneName')}
+                >
+                  {zoneList.map((item) => {
+                    return (
+                      <MenuItem disabled={!isActive} key={item.zone_or_division_id} value={item.zone_or_division}>
+                        {item.zone_or_division}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
             </div>
             <div className="col-12 mb-4 ">
-              <Autocomplete
-                id="site-combo-box"
-                options={sites}
-                getOptionLabel={(option) => option.title}
-                style={{ width: '100%' }}
-                renderInput={(params) => <TextField {...params} label="Site Name" variant="outlined" />}
-              />
+              <Typography className={styles.dropDownLabel} component={'div'}>
+                Site
+              </Typography>
+              <FormControl className={styles.dropDown}>
+                <Select
+                  variant={'outlined'}
+                  size={'small'}
+                  className={styles.dropDownSelect}
+                  value={siteDetails.siteName}
+                  onChange={(e) => handleOnChange(e.target.value, 'siteName')}
+                >
+                  {siteList.map((item) => {
+                    return (
+                      <MenuItem key={item.id} value={item.siteName}>
+                        {item.siteName}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
             </div>
             <div className="col-12 mb-4">
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -151,13 +348,14 @@ const ModalDialog = (props) => {
                   disableToolbar
                   disablePast
                   variant="inline"
-                  format="MM/dd/yyyy"
+                  format="dd-MM-yyyy"
                   inputVariant="outlined"
                   autoOk
                   margin="normal"
                   id="date-picker-inline"
                   label="Date picker inline"
                   value={selectedDate}
+                  maxDate={maxDate}
                   onChange={handleDateChange}
                   KeyboardButtonProps={{
                     'aria-label': 'change date',
@@ -166,28 +364,71 @@ const ModalDialog = (props) => {
               </MuiPickersUtilsProvider>
             </div>
             <div className="col-12 mb-4">
-              <Autocomplete
-                id="time-combo-box"
-                options={time}
-                getOptionLabel={(option) => option.title}
-                style={{ width: '100%' }}
-                renderInput={(params) => <TextField {...params} label="Time" variant="outlined" />}
-              />
+              <Typography className={styles.dropDownLabel} component={'div'}>
+                Time
+              </Typography>
+              <FormControl className={styles.dropDown}>
+                <Select
+                  variant={'outlined'}
+                  size={'small'}
+                  className={styles.dropDownSelect}
+                  value={selectedTime}
+                  onChange={(e) => handleOnChange(e.target.value, 'time')}
+                >
+                  {availableTimeSlots.map((item, i) => {
+                    return (
+                      <MenuItem key={`item${i}`} value={item}>
+                        {item}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
             </div>
             <div className="col-12 mb-4">
-              <Autocomplete
-                id="reassign-combo-box"
-                options={reAssignReason}
-                getOptionLabel={(option) => option.title}
-                style={{ width: '100%' }}
-                renderInput={(params) => <TextField {...params} label="Reassign Reason" variant="outlined" />}
-              />
+              <Typography className={styles.dropDownLabel} component={'div'}>
+                Re-Assign Reason
+              </Typography>
+              <FormControl className={styles.dropDown}>
+                <Select
+                  variant={'outlined'}
+                  size={'small'}
+                  className={styles.dropDownSelect}
+                  value={reAssignReason}
+                  onChange={(e) => handleOnChange(e.target.value, 'reAssignReason')}
+                >
+                  {reAssignReasons.map((item) => {
+                    return (
+                      <MenuItem key={item.id} value={item.reason}>
+                        {item.reason}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
             </div>
+            {showReAssignComment ? (
+              <div className="col-12 mb-4">
+                <Typography component={'div'} className={` ${styles.fieldLabel} `}>
+                  {'Reason'}
+                  <RequiredFieldMarker />
+                </Typography>
+                <TextField
+                  className={styles.textField}
+                  value={commentVal}
+                  size="small"
+                  variant={'outlined'}
+                  onChange={(event) => handleOnChange(event, 'text')}
+                  InputLabelProps={{ shrink: true }}
+                  autoComplete={'disabled'}
+                />
+              </div>
+            ) : null}
             <div className="col-12 text-center">
-              <Button variant="contained" className={styles.saveButton}>
+              <Button variant="contained" className={styles.saveButton} disabled={!enableSubmit /* && isOwner */} onClick={handleSubmit}>
                 Save
               </Button>
-              <Button variant="contained" className={`${styles.cancelButton}`}>
+              <Button variant="contained" className={`${styles.cancelButton}`} onClick={handleClose}>
                 Cancel
               </Button>
             </div>

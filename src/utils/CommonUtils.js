@@ -1,4 +1,6 @@
 import { get as getlodash } from 'lodash';
+import moment from 'moment';
+
 const jwt = require('jsonwebtoken');
 
 const setCookie = (key, value, expMinutes = 120) => {
@@ -32,48 +34,66 @@ const isTokenAlive = (token) => {
   return currentTime <= expiryTime;
 };
 
-const getZoneList = () => {
-  const zones = [
-    {
-      label: 'Select',
-      value: 'Select',
-    },
-    {
-      label: 'South',
-      value: 'South',
-    },
-    {
-      label: 'Central',
-      value: 'Central',
-    },
-    {
-      label: 'North',
-      value: 'North',
-    },
-  ];
-  return zones;
+export const yesNoRadioButton = [
+  { id: true, value: 'Yes' },
+  { id: false, value: 'No' },
+];
+
+export const attenderRelationship = [
+  { id: 'family', name: 'Family' },
+  { id: 'ngo', name: 'NGO' },
+  { id: 'relative', name: 'Relative' },
+];
+
+export const addressProof = [
+  { id: 'aadharCard', name: 'Aadhar Card' },
+  { id: 'drivingLicense', name: 'Driving License' },
+  { id: 'rationCard', name: 'Ration Card' },
+];
+
+export const cancellationReason = [{ id: 'machinery issue', name: 'Machinery Issue' }];
+
+export const bookingStatus = {
+  NEW: [{ id: 'BOOKED', value: 'Booked' }],
+  BOOKED: [
+    { id: 'BOOKED', value: 'Booked' },
+    { id: 'ARRIVED', value: 'Arrived' },
+    { id: 'NOSHOW', value: 'No Show' },
+    { id: 'CANCEL', value: 'Cancelled Booking' },
+  ],
+  ARRIVED: [
+    { id: 'ARRIVED', value: 'Arrived' },
+    { id: 'STARTED', value: 'Started' },
+    { id: 'NOSHOW', value: 'No Show' },
+    { id: 'CANCEL', value: 'Cancelled Booking' },
+  ],
+  STARTED: [
+    { id: 'STARTED', value: 'Started' },
+    { id: 'COMPLETE', value: 'Completed' },
+  ],
+  COMPLETED: [{ id: 'COMPLETED', value: 'Completed' }],
+  CANCELLED: [{ id: 'CANCELLED', value: 'Cancelled Booking' }],
+  REASSIGNED: [{ id: 'REASSIGNED', value: 'Re-Assigned' }],
+  NOSHOW: [{ id: 'NOSHOW', value: 'No Show' }],
 };
 
-const getSiteList = () => {
-  const sites = [
-    {
-      label: 'Select',
-      value: 'Select',
-    },
-    {
-      label: 'Ambattur',
-      value: 'Ambattur',
-    },
-    {
-      label: 'Ayanavaram',
-      value: 'Ayanavaram',
-    },
-    {
-      label: 'Egmore',
-      value: 'Egmore',
-    },
+export const enableReassignButtonStatus = ['BOOKED', 'ARRIVED', 'REASSIGNED'];
+
+export const alwaysDisableSaveButton = ['COMPLETED', 'CANCELLED', 'NOSHOW'];
+
+const getReassignReasons = () => {
+  const reAssignReasons = [
+    { reason: 'Attender Requested', id: 1 },
+    { reason: 'Machinery Failure', id: 2 },
+    { reason: 'Staff Not Available', id: 3 },
+    { reason: 'Requesting Time Availablity', id: 4 },
+    { reason: 'Other', id: 5 },
   ];
-  return sites;
+  return reAssignReasons;
 };
 
-export { getCookie, setCookie, deleteCookie, isTokenAlive, getZoneList, getSiteList };
+const getMomentDateStr = (date, format) => {
+  return moment(date).format(format);
+}
+
+export { getCookie, setCookie, deleteCookie, isTokenAlive, getReassignReasons, getMomentDateStr};

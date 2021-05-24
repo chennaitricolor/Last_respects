@@ -16,11 +16,9 @@ const useStyles = makeStyles(() => ({
     fontSize: '14px',
     lineHeight: '16px',
     color: '#000000',
-    marginBottom: '2%',
   },
   dropDown: {
     width: '94%',
-    marginTop: '3%',
 
     '& label': {
       color: '#707070 !important',
@@ -35,7 +33,7 @@ const useStyles = makeStyles(() => ({
   dropDownSelect: {
     fontSize: '16px',
     height: '40px',
-    marginTop: '3%',
+    marginTop: '8px',
     backgroundColor: '#fff',
 
     '& div': {
@@ -43,10 +41,21 @@ const useStyles = makeStyles(() => ({
       color: '#4F4F4F',
     },
   },
+  contactDetails: {
+    color: '#4F4F4F',
+    fontSize: '16px',
+    marginTop: '16px',
+  },
 }));
 
 const ZoneSelection = (props) => {
   const styles = useStyles();
+
+  const getSiteValueByKey = (key) => {
+    let siteList = props.siteList;
+    let site = siteList.filter((site) => site.siteName === props.siteDetails.siteName)[0];
+    return site !== undefined ? site[key] : '';
+  };
 
   return (
     <div className={`row ${styles.slotHeader} mb-4 mt-4`}>
@@ -86,17 +95,19 @@ const ZoneSelection = (props) => {
           >
             {props.siteList.map((item) => {
               return (
-                <MenuItem key={item.id} value={item.site_name}>
-                  {item.site_name}
+                <MenuItem key={item.id} value={item.siteName}>
+                  {item.siteName}
                 </MenuItem>
               );
             })}
           </Select>
         </FormControl>
       </div>
-      <div className="col-12 col-md-2 text">Name : {'Velankadu Buriel'}</div>
-      <div className="col-12 col-md-2 text">Contact : {'123456789'}</div>
-      <div className="col-12 col-md-2 text">Address : {'Anna Nagar East'}</div>
+      <div className={`col-12 col-md-2 text ${styles.contactDetails}`}>
+        Site Name : {props.siteDetails.siteName}
+      </div>
+      <div className={`col-12 col-md-2 text ${styles.contactDetails}`}>Contact : {getSiteValueByKey('contactNo')}</div>
+      <div className={`col-12 col-md-2 text ${styles.contactDetails}`}>Address : {getSiteValueByKey('address')}</div>
     </div>
   );
 };
