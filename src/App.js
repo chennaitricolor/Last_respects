@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Route, Switch } from 'react-router-dom';
 import BaseContainer from './containers/BaseContainer';
 import SlotBookingContainer from './containers/SlotBookingContainer';
+import MachineryManagementContainer from './containers/MachineryManagementContainer';
 import './App.css';
 
 const useStyles = makeStyles({
@@ -68,6 +69,9 @@ const App = () => {
         <Switch>
           <Route path="/slotBooking">
             <SlotBookingContainer />
+          </Route>
+          <Route path="/machineryManagement">
+            <MachineryManagementContainer />
           </Route>
         </Switch>
       </BaseContainer>
