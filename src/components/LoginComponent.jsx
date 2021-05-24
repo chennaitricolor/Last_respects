@@ -18,7 +18,7 @@ const useStyles = makeStyles(() => ({
     width: '100%',
     padding: '40px 0 0 0',
     maxWidth: '600px'
-  },  
+  },
   mobileLoginContainer:{
     color: '#777',
     height: '100%',
@@ -54,6 +54,7 @@ const useStyles = makeStyles(() => ({
   textField: {
     width: '94%',
     margin: '5% 2% 0% 2%',
+    backgroundColor: '#fff',
 
     '& label': {
       color: '#707070 !important',
