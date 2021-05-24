@@ -135,7 +135,7 @@ const TimeSlotSelection = (props) => {
       });
 
       if (trimmedTimeArray.length === 2) {
-        if (moment(trimmedTimeArray[1], 'hh:mm A').isBefore(moment().format('hh:mm A'))) return true;
+        if (moment(trimmedTimeArray[1], 'hh:mm A').isBefore(moment())) return true;
       }
       return false;
     }
@@ -151,9 +151,9 @@ const TimeSlotSelection = (props) => {
       return slotAvailable ? clsx(styles.timeSlot, styles.timeSlotBlocked) : clsx(styles.timeSlot, styles.timeSlotBooked);
     }
 
-    if (slotAvailable) return clsx(styles.timeSlot, styles.timeSlotAvailable);
-
     if (isCurrentTimeCrossedSlotTime(time)) return clsx(styles.timeSlot, styles.timeSlotBlocked);
+
+    if (slotAvailable) return clsx(styles.timeSlot, styles.timeSlotAvailable);
 
     if (timeSlotCompleted) {
       return clsx(styles.timeSlot, styles.timeSlotBlocked);
@@ -168,6 +168,11 @@ const TimeSlotSelection = (props) => {
 
     if (yesterdayDate === props.selectedDate) {
       if (slotAvailable) return true;
+    }
+
+    if (isCurrentTimeCrossedSlotTime(time)) {
+       if (isSlotAvailable(time))
+         return true;
     }
 
     let currentSiteDetails = props.siteList.filter((site) => site.id === props.siteDetails.siteId);
