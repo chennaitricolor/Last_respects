@@ -18,6 +18,8 @@ const getSlotDetailsBasedOnSlotIdReducer = (state = defaultState, action) => {
       return Object.assign({}, state, defaultState);
     case actionTypes.RESET_DATA_UNMOUNT_SLOT_BOOKING:
       return Object.assign({}, state, defaultState);
+    case actionTypes.LOGOUT_SUCCESS:
+      return Object.assign({}, state, defaultState);
     default:
       return state;
   }

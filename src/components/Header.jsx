@@ -12,6 +12,8 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { deleteCookie, getCookie, isTokenAlive } from '../utils/CommonUtils';
 import { actionTypes } from '../utils/actionTypes';
+import IconButton from '@material-ui/core/IconButton';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 const useStyles = makeStyles((theme) => ({
   header: {
@@ -58,6 +60,11 @@ const useStyles = makeStyles((theme) => ({
     color: '#EEFAFE',
     margin: 'auto 0',
   },
+  logoutButton: {
+    position: 'absolute',
+    right: '8px',
+    marginTop: '4px',
+  },
 }));
 
 const Header = () => {
@@ -82,6 +89,12 @@ const Header = () => {
       });
     }
   }, []);
+
+  const handleLogout = () => {
+    dispatch({
+      type: actionTypes.INITIATE_LOGOUT,
+    });
+  };
 
   const toggleDrawer = (anchor, open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -122,23 +135,30 @@ const Header = () => {
   };
 
   return (
-    <header className="container-fluid">
-      <div className={`row ${styles.header}`}>
-        {['left'].map((anchor) => (
-          <React.Fragment key={anchor}>
-            <Button className={'menu-button'} onClick={toggleDrawer(anchor, true)}>
-              <MenuIcon style={{ color: '#fff' }} />
-            </Button>
-            <Drawer classes={{ paper: styles.drawerPaper }} anchor={anchor} open={state[anchor]} onClose={toggleDrawer(anchor, false)}>
-              {menuList(anchor)}
-            </Drawer>
-          </React.Fragment>
-        ))}
-        <Typography variant={'h5'} component={'div'} className={styles.title}>
-          Last Respects
-        </Typography>
-      </div>
-    </header>
+    <div>
+      {window.location.pathname !== '/' && (
+        <header className="container-fluid">
+          <div className={`row ${styles.header}`}>
+            {['left'].map((anchor) => (
+              <React.Fragment key={anchor}>
+                <Button className={'menu-button'} onClick={toggleDrawer(anchor, true)}>
+                  <MenuIcon style={{ color: '#fff' }} />
+                </Button>
+                <Drawer classes={{ paper: styles.drawerPaper }} anchor={anchor} open={state[anchor]} onClose={toggleDrawer(anchor, false)}>
+                  {menuList(anchor)}
+                </Drawer>
+              </React.Fragment>
+            ))}
+            <Typography variant={'h5'} component={'div'} className={styles.title}>
+              Last Respects
+            </Typography>
+            <IconButton className={styles.logoutButton} aria-label="Logout" color="primary" onClick={handleLogout}>
+              <ExitToAppIcon style={{ color: '#fff' }} />
+            </IconButton>
+          </div>
+        </header>
+      )}
+    </div>
   );
 };
 
