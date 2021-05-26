@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { actionTypes } from '../utils/actionTypes';
 import moment from 'moment';
 import Typography from '@material-ui/core/Typography';
+import Header from '../components/Header';
 
 const useStyles = makeStyles(() => ({
   slotBookingDiv: {
@@ -162,6 +163,7 @@ const SlotBookingContainer = (props) => {
 
   return (
     <>
+      <Header />
       {!isFormOpen && (
         <div className={`container ${styles.customContainer} ${styles.slotBookingDiv}`}>
           <ZoneSelection siteDetails={siteDetails} zoneList={zoneList} siteList={siteList} handleOnChangeForDropdown={handleOnChangeForDropdown} />

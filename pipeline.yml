@@ -8,7 +8,7 @@ replicas:
 restart_policy: any
 max_mem: 1024M
 max_cpu: 1
-traefik_application_port: 8000
+traefik_application_port: 3200
 traefik_https_enable: true
 traefik_ssl_provider: letsencrypt
 vault:
