@@ -182,6 +182,16 @@ const SlotBookingContainer = (props) => {
                     siteList={siteList}
                     openSlotForm={openSlotForm}
                   />
+                  {selectedTimeSlot!=='' && 
+                        <LastRespectFormContainer
+                          date={selectedDate}
+                          time={selectedTimeSlot}
+                          siteList={siteList}
+                          siteId={siteDetails.siteId}
+                          type={type}
+                          editSlotDetails={selectedSlotDetails}
+                          onCancel={() => setFormOpen(false)}
+                        />}
                 </div>
               </div>
             ) : (
@@ -196,7 +206,7 @@ const SlotBookingContainer = (props) => {
           </div>
         </div>
       )}
-      {isFormOpen && (
+      {/* {isFormOpen && (
         <LastRespectFormContainer
           date={selectedDate}
           time={selectedTimeSlot}
@@ -206,7 +216,7 @@ const SlotBookingContainer = (props) => {
           editSlotDetails={selectedSlotDetails}
           onCancel={() => setFormOpen(false)}
         />
-      )}
+      )} */}
     </>
   );
 };
