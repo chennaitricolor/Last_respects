@@ -6,8 +6,8 @@ import moment from 'moment';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+import { ReactComponent as Success } from '../../images/Sucess.svg';
+import { ReactComponent as PendingAction } from '../../images/PendingAction.svg';
 
 const useStyles = makeStyles({
   rowFullWidth: {
@@ -35,7 +35,6 @@ const useStyles = makeStyles({
     margin: '-2px 10px 0 15px',
     borderRadius: 3,
   },
-
   bookedColor: {
     background: '#EB5757',
   },
@@ -54,7 +53,7 @@ const useStyles = makeStyles({
   timeSlot: {
     padding: '10px 15px',
     marginRight: '16px',
-    marginBottom: '8px',
+    marginBottom: '2px',
     fontWeight: 'bold',
     fontSize: '14px',
     color: '#FFFFFF',
@@ -72,7 +71,6 @@ const useStyles = makeStyles({
   timeSlotBlocked: {
     border: '1px solid #828282',
     background: '#828282',
-    cursor: 'not-allowed',
   },
 });
 
@@ -171,8 +169,7 @@ const TimeSlotSelection = (props) => {
     }
 
     if (isCurrentTimeCrossedSlotTime(time)) {
-       if (isSlotAvailable(time))
-         return true;
+      if (isSlotAvailable(time)) return true;
     }
 
     let currentSiteDetails = props.siteList.filter((site) => site.id === props.siteDetails.siteId);
@@ -198,15 +195,11 @@ const TimeSlotSelection = (props) => {
       <List disablePadding={true} className={`${styles.timeSlotWrapper}`}>
         {timeSlotArray.map((time, index) => {
           return (
-            <ListItem key={index} button disabled={isDisabledTime(time)} onClick={() => selectTime(time)} style={{ padding: 0 }}>
+            <ListItem key={index} button disabled={isDisabledTime(time)} onClick={() => selectTime(time)} style={{ padding: 0, opacity: 'initial' }}>
               <ListItemText className={getClassesForTimeSlot(time)}>
                 {time}
-                {isTimeSlotCompleted(time) && (
-                  <CheckCircleOutlineIcon style={{ background: '#219653', color: '#fff', borderRadius: '50%', float: 'right' }} />
-                )}
-                {isCurrentTimeCrossedSlotTime(time) && isTimeSlotInProgress(time) && (
-                  <ErrorOutlineIcon style={{ background: '#F2994A', color: '#fff', borderRadius: '50%', float: 'right' }} />
-                )}
+                {isTimeSlotCompleted(time) && <Success style={{ marginTop: '4px', float: 'right' }} />}
+                {isCurrentTimeCrossedSlotTime(time) && isTimeSlotInProgress(time) && <PendingAction style={{ marginTop: '4px', float: 'right' }} />}
               </ListItemText>
             </ListItem>
           );
