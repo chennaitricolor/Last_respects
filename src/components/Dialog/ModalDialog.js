@@ -124,7 +124,7 @@ const ModalDialog = (props) => {
     zoneName: '',
     siteName: '',
   });
-  const [selectedReason, setReassignReason] = useState(reAssignReasons);
+  const [selectedReason, setReassignReason] = useState('');
   const [showReAssignComment, setShowReAssignComment] = useState(false);
   const [commentVal, setCommentVal] = useState('');
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -197,8 +197,28 @@ const ModalDialog = (props) => {
     }
   }, [dispatch, siteDetails]);
 
-  const handleDateChange = (date) => {
+  const enableSubmitAction = () => {
+    let result = false;
+    result =
+      zoneName !== '' &&
+      siteDetails.siteName !== '' &&
+      selectedDate !== null &&
+      selectedDate !== '' &&
+      selectedTime !== '' &&
+      selectedReason !== ''
+      && isOwner;
+
+    result = showReAssignComment ? commentVal !== '' : result;
+
+    result  ? setEnableSubmit(true) : setEnableSubmit(false);
+  };
+
+  //handle submit
+  useEffect( () => {
     enableSubmitAction();
+  },[zoneName ,siteDetails.siteName,selectedDate,selectedTime,selectedReason,isOwner,commentVal]);
+
+  const handleDateChange = (date) => {
     setSelectedDate(date);
     dispatch({
       type: actionTypes.GET_AVAILABLE_SLOT_DETAILS_BASED_SITE_ID,
@@ -211,7 +231,6 @@ const ModalDialog = (props) => {
   };
 
   const handleOnChange = (event, id) => {
-    enableSubmitAction();
     if (event !== null) {
       if (id === 'zoneName') {
         setSiteDetails({
@@ -270,23 +289,6 @@ const ModalDialog = (props) => {
       });
       setEnableSubmit(false);
       props.setOpenDialog(false);
-    }
-  };
-
-  const enableSubmitAction = () => {
-    let result = false;
-    result =
-      zoneName !== '' &&
-      siteDetails.siteName !== '' &&
-      selectedDate !== null &&
-      selectedDate !== '' &&
-      selectedTime !== '' &&
-      selectedReason !== ''
-      && isOwner;
-
-    result = showReAssignComment ? commentVal !== '' : result;
-    if(result){
-      setEnableSubmit(true)
     }
   };
 
@@ -422,7 +424,7 @@ const ModalDialog = (props) => {
                   value={commentVal}
                   size="small"
                   variant={'outlined'}
-                  onChange={(event) => handleOnChange(event, 'text')}
+                  onChange={(event) => handleOnChange(event.target.value, 'text')}
                   InputLabelProps={{ shrink: true }}
                   autoComplete={'disabled'}
                 />
