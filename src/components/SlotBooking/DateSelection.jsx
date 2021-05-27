@@ -69,6 +69,24 @@ const DateSelection = (props) => {
 
   let dateArray = props.dateTimeSlotDetails !== null ? Object.keys(props.dateTimeSlotDetails) : null;
 
+  const isCurrentTimeCrossedSlotTime = (time, date) => {
+    let currentDate = moment().format('DD-MM-YYYY');
+    if (currentDate === date) {
+      let timeArray = time.split('-');
+      let trimmedTimeArray = [];
+
+      timeArray.forEach((timeValue) => {
+        trimmedTimeArray.push(timeValue.trim());
+      });
+
+      if (trimmedTimeArray.length === 2) {
+        if (moment(trimmedTimeArray[1], 'hh:mm A').isBefore(moment())) return true;
+      }
+      return false;
+    }
+    return false;
+  };
+
   const getAvailableSlotCount = (date) => {
     let yesterdayDate = moment().subtract(1, 'days').format('DD-MM-YYYY');
     let availableCount = 0;
@@ -76,11 +94,11 @@ const DateSelection = (props) => {
 
     if (yesterdayDate === date) return 'Previous Date';
 
-    Object.values(dateSlots).forEach((value) => {
-      if (value.id === undefined) availableCount++;
-    });
+    for (let [key, value] of Object.entries(dateSlots)) {
+      if (value.id === undefined && !isCurrentTimeCrossedSlotTime(key, date)) availableCount++;
+    }
 
-    return `${availableCount} Slots Available`;
+    return `${availableCount === 0 ? 'No' : availableCount} Slots Available`;
   };
 
   const getClassesForDateSlot = (date, yesterdayStyle, style, selectedStyle) => {
@@ -104,10 +122,17 @@ const DateSelection = (props) => {
               <div key={index} style={{ display: 'inline-block', marginRight: '8px' }} onClick={() => props.selectDate(date)}>
                 <Card className={getClassesForDateSlot(date, styles.yesterdayDateCard, styles.dateCard, styles.dateCardSelected)}>
                   <CardContent>
-                    <Typography className={getClassesForDateSlot(date, styles.yesterdayDateText, styles.dateText, styles.dateTextSelected)} variant={'h5'} component={'div'}>
+                    <Typography
+                      className={getClassesForDateSlot(date, styles.yesterdayDateText, styles.dateText, styles.dateTextSelected)}
+                      variant={'h5'}
+                      component={'div'}
+                    >
                       {formatDate(date)}
                     </Typography>
-                    <Typography className={getClassesForDateSlot(date, styles.yesterdaySlotText, styles.slotText, styles.slotTextSelected)} component={'div'}>
+                    <Typography
+                      className={getClassesForDateSlot(date, styles.yesterdaySlotText, styles.slotText, styles.slotTextSelected)}
+                      component={'div'}
+                    >
                       {`${getAvailableSlotCount(date)}`}
                     </Typography>
                   </CardContent>
