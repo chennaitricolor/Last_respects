@@ -97,12 +97,7 @@ const getMomentDateStr = (date, format) => {
 }
 
 const isMobile = () =>{
-  let result = false;
-  
-  return window.innerWidth>768 ? false: true;
-  if (window.innerWidth > 768) {
-    result = false;
-  } 
+  return window.innerWidth< 768 ? true: false;
 }
 
-export { getCookie, setCookie, deleteCookie, isTokenAlive, getReassignReasons, getMomentDateStr};
+export { getCookie, setCookie, deleteCookie, isTokenAlive, getReassignReasons, getMomentDateStr,isMobile};

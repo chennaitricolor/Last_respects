@@ -9,6 +9,7 @@ import { actionTypes } from '../utils/actionTypes';
 import moment from 'moment';
 import Typography from '@material-ui/core/Typography';
 import Header from '../components/Header';
+import {isMobile} from '../utils/CommonUtils';
 
 const useStyles = makeStyles(() => ({
   slotBookingDiv: {
@@ -65,6 +66,7 @@ const SlotBookingContainer = (props) => {
   const zoneList = useSelector((state) => state.getAllZoneReducer.zoneList);
   const siteList = useSelector((state) => state.getSitesBasedOnZoneIdReducer.siteList);
   const dateTimeSlotDetails = useSelector((state) => state.getSlotsBasedOnSiteIdReducer.slotDetails);
+  const mobileCheck = isMobile();
 
   useEffect(() => {
     dispatch({
@@ -157,7 +159,7 @@ const SlotBookingContainer = (props) => {
   const openSlotForm = (payload) => {
     setSelectedTimeSlot(payload.time);
     setType(payload.type);
-    setFormOpen(true);
+    mobileCheck ? setFormOpen(true) : setFormOpen(false);
     setSelectedSlotDetails(payload.slotDetails);
   };
 
@@ -182,7 +184,7 @@ const SlotBookingContainer = (props) => {
                     siteList={siteList}
                     openSlotForm={openSlotForm}
                   />
-                  {selectedTimeSlot!=='' && 
+                  {!mobileCheck && selectedTimeSlot!=='' && 
                         <LastRespectFormContainer
                           date={selectedDate}
                           time={selectedTimeSlot}
@@ -206,7 +208,7 @@ const SlotBookingContainer = (props) => {
           </div>
         </div>
       )}
-      {/* {isFormOpen && (
+      {mobileCheck && isFormOpen && (
         <LastRespectFormContainer
           date={selectedDate}
           time={selectedTimeSlot}
@@ -216,7 +218,7 @@ const SlotBookingContainer = (props) => {
           editSlotDetails={selectedSlotDetails}
           onCancel={() => setFormOpen(false)}
         />
-      )} */}
+      )}
     </>
   );
 };

@@ -27,6 +27,7 @@ import {
   getCookie,
   isTokenAlive,
   yesNoRadioButton,
+  isMobile,
 } from '../utils/CommonUtils';
 import moment from 'moment';
 import momentTimeZone from 'moment-timezone';
@@ -34,7 +35,12 @@ import { actionTypes } from '../utils/actionTypes';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
+  root:{
+    display: 'flex',
+    flexFlow: 'column',
+    height: '100%'
+  },
+  mobileRoot: {
     display: 'flex',
     flexFlow: 'column',
     height: '100%',
@@ -277,6 +283,7 @@ const initialState = {
 
 const LastRespectForm = (props) => {
   const styles = useStyles();
+  const mobileCheck = isMobile();
 
   const dispatch = useDispatch();
   const [details, setDetails] = useState(initialState);
@@ -425,15 +432,15 @@ const LastRespectForm = (props) => {
   };
 
   const [openDialog, setOpenDialog] = useState(false);
-
+  const rootStyle = mobileCheck ? styles.mobileRoot : styles.root ;
   return (
-    <div className={styles.root}>
+    <div className={rootStyle}>
       <div>
-        <div>
+        { mobileCheck && <div>
           <Button variant={'text'} onClick={props.onCancel} className={styles.backButton}>
             {'<- Back'}
           </Button>
-        </div>
+        </div> }
         <form className={styles.form}>
           <Typography className={styles.header} component={'div'}>
             Date & Time Slot
