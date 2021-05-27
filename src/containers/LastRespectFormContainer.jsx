@@ -27,7 +27,7 @@ const LastRespectFormContainer = (props) => {
   }, [slotDetails]);
 
   return (
-    <div style={{ height: '92%' }} className="col-12">
+    <div  className="col-md-8 col-12">
       {props.type === 'ADD' ? (
         <LastRespectForm
           selectedDate={props.date}

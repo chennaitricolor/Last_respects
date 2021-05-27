@@ -27,6 +27,7 @@ import {
   getCookie,
   isTokenAlive,
   yesNoRadioButton,
+  isMobile,
 } from '../utils/CommonUtils';
 import moment from 'moment';
 import momentTimeZone from 'moment-timezone';
@@ -34,7 +35,12 @@ import { actionTypes } from '../utils/actionTypes';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
+  root:{
+    display: 'flex',
+    flexFlow: 'column',
+    height: '100%'
+  },
+  mobileRoot: {
     display: 'flex',
     flexFlow: 'column',
     height: '100%',
@@ -192,7 +198,7 @@ const renderRadioButtonField = (label, value, id, radioButtonList, handleOnChang
       <RadioGroup
         className={`last-respect-form-${id}-radio-value`}
         style={{ display: 'inline-block' }}
-        value={radioValue.length != 0 ? radioValue[0].value : ''}
+        value={radioValue.length !== 0 ? radioValue[0].value : ''}
         onChange={(event) => handleOnChange(event, id, type)}
       >
         {radioButtonList.map((radioButton, index) => {
@@ -277,6 +283,7 @@ const initialState = {
 
 const LastRespectForm = (props) => {
   const styles = useStyles();
+  const mobileCheck = isMobile();
 
   const dispatch = useDispatch();
   const [details, setDetails] = useState(initialState);
@@ -312,7 +319,7 @@ const LastRespectForm = (props) => {
       if (event !== null) {
         setDetails({
           ...details,
-          [id]: radioValue.length != 0 ? radioValue[0].id : '',
+          [id]: radioValue.length !== 0 ? radioValue[0].id : '',
         });
       }
     }
@@ -370,7 +377,7 @@ const LastRespectForm = (props) => {
 
   const isOwnerForSelectedSite = () => {
     let currentSiteDetails = props.siteList.filter((site) => site.id === props.siteId);
-    return currentSiteDetails.length != 0 ? currentSiteDetails[0].isOwner : false;
+    return currentSiteDetails.length !== 0 ? currentSiteDetails[0].isOwner : false;
   };
 
   const handleFormSubmit = () => {
@@ -408,7 +415,7 @@ const LastRespectForm = (props) => {
       }
 
       callFetchApi(api, null, requestMethod, payload, token).then((response) => {
-        if (response.status == 200) {
+        if (response.status === 200) {
           setSaveLoader(false);
           dispatch({
             type: actionTypes.GET_SLOTS_BASED_SITE_ID,
@@ -425,15 +432,15 @@ const LastRespectForm = (props) => {
   };
 
   const [openDialog, setOpenDialog] = useState(false);
-
+  const rootStyle = mobileCheck ? styles.mobileRoot : styles.root ;
   return (
-    <div className={styles.root}>
+    <div className={rootStyle}>
       <div>
-        <div>
+        { mobileCheck && <div>
           <Button variant={'text'} onClick={props.onCancel} className={styles.backButton}>
             {'<- Back'}
           </Button>
-        </div>
+        </div> }
         <form className={styles.form}>
           <Typography className={styles.header} component={'div'}>
             Date & Time Slot
@@ -444,7 +451,7 @@ const LastRespectForm = (props) => {
             </Typography>
             {props.type === 'EDIT' && enableReassignButtonStatus.includes(props.details.status) && (
               <div style={{ display: 'inline-block', float: 'right' }}>
-                {openDialog && <ModalDialog setOpenDialog={setOpenDialog} />}
+                {openDialog && <ModalDialog setOpenDialog={setOpenDialog} slotId={props.details.id}/>}
                 <Button
                   variant="outlined"
                   className={styles.reAssignButton}

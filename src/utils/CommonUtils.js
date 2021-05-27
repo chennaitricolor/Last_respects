@@ -96,4 +96,8 @@ const getMomentDateStr = (date, format) => {
   return moment(date).format(format);
 }
 
-export { getCookie, setCookie, deleteCookie, isTokenAlive, getReassignReasons, getMomentDateStr};
+const isMobile = () =>{
+  return window.innerWidth< 768 ? true: false;
+}
+
+export { getCookie, setCookie, deleteCookie, isTokenAlive, getReassignReasons, getMomentDateStr,isMobile};
