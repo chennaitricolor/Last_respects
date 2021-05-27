@@ -192,7 +192,7 @@ const renderRadioButtonField = (label, value, id, radioButtonList, handleOnChang
       <RadioGroup
         className={`last-respect-form-${id}-radio-value`}
         style={{ display: 'inline-block' }}
-        value={radioValue.length != 0 ? radioValue[0].value : ''}
+        value={radioValue.length !== 0 ? radioValue[0].value : ''}
         onChange={(event) => handleOnChange(event, id, type)}
       >
         {radioButtonList.map((radioButton, index) => {
@@ -312,7 +312,7 @@ const LastRespectForm = (props) => {
       if (event !== null) {
         setDetails({
           ...details,
-          [id]: radioValue.length != 0 ? radioValue[0].id : '',
+          [id]: radioValue.length !== 0 ? radioValue[0].id : '',
         });
       }
     }
@@ -370,7 +370,7 @@ const LastRespectForm = (props) => {
 
   const isOwnerForSelectedSite = () => {
     let currentSiteDetails = props.siteList.filter((site) => site.id === props.siteId);
-    return currentSiteDetails.length != 0 ? currentSiteDetails[0].isOwner : false;
+    return currentSiteDetails.length !== 0 ? currentSiteDetails[0].isOwner : false;
   };
 
   const handleFormSubmit = () => {
@@ -408,7 +408,7 @@ const LastRespectForm = (props) => {
       }
 
       callFetchApi(api, null, requestMethod, payload, token).then((response) => {
-        if (response.status == 200) {
+        if (response.status === 200) {
           setSaveLoader(false);
           dispatch({
             type: actionTypes.GET_SLOTS_BASED_SITE_ID,
@@ -444,7 +444,7 @@ const LastRespectForm = (props) => {
             </Typography>
             {props.type === 'EDIT' && enableReassignButtonStatus.includes(props.details.status) && (
               <div style={{ display: 'inline-block', float: 'right' }}>
-                {openDialog && <ModalDialog setOpenDialog={setOpenDialog} />}
+                {openDialog && <ModalDialog setOpenDialog={setOpenDialog} slotId={props.details.id}/>}
                 <Button
                   variant="outlined"
                   className={styles.reAssignButton}
