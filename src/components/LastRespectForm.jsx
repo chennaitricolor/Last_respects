@@ -451,7 +451,7 @@ const LastRespectForm = (props) => {
             </Typography>
             {props.type === 'EDIT' && enableReassignButtonStatus.includes(props.details.status) && (
               <div style={{ display: 'inline-block', float: 'right' }}>
-                {openDialog && <ModalDialog setOpenDialog={setOpenDialog} slotId={props.details.id}/>}
+                {openDialog && <ModalDialog setOpenDialog={setOpenDialog} slotDetails={props.details}/>}
                 <Button
                   variant="outlined"
                   className={styles.reAssignButton}

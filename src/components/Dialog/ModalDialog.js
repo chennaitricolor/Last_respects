@@ -262,12 +262,12 @@ const ModalDialog = (props) => {
     setEnableSubmit(false);
     let token = getCookie('lrToken');
     if (token !== '' && isTokenAlive(token)) {
-      let api = apiUrls.updateSlotStatus.replace(':slotId', props.slotId);
-      let slotDetails = {
-        slot: selectedTime,
-        dateOfCremation: moment(selectedDate, 'DD-MM-YYYY').format('YYYY-MM-DD'),
-        burialSiteId: siteId,
-      };
+      let api = apiUrls.updateSlotStatus.replace(':slotId', props.slotDetails.id);
+      let slotDetails = props.slotDetails;
+      slotDetails.id = undefined;
+      slotDetails.slot = selectedTime;
+      slotDetails.dateOfCremation = moment(selectedDate, 'DD-MM-YYYY').format('MM-DD-YYYY');
+      slotDetails.burialSiteId = parseInt(siteId);
 
       let reAssignPayload = {
         slotDetails: slotDetails,
@@ -280,15 +280,14 @@ const ModalDialog = (props) => {
           dispatch({
             type: actionTypes.GET_SLOTS_BASED_SITE_ID,
             payload: {
-              siteId: props.siteId,
+              siteId: siteId,
             },
           });
+          props.setOpenDialog(false);
         } else {
           setShowError(true);
         }
       });
-      setEnableSubmit(false);
-      props.setOpenDialog(false);
     }
   };
 

@@ -13,7 +13,7 @@ import {isMobile} from '../utils/CommonUtils';
 
 const useStyles = makeStyles(() => ({
   slotBookingDiv: {
-    height: '90%',
+    //height: '90%',
     position: 'relative',
     overflow: 'auto',
   },
@@ -184,7 +184,7 @@ const SlotBookingContainer = (props) => {
                     siteList={siteList}
                     openSlotForm={openSlotForm}
                   />
-                  {!mobileCheck && selectedTimeSlot!=='' && 
+                  {!mobileCheck && !isFormOpen && selectedTimeSlot!=='' && 
                         <LastRespectFormContainer
                           date={selectedDate}
                           time={selectedTimeSlot}
