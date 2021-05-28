@@ -40,18 +40,25 @@ export const yesNoRadioButton = [
 ];
 
 export const attenderRelationship = [
-  { id: 'family', name: 'Family' },
-  { id: 'ngo', name: 'NGO' },
-  { id: 'relative', name: 'Relative' },
+  { id: 'Family', name: 'Family' },
+  { id: 'Government', name: 'Government' },
+  { id: 'NGO', name: 'NGO' },
+  { id: 'Relative', name: 'Relative' },
 ];
 
 export const addressProof = [
-  { id: 'aadharCard', name: 'Aadhar Card' },
-  { id: 'drivingLicense', name: 'Driving License' },
-  { id: 'rationCard', name: 'Ration Card' },
+  { id: 'Aadhar Card', name: 'Aadhar Card' },
+  { id: 'Driving License', name: 'Driving License' },
+  { id: 'Ecard', name: 'E-Card' },
+  { id: 'Ration Card', name: 'Ration Card' },
 ];
 
-export const cancellationReason = [{ id: 'machinery issue', name: 'Machinery Issue' }];
+export const cancellationReason = [
+  { id: 'Did Not Arrive', name: 'Did Not Arrive' },
+  { id: 'Machinery Issue', name: 'Machinery Issue' },
+  { id: 'Rescheduled', name: 'Rescheduled' },
+  { id: 'Others', name: 'Others' },
+];
 
 export const bookingStatus = {
   NEW: [{ id: 'BOOKED', value: 'Booked' }],

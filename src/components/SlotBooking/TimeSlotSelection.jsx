@@ -174,7 +174,8 @@ const TimeSlotSelection = (props) => {
 
     let currentSiteDetails = props.siteList.filter((site) => site.id === props.siteDetails.siteId);
     let isOwner = currentSiteDetails.length !== 0 ? currentSiteDetails[0].isOwner : false;
-    return !isOwner && slotAvailable;
+    let isActive = currentSiteDetails.length !== 0 ? currentSiteDetails[0].isActive : false;
+    return !isOwner && !isActive && slotAvailable;
   };
 
   return (

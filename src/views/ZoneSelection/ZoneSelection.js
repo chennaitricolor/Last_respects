@@ -57,6 +57,20 @@ const ZoneSelection = (props) => {
     return site !== undefined ? site[key] : '';
   };
 
+  const sortZoneList = (zoneList) => {
+    if (zoneList !== undefined && zoneList !== null && zoneList.length !== 0) {
+      zoneList.sort((a, b) => (a.zone_or_division > b.zone_or_division ? 1 : -1));
+    }
+    return zoneList;
+  };
+
+  const sortSiteList = (siteList) => {
+    if (siteList !== undefined && siteList !== null && siteList.length !== 0) {
+      siteList.sort((a, b) => (a.siteName > b.siteName ? 1 : -1));
+    }
+    return siteList;
+  }
+
   return (
     <div className={`row ${styles.slotHeader} mb-4 mt-4`}>
       <div className={`col-6 col-md-3 dropdown`}>
@@ -71,7 +85,7 @@ const ZoneSelection = (props) => {
             value={props.siteDetails.zoneName}
             onChange={(e) => props.handleOnChangeForDropdown(e.target.value, 'zoneName')}
           >
-            {props.zoneList.map((item) => {
+            {sortZoneList(props.zoneList).map((item) => {
               return (
                 <MenuItem key={item.zone_or_division_id} value={item.zone_or_division}>
                   {item.zone_or_division}
@@ -93,7 +107,7 @@ const ZoneSelection = (props) => {
             value={props.siteDetails.siteName}
             onChange={(e) => props.handleOnChangeForDropdown(e.target.value, 'siteName')}
           >
-            {props.siteList.map((item) => {
+            {sortSiteList(props.siteList).map((item) => {
               return (
                 <MenuItem key={item.id} value={item.siteName}>
                   {item.siteName}
@@ -103,9 +117,7 @@ const ZoneSelection = (props) => {
           </Select>
         </FormControl>
       </div>
-      <div className={`col-12 col-md-2 text ${styles.contactDetails}`}>
-        Site Name : {props.siteDetails.siteName}
-      </div>
+      <div className={`col-12 col-md-2 text ${styles.contactDetails}`}>Site Name : {props.siteDetails.siteName}</div>
       <div className={`col-12 col-md-2 text ${styles.contactDetails}`}>Contact : {getSiteValueByKey('contactNo')}</div>
       <div className={`col-12 col-md-2 text ${styles.contactDetails}`}>Address : {getSiteValueByKey('address')}</div>
     </div>

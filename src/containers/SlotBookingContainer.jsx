@@ -9,7 +9,7 @@ import { actionTypes } from '../utils/actionTypes';
 import moment from 'moment';
 import Typography from '@material-ui/core/Typography';
 import Header from '../components/Header';
-import {isMobile} from '../utils/CommonUtils';
+import { isMobile } from '../utils/CommonUtils';
 
 const useStyles = makeStyles(() => ({
   slotBookingDiv: {
@@ -184,16 +184,17 @@ const SlotBookingContainer = (props) => {
                     siteList={siteList}
                     openSlotForm={openSlotForm}
                   />
-                  {!mobileCheck && selectedTimeSlot!=='' && 
-                        <LastRespectFormContainer
-                          date={selectedDate}
-                          time={selectedTimeSlot}
-                          siteList={siteList}
-                          siteId={siteDetails.siteId}
-                          type={type}
-                          editSlotDetails={selectedSlotDetails}
-                          onCancel={() => setFormOpen(false)}
-                        />}
+                  {!mobileCheck && selectedTimeSlot !== '' && (
+                    <LastRespectFormContainer
+                      date={selectedDate}
+                      time={selectedTimeSlot}
+                      siteList={siteList}
+                      siteId={siteDetails.siteId}
+                      type={type}
+                      editSlotDetails={selectedSlotDetails}
+                      onCancel={() => setFormOpen(false)}
+                    />
+                  )}
                 </div>
               </div>
             ) : (
