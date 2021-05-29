@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -33,6 +33,10 @@ import moment from 'moment';
 import momentTimeZone from 'moment-timezone';
 import { actionTypes } from '../utils/actionTypes';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import Alert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -288,6 +292,21 @@ const LastRespectForm = (props) => {
   const dispatch = useDispatch();
   const [details, setDetails] = useState(initialState);
   const [saveLoader, setSaveLoader] = useState(false);
+  const [snackInfo, setSnackInfo] = useState({
+    openSnack: false,
+    message: '',
+    severity: 'success',
+  });
+
+  const snackBarInfo = useSelector((state) => state.showSnackBarMessageReducer);
+
+  useEffect(() => {
+    setSnackInfo({
+      openSnack: snackBarInfo.openSnack,
+      message: snackBarInfo.message,
+      severity: snackBarInfo.severity,
+    });
+  }, [dispatch, snackBarInfo]);
 
   useEffect(() => {
     if (props.type === 'EDIT' && props.details !== null) {
@@ -339,6 +358,12 @@ const LastRespectForm = (props) => {
         });
       }
     }
+  };
+
+  const handleCloseSnackBar = () => {
+    dispatch({
+      type: actionTypes.RESET_SNACKBAR,
+    });
   };
 
   const enableSubmit = () => {
@@ -435,20 +460,51 @@ const LastRespectForm = (props) => {
         requestMethod = 'PUT';
       }
 
-      callFetchApi(api, null, requestMethod, payload, token).then((response) => {
-        if (response.status === 200) {
-          setSaveLoader(false);
-          dispatch({
-            type: actionTypes.GET_SLOTS_BASED_SITE_ID,
-            payload: {
-              siteId: props.siteId,
-            },
-          });
-          props.onCancel();
-        } else {
-          setSaveLoader(false);
-        }
-      });
+      callFetchApi(api, null, requestMethod, payload, token)
+        .then((response) => {
+          if (response.status == 200) {
+            setSaveLoader(false);
+            dispatch({
+              type: actionTypes.GET_SLOTS_BASED_SITE_ID,
+              payload: {
+                siteId: props.siteId,
+              },
+            });
+            dispatch({
+              type: actionTypes.SHOW_SNACKBAR,
+              payload: {
+                openSnack: true,
+                message: `Slot ${props.selectedTime} has ${props.type === 'ADD' ? 'Booked' : 'Updated'}`,
+                severity: 'success',
+              },
+            });
+            props.onCancel();
+          } else {
+            setSaveLoader(false);
+            dispatch({
+              type: actionTypes.SHOW_SNACKBAR,
+              payload: {
+                openSnack: true,
+                message: 'Error',
+                severity: 'error',
+              },
+            });
+          }
+        })
+        .catch((error) => {
+          if (error.response !== undefined && error.response.data !== undefined && error.response.data.error !== undefined) {
+            let errorMessage = error.response.data.error[0];
+            setSaveLoader(false);
+            dispatch({
+              type: actionTypes.SHOW_SNACKBAR,
+              payload: {
+                openSnack: true,
+                message: errorMessage.message,
+                severity: 'error',
+              },
+            });
+          }
+        });
     }
   };
 
@@ -598,6 +654,22 @@ const LastRespectForm = (props) => {
           Cancel
         </Button>
       </div>
+      <Snackbar
+        open={snackInfo.openSnack}
+        autoHideDuration={6000}
+        action={
+          <React.Fragment>
+            <IconButton aria-label="close" color="inherit" onClick={handleCloseSnackBar}>
+              <CloseIcon />
+            </IconButton>
+          </React.Fragment>
+        }
+        onClose={handleCloseSnackBar}
+      >
+        <Alert onClose={handleCloseSnackBar} severity={snackInfo.severity}>
+          {snackInfo.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
