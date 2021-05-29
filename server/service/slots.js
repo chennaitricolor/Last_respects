@@ -38,6 +38,7 @@ class Slots {
         return slotMetaDates;
       }
       const currentDate = moment();
+      const previousDate = moment(currentDate).subtract(1, 'd');
       const endDate = moment(currentDate).add(DATE_RANGE.VALUE, DATE_RANGE.UNIT || 'd');
       let days = DATE_RANGE.VALUE || 4;
       const siteId = _.get(req, 'params.siteId');
@@ -75,7 +76,7 @@ class Slots {
         [Sequelize.Op.and]: [
           {
             dateOfCremation: {
-              [Sequelize.Op.between]: [currentDate, endDate]
+              [Sequelize.Op.between]: [previousDate, endDate]
             }
           },
           {
