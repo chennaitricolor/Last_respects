@@ -36,6 +36,7 @@ const LastRespectFormContainer = (props) => {
           siteId={props.siteId}
           onCancel={props.onCancel}
           type={props.type}
+          setType={props.setType}
           details={details}
         />
       ) : props.type === 'EDIT' && details !== null ? (

@@ -17,7 +17,7 @@ import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles(() => ({
   slotBookingDiv: {
-    height: '90%',
+    //height: '90%',
     position: 'relative',
     overflow: 'auto',
   },
@@ -216,6 +216,7 @@ const SlotBookingContainer = (props) => {
                       siteList={siteList}
                       siteId={siteDetails.siteId}
                       type={type}
+                      setType={setType}
                       editSlotDetails={selectedSlotDetails}
                       onCancel={() => setFormOpen(false)}
                     />

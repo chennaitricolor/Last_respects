@@ -462,7 +462,7 @@ const LastRespectForm = (props) => {
 
       callFetchApi(api, null, requestMethod, payload, token)
         .then((response) => {
-          if (response.status == 200) {
+          if (response.status === 200) {
             setSaveLoader(false);
             dispatch({
               type: actionTypes.GET_SLOTS_BASED_SITE_ID,
@@ -478,6 +478,7 @@ const LastRespectForm = (props) => {
                 severity: 'success',
               },
             });
+            props.setType('EDIT')
             props.onCancel();
           } else {
             setSaveLoader(false);
@@ -530,7 +531,7 @@ const LastRespectForm = (props) => {
             </Typography>
             {props.type === 'EDIT' && enableReassignButtonStatus.includes(props.details.status) && (
               <div style={{ display: 'inline-block', float: 'right' }}>
-                {openDialog && <ModalDialog setOpenDialog={setOpenDialog} slotId={props.details.id} />}
+                {openDialog && <ModalDialog setOpenDialog={setOpenDialog} slotDetails={props.details}/>}
                 <Button
                   variant="outlined"
                   className={styles.reAssignButton}
