@@ -165,16 +165,26 @@ const TimeSlotSelection = (props) => {
     let slotAvailable = isSlotAvailable(time);
 
     if (yesterdayDate === props.selectedDate) {
-      if (slotAvailable) return true;
+      return slotAvailable;
     }
 
     if (isCurrentTimeCrossedSlotTime(time)) {
-      if (isSlotAvailable(time)) return true;
+      return slotAvailable;
     }
 
     let currentSiteDetails = props.siteList.filter((site) => site.id === props.siteDetails.siteId);
     let isOwner = currentSiteDetails.length !== 0 ? currentSiteDetails[0].isOwner : false;
-    return !isOwner && slotAvailable;
+    let isActive = currentSiteDetails.length !== 0 ? currentSiteDetails[0].isActive : false;
+
+    if (!isOwner) {
+      return slotAvailable;
+    }
+
+    if (!isActive) {
+      return slotAvailable;
+    }
+
+    return false;
   };
 
   return (
@@ -195,7 +205,7 @@ const TimeSlotSelection = (props) => {
       <List disablePadding={true} className={`${styles.timeSlotWrapper}`}>
         {timeSlotArray.map((time, index) => {
           return (
-            <ListItem key={index} button disabled={isDisabledTime(time)} onClick={() => selectTime(time)} style={{ padding: 0, opacity: 'initial' }}>
+            <ListItem key={index} button disabled={isDisabledTime(time)} onClick={() => selectTime(time)} style={{ padding: 0 }}>
               <ListItemText className={getClassesForTimeSlot(time)}>
                 {time}
                 {isTimeSlotCompleted(time) && <Success style={{ marginTop: '4px', float: 'right' }} />}

@@ -31,12 +31,16 @@ function callFetchAxios(endpoint, params, method, reqbody = {}, headerToken = nu
       return axiosInstance
         .post(endpoint, reqbody)
         .then((response) => response)
-        .catch((error) => error);
+        .catch((error) => {
+          throw error;
+        });
     case 'PUT':
       return axiosInstance
         .put(endpoint, reqbody)
         .then((response) => response)
-        .catch((error) => error);
+        .catch((error) => {
+          throw error;
+        });
     case 'DELETE':
       return axiosInstance
         .delete(endpoint)

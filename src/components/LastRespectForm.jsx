@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
@@ -33,12 +33,16 @@ import moment from 'moment';
 import momentTimeZone from 'moment-timezone';
 import { actionTypes } from '../utils/actionTypes';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import Alert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
 
 const useStyles = makeStyles((theme) => ({
-  root:{
+  root: {
     display: 'flex',
     flexFlow: 'column',
-    height: '100%'
+    height: '100%',
   },
   mobileRoot: {
     display: 'flex',
@@ -288,6 +292,21 @@ const LastRespectForm = (props) => {
   const dispatch = useDispatch();
   const [details, setDetails] = useState(initialState);
   const [saveLoader, setSaveLoader] = useState(false);
+  const [snackInfo, setSnackInfo] = useState({
+    openSnack: false,
+    message: '',
+    severity: 'success',
+  });
+
+  const snackBarInfo = useSelector((state) => state.showSnackBarMessageReducer);
+
+  useEffect(() => {
+    setSnackInfo({
+      openSnack: snackBarInfo.openSnack,
+      message: snackBarInfo.message,
+      severity: snackBarInfo.severity,
+    });
+  }, [dispatch, snackBarInfo]);
 
   useEffect(() => {
     if (props.type === 'EDIT' && props.details !== null) {
@@ -341,12 +360,29 @@ const LastRespectForm = (props) => {
     }
   };
 
+  const handleCloseSnackBar = () => {
+    dispatch({
+      type: actionTypes.RESET_SNACKBAR,
+    });
+  };
+
   const enableSubmit = () => {
     if (props.type === 'EDIT' && alwaysDisableSaveButton.includes(props.details.status)) {
       return false;
     }
 
-    const { deceasedName, covidRelated, attenderName, attenderContact, status, reasonForCancellation, attenderAddress, attenderType } = details;
+    const {
+      deceasedName,
+      covidRelated,
+      attenderName,
+      attenderContact,
+      status,
+      reasonForCancellation,
+      attenderAddress,
+      attenderType,
+      proofType,
+      otherComments,
+    } = details;
 
     if (props.type === 'ADD') {
       return (
@@ -357,6 +393,7 @@ const LastRespectForm = (props) => {
         attenderContact.length === 10 &&
         attenderType &&
         attenderAddress &&
+        proofType &&
         status
       );
     }
@@ -366,7 +403,10 @@ const LastRespectForm = (props) => {
 
       let statusCheck = false;
       if (status !== 'BOOKED') statusCheck = true;
-      if (status === 'CANCEL' && !reasonForCancellation) statusCheck = false;
+      if (status === 'CANCEL') {
+        if (!reasonForCancellation) statusCheck = false;
+        if (reasonForCancellation === 'Others' && !otherComments) statusCheck = false;
+      }
       return statusCheck;
     }
   };
@@ -408,39 +448,78 @@ const LastRespectForm = (props) => {
         payload.type = details.status;
         payload.updatedTime = momentTimeZone().tz('Asia/Kolkata').format();
 
-        if (details.status === 'CANCEL') payload.reason = details.reasonForCancellation;
+        if (details.status === 'CANCEL') {
+          if (details.reasonForCancellation === 'Others') {
+            payload.reason = details.reasonForCancellation + ' - ' + details.otherComments;
+          } else {
+            payload.reason = details.reasonForCancellation;
+          }
+        }
 
         api = apiUrls.updateSlotStatus.replace(':slotId', props.details.id);
         requestMethod = 'PUT';
       }
 
-      callFetchApi(api, null, requestMethod, payload, token).then((response) => {
-        if (response.status === 200) {
-          setSaveLoader(false);
-          dispatch({
-            type: actionTypes.GET_SLOTS_BASED_SITE_ID,
-            payload: {
-              siteId: props.siteId,
-            },
-          });
-          props.onCancel();
-        } else {
-          setSaveLoader(false);
-        }
-      });
+      callFetchApi(api, null, requestMethod, payload, token)
+        .then((response) => {
+          if (response.status == 200) {
+            setSaveLoader(false);
+            dispatch({
+              type: actionTypes.GET_SLOTS_BASED_SITE_ID,
+              payload: {
+                siteId: props.siteId,
+              },
+            });
+            dispatch({
+              type: actionTypes.SHOW_SNACKBAR,
+              payload: {
+                openSnack: true,
+                message: `Slot ${props.selectedTime} has ${props.type === 'ADD' ? 'Booked' : 'Updated'}`,
+                severity: 'success',
+              },
+            });
+            props.onCancel();
+          } else {
+            setSaveLoader(false);
+            dispatch({
+              type: actionTypes.SHOW_SNACKBAR,
+              payload: {
+                openSnack: true,
+                message: 'Error',
+                severity: 'error',
+              },
+            });
+          }
+        })
+        .catch((error) => {
+          if (error.response !== undefined && error.response.data !== undefined && error.response.data.error !== undefined) {
+            let errorMessage = error.response.data.error[0];
+            setSaveLoader(false);
+            dispatch({
+              type: actionTypes.SHOW_SNACKBAR,
+              payload: {
+                openSnack: true,
+                message: errorMessage.message,
+                severity: 'error',
+              },
+            });
+          }
+        });
     }
   };
 
   const [openDialog, setOpenDialog] = useState(false);
-  const rootStyle = mobileCheck ? styles.mobileRoot : styles.root ;
+  const rootStyle = mobileCheck ? styles.mobileRoot : styles.root;
   return (
     <div className={rootStyle}>
       <div>
-        { mobileCheck && <div>
-          <Button variant={'text'} onClick={props.onCancel} className={styles.backButton}>
-            {'<- Back'}
-          </Button>
-        </div> }
+        {mobileCheck && (
+          <div>
+            <Button variant={'text'} onClick={props.onCancel} className={styles.backButton}>
+              {'<- Back'}
+            </Button>
+          </div>
+        )}
         <form className={styles.form}>
           <Typography className={styles.header} component={'div'}>
             Date & Time Slot
@@ -509,7 +588,7 @@ const LastRespectForm = (props) => {
               true,
             )}
             {renderDropdownInput(
-              'Attender Relationship',
+              'Cremation Conducted by',
               details.attenderType,
               'attenderType',
               handleOnChange,
@@ -521,7 +600,7 @@ const LastRespectForm = (props) => {
           </div>
           <div className="row ">
             {renderTextInput('Address', details.attenderAddress, 'attenderAddress', handleOnChange, styles, true, 3, props.type === 'EDIT', true)}
-            {renderDropdownInput('Address Proof', details.proofType, 'proofType', handleOnChange, addressProof, styles, props.type === 'EDIT', false)}
+            {renderDropdownInput('Address Proof', details.proofType, 'proofType', handleOnChange, addressProof, styles, props.type === 'EDIT', true)}
           </div>
           <div className="row ">
             {renderRadioButtonField(
@@ -548,19 +627,21 @@ const LastRespectForm = (props) => {
                   cancellationReason,
                   styles,
                   false,
-                  false,
+                  details.status === 'CANCEL',
                 )}
-              {/*{renderTextInput(*/}
-              {/*  'Other Comments',*/}
-              {/*  details.otherComments,*/}
-              {/*  'otherComments',*/}
-              {/*  handleOnChange,*/}
-              {/*  styles,*/}
-              {/*  true,*/}
-              {/*  3,*/}
-              {/*  props.type === 'EDIT',*/}
-              {/*  true,*/}
-              {/*)}*/}
+              {details.status === 'CANCEL' &&
+                details.reasonForCancellation === 'Others' &&
+                renderTextInput(
+                  'Other Comments',
+                  details.otherComments,
+                  'otherComments',
+                  handleOnChange,
+                  styles,
+                  false,
+                  null,
+                  false,
+                  details.reasonForCancellation === 'Others',
+                )}
             </div>
           )}
         </form>
@@ -573,6 +654,22 @@ const LastRespectForm = (props) => {
           Cancel
         </Button>
       </div>
+      <Snackbar
+        open={snackInfo.openSnack}
+        autoHideDuration={6000}
+        action={
+          <React.Fragment>
+            <IconButton aria-label="close" color="inherit" onClick={handleCloseSnackBar}>
+              <CloseIcon />
+            </IconButton>
+          </React.Fragment>
+        }
+        onClose={handleCloseSnackBar}
+      >
+        <Alert onClose={handleCloseSnackBar} severity={snackInfo.severity}>
+          {snackInfo.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
