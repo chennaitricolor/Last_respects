@@ -462,7 +462,7 @@ const LastRespectForm = (props) => {
 
       callFetchApi(api, null, requestMethod, payload, token)
         .then((response) => {
-          if (response.status == 200) {
+          if (response.status === 200) {
             setSaveLoader(false);
             dispatch({
               type: actionTypes.GET_SLOTS_BASED_SITE_ID,
@@ -478,6 +478,7 @@ const LastRespectForm = (props) => {
                 severity: 'success',
               },
             });
+            props.setType('EDIT')
             props.onCancel();
           } else {
             setSaveLoader(false);

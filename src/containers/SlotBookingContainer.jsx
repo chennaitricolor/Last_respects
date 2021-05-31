@@ -216,6 +216,7 @@ const SlotBookingContainer = (props) => {
                       siteList={siteList}
                       siteId={siteDetails.siteId}
                       type={type}
+                      setType={setType}
                       editSlotDetails={selectedSlotDetails}
                       onCancel={() => setFormOpen(false)}
                     />
