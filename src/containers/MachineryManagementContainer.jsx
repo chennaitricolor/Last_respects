@@ -1,15 +1,18 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import BackButtonComponent from '../components/common/BackButtonComponent';
 import SwitchComponent from './../components/common/SwitchComponent';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import { grey, red } from '@material-ui/core/colors';
 import TableComponent from './../components/common/TableComponent';
+import Header from './../components/Header';
+import { Link } from 'react-router-dom';
 
 //styles
 const useStyles = makeStyles(() => ({
+  backButton: {
+    textTransform: 'none',
+  },
   headerSection: {
     paddingLeft: 20,
     marginTop: 20,
@@ -80,10 +83,6 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const handleOnButtonBackClick = () => {
-  console.log('Back Clicked');
-};
-
 const MachineryManagementContainer = () => {
   const styles = useStyles();
 
@@ -116,9 +115,12 @@ const MachineryManagementContainer = () => {
 
   return (
     <>
+      <Header />
       <div className={styles.headerSection}>
         <div>
-          <BackButtonComponent displayText="<- Back to home" handleOnClick={handleOnButtonBackClick} />
+          <Button className={styles.backButton} component={Link} to="/slotBooking">
+            {'<- Back to Home'}
+          </Button>
         </div>
         <div className={styles.headerInfoText}>
           <span>Machinery Management</span>
