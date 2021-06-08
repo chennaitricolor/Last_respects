@@ -70,7 +70,7 @@ const App = () => {
           <Route path="/slotBooking">
             <SlotBookingContainer />
           </Route>
-          <Route path="/machineryManagement">
+          <Route path="/machinery">
             <MachineryManagementContainer />
           </Route>
         </Switch>
