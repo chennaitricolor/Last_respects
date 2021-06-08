@@ -124,15 +124,16 @@ const ModalDialog = (props) => {
     zoneName: '',
     siteName: '',
   });
-  const [reAssignReason, setReassignReason] = useState(reAssignReasons);
+  const [selectedReason, setReassignReason] = useState('');
   const [showReAssignComment, setShowReAssignComment] = useState(false);
   const [commentVal, setCommentVal] = useState('');
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   let date = new Date();
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState('');
-  const [maxDate, setMaxDate] = useState(date.setDate(date.getDate() + 1));
+  const [maxDate, setMaxDate] = useState(date.setDate(new Date().getDate() + 1));
   const [showError, setShowError] = useState(false);
+  const [enableSubmit, setEnableSubmit] = useState(false);
 
   const zoneList = useSelector((state) => state.getAllZoneReducer.zoneList);
   const siteList = useSelector((state) => state.getSitesBasedOnZoneIdReducer.siteList);
@@ -142,19 +143,7 @@ const ModalDialog = (props) => {
   const isActive = payload.isActive;
   const isOwner = payload.isOwner;
   const siteId = payload.siteId;
-  let availableTimeSlots = availableSlotDetails != null ? Object.keys(availableSlotDetails[Object.keys(availableSlotDetails)[0]]) : [];
-
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-    dispatch({
-      type: actionTypes.GET_AVAILABLE_SLOT_DETAILS_BASED_SITE_ID,
-      payload: {
-        siteId: siteId,
-        availableFlag: true,
-        date: getMomentDateStr(date, 'YYYY-MM-DD'),
-      },
-    });
-  };
+  let availableTimeSlots = availableSlotDetails !== null ? Object.keys(availableSlotDetails[Object.keys(availableSlotDetails)[0]]) : [];
 
   const handleClose = () => {
     props.setOpenDialog(false);
@@ -208,6 +197,39 @@ const ModalDialog = (props) => {
     }
   }, [dispatch, siteDetails]);
 
+  const enableSubmitAction = () => {
+    let result = false;
+    result =
+      zoneName !== '' &&
+      siteDetails.siteName !== '' &&
+      selectedDate !== null &&
+      selectedDate !== '' &&
+      selectedTime !== '' &&
+      selectedReason !== ''
+      && isOwner;
+
+    result = showReAssignComment ? commentVal !== '' : result;
+
+    result  ? setEnableSubmit(true) : setEnableSubmit(false);
+  };
+
+  //handle submit
+  useEffect( () => {
+    enableSubmitAction();
+  },[zoneName ,siteDetails.siteName,selectedDate,selectedTime,selectedReason,isOwner,commentVal]);
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    dispatch({
+      type: actionTypes.GET_AVAILABLE_SLOT_DETAILS_BASED_SITE_ID,
+      payload: {
+        siteId: siteId,
+        availableFlag: true,
+        date: getMomentDateStr(date, 'YYYY-MM-DD'),
+      },
+    });
+  };
+
   const handleOnChange = (event, id) => {
     if (event !== null) {
       if (id === 'zoneName') {
@@ -230,7 +252,6 @@ const ModalDialog = (props) => {
         setReassignReason(event);
       }
       if (id === 'time') {
-        console.log('time in handle function ==>', event);
         setSelectedTime(event);
       }
     }
@@ -238,52 +259,36 @@ const ModalDialog = (props) => {
 
   const handleSubmit = () => {
     setShowError(false);
+    setEnableSubmit(false);
     let token = getCookie('lrToken');
     if (token !== '' && isTokenAlive(token)) {
-      let api = apiUrls.updateSlotStatus.replace(':slotId', 'slotId');
-      let slotDetails = {
-        slot: selectedTime,
-        dateOfCremation: moment(selectedDate, 'DD-MM-YYYY').format('YYYY-MM-DD'),
-        burialSiteId: siteId,
-      };
+      let api = apiUrls.updateSlotStatus.replace(':slotId', props.slotDetails.id);
+      let slotDetails = props.slotDetails;
+      slotDetails.id = undefined;
+      slotDetails.slot = selectedTime;
+      slotDetails.dateOfCremation = moment(selectedDate, 'DD-MM-YYYY').format('MM-DD-YYYY');
+      slotDetails.burialSiteId = parseInt(siteId);
 
       let reAssignPayload = {
         slotDetails: slotDetails,
         type: 'REASSIGN',
-        reason: showReAssignComment ? reAssignReason + ' - ' + commentVal : reAssignReason,
+        reason: showReAssignComment ? selectedReason + ' - ' + commentVal : selectedReason,
       };
 
       callFetchApi(api, null, 'PUT', reAssignPayload, token).then((response) => {
-        if (response.status == 200) {
+        if (response.status === 200) {
           dispatch({
             type: actionTypes.GET_SLOTS_BASED_SITE_ID,
             payload: {
-              siteId: props.siteId,
+              siteId: siteId,
             },
           });
+          props.setOpenDialog(false);
         } else {
           setShowError(true);
         }
       });
     }
-  };
-
-  const enableSubmit = () => {
-    debugger;
-    let result;
-    result =
-      zoneName !== '' &&
-      siteDetails.siteName !== '' &&
-      selectedDate != null &&
-      selectedDate != '' &&
-      selectedTime != '' &&
-      reAssignReason != '' &&
-      showReAssignComment &&
-      commentVal != '';
-
-    result = showReAssignComment ? commentVal != '' : result;
-    console.log('result value => ', result);
-    return result;
   };
 
   return (
@@ -394,7 +399,7 @@ const ModalDialog = (props) => {
                   variant={'outlined'}
                   size={'small'}
                   className={styles.dropDownSelect}
-                  value={reAssignReason}
+                  value={selectedReason}
                   onChange={(e) => handleOnChange(e.target.value, 'reAssignReason')}
                 >
                   {reAssignReasons.map((item) => {
@@ -418,14 +423,14 @@ const ModalDialog = (props) => {
                   value={commentVal}
                   size="small"
                   variant={'outlined'}
-                  onChange={(event) => handleOnChange(event, 'text')}
+                  onChange={(event) => handleOnChange(event.target.value, 'text')}
                   InputLabelProps={{ shrink: true }}
                   autoComplete={'disabled'}
                 />
               </div>
             ) : null}
             <div className="col-12 text-center">
-              <Button variant="contained" className={styles.saveButton} disabled={!enableSubmit /* && isOwner */} onClick={handleSubmit}>
+              <Button variant="contained" className={styles.saveButton} disabled={!enableSubmit} onClick={handleSubmit}>
                 Save
               </Button>
               <Button variant="contained" className={`${styles.cancelButton}`} onClick={handleClose}>

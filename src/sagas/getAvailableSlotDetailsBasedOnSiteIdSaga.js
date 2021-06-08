@@ -11,7 +11,6 @@ export default function* getAvailableSlotDetailsBasedOnSiteIdSaga(action) {
       let api = apiUrls.getAvailableSlotDetailsBasedOnSiteId.replace(':siteId', action.payload.siteId)
                 .replace(':date',action.payload.date ).replace(':availableFlag',action.payload.availableFlag );
       const response = yield call(callFetchApi, api, {}, 'GET', {}, token);
-      console.log('available slot response ==>',response);
       yield put({
         type: actionTypes.GET_AVAILABLE_SLOT_DETAILS_BASED_SITE_ID_SUCCESS,
         response: response.data,

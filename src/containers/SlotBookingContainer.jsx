@@ -9,10 +9,15 @@ import { actionTypes } from '../utils/actionTypes';
 import moment from 'moment';
 import Typography from '@material-ui/core/Typography';
 import Header from '../components/Header';
+import { isMobile } from '../utils/CommonUtils';
+import Alert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles(() => ({
   slotBookingDiv: {
-    height: '90%',
+    //height: '90%',
     position: 'relative',
     overflow: 'auto',
   },
@@ -61,10 +66,18 @@ const SlotBookingContainer = (props) => {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
   const [type, setType] = useState('ADD');
   const [selectedSlotDetails, setSelectedSlotDetails] = useState(null);
+  const [snackInfo, setSnackInfo] = useState({
+    openSnack: false,
+    message: '',
+    severity: 'success',
+  });
 
   const zoneList = useSelector((state) => state.getAllZoneReducer.zoneList);
   const siteList = useSelector((state) => state.getSitesBasedOnZoneIdReducer.siteList);
   const dateTimeSlotDetails = useSelector((state) => state.getSlotsBasedOnSiteIdReducer.slotDetails);
+  const snackBarInfo = useSelector((state) => state.showSnackBarMessageReducer);
+
+  const mobileCheck = isMobile();
 
   useEffect(() => {
     dispatch({
@@ -113,6 +126,14 @@ const SlotBookingContainer = (props) => {
     }
   }, [dispatch, siteDetails]);
 
+  useEffect(() => {
+    setSnackInfo({
+      openSnack: snackBarInfo.openSnack,
+      message: snackBarInfo.message,
+      severity: snackBarInfo.severity,
+    });
+  }, [dispatch, snackBarInfo]);
+
   const selectDate = (date) => {
     setSelectedDate(date);
   };
@@ -157,8 +178,14 @@ const SlotBookingContainer = (props) => {
   const openSlotForm = (payload) => {
     setSelectedTimeSlot(payload.time);
     setType(payload.type);
-    setFormOpen(true);
+    mobileCheck ? setFormOpen(true) : setFormOpen(false);
     setSelectedSlotDetails(payload.slotDetails);
+  };
+
+  const handleCloseSnackBar = () => {
+    dispatch({
+      type: actionTypes.RESET_SNACKBAR,
+    });
   };
 
   return (
@@ -182,6 +209,18 @@ const SlotBookingContainer = (props) => {
                     siteList={siteList}
                     openSlotForm={openSlotForm}
                   />
+                  {!mobileCheck && selectedTimeSlot !== '' && (
+                    <LastRespectFormContainer
+                      date={selectedDate}
+                      time={selectedTimeSlot}
+                      siteList={siteList}
+                      siteId={siteDetails.siteId}
+                      type={type}
+                      setType={setType}
+                      editSlotDetails={selectedSlotDetails}
+                      onCancel={() => setFormOpen(false)}
+                    />
+                  )}
                 </div>
               </div>
             ) : (
@@ -196,7 +235,7 @@ const SlotBookingContainer = (props) => {
           </div>
         </div>
       )}
-      {isFormOpen && (
+      {mobileCheck && isFormOpen && (
         <LastRespectFormContainer
           date={selectedDate}
           time={selectedTimeSlot}
@@ -207,6 +246,22 @@ const SlotBookingContainer = (props) => {
           onCancel={() => setFormOpen(false)}
         />
       )}
+      <Snackbar
+        open={snackInfo.openSnack}
+        autoHideDuration={6000}
+        action={
+          <React.Fragment>
+            <IconButton aria-label="close" color="inherit" onClick={handleCloseSnackBar}>
+              <CloseIcon />
+            </IconButton>
+          </React.Fragment>
+        }
+        onClose={handleCloseSnackBar}
+      >
+        <Alert onClose={handleCloseSnackBar} severity={snackInfo.severity}>
+          {snackInfo.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

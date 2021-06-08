@@ -98,7 +98,7 @@ const DateSelection = (props) => {
       if (value.id === undefined && !isCurrentTimeCrossedSlotTime(key, date)) availableCount++;
     }
 
-    return `${availableCount == 0 ? 'No' : availableCount} Slots Available`;
+    return `${availableCount === 0 ? 'No' : availableCount} Slots Available`;
   };
 
   const getClassesForDateSlot = (date, yesterdayStyle, style, selectedStyle) => {
