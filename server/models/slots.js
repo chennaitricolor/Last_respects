@@ -97,6 +97,16 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: true,
       field: 'proof_id'
     },
+    aadharOfDeceased: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'aadhar_of_deceased'
+    },
+    bookingId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'booking_id'
+    },
     createdTime: {
       type: DataTypes.DATE,
       allowNull: false,

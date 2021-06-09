@@ -18,7 +18,13 @@ module.exports = function (sequelize, DataTypes) {
       autoIncrement: true,
       primaryKey: true,
       field: 'id'
-    }
+    },
+    isAdmin: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      default: false,
+      field: 'is_admin'
+    },
   }, {
     schema: process.env.DB_SCHEMA,
     tableName: 'user',

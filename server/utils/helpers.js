@@ -1,4 +1,6 @@
 const moment = require('moment-timezone');
+const nanoId = require('nanoid');
+const idGenerator = nanoId.customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890', 8)
 const _ = require('lodash');
 const { SLOT_STATUS } = require('../constant/enum');
 const { SLOT_STATUS_TRANSITION_NOT_ALLOWED, blockedSlots } = require('../constant/constants');
@@ -40,6 +42,9 @@ module.exports = {
       [SLOT_STATUS.ARRIVED]: 'actualArrivedTime',
       [SLOT_STATUS.STARTED]: 'actualStartedTime',
     }[status];
+  },
+  getBookingId: () => {
+    return idGenerator()
   },
   validateStateTransition: (prev = SLOT_STATUS.BOOKED, next) => {
     const acceptedTransitions = {

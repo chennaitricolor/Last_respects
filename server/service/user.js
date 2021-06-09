@@ -2,12 +2,11 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const models = require('../models');
-const { exceptionparser } = require('../utils/validators');
+const { exceptionparser, validate, user: userValidator } = require('../utils/validators');
 
 const { user } = models;
-const { errors, refreshTokenExpiry, success, tokenExpiry, secret } = require('../constant/constants');
+const { refreshTokenExpiry, success, tokenExpiry, secret, USER_ALREADY_EXISTS, USER_NOT_FOUND, INCORRECT_USERNAME_PASSWORD, SALT_ROUNDS } = require('../constant/constants');
 const BurialSitesService = require('./burial_sites');
-const { SITE_STATUS } = require('../constant/enum');
 const _ = require('lodash');
 
 class User {
@@ -33,24 +32,25 @@ class User {
 *       tags: ['Users']
 */
 
-  static create(req, res) {
+  static async create(req, res) {
     try {
-      const encryptedPassword = bcrypt.hashSync(req.body.password);
-
-      const { name } = req.body;
-
-      return user.create({
+      validate(userValidator.create(req.body))
+      let { name, password } = req.body;
+      name = _.toLower(name)
+      const userDetails = await user.findOne({ where: { name }});
+      if(!_.isEmpty(userDetails)) {
+        throw USER_ALREADY_EXISTS
+      }
+      password = await bcrypt.hash(req.body.password, SALT_ROUNDS);
+      const newUserDetails = {
         name,
-        password: encryptedPassword,
-      }).then((userResponse) => {
-        const token = jwt.sign({ id: userResponse.id }, secret, {
-          expiresIn: tokenExpiry, // expires in 24 hours
-        });
-        res.status(201).send({
-          ...success.USER_CREATION_SUCCESS,
-          token
-        })
-      }).catch(error => res.status(400).send(error));;
+        password,
+      };
+      await user.create(newUserDetails)
+      res.status(201).send({
+        ...success.USER_CREATION_SUCCESS,
+        auth: false
+      })
 
     } catch (e) {
       const { code, message } = exceptionparser(e);
@@ -75,7 +75,7 @@ class User {
       return user
         .findAll({
           attributes: {
-            exclude: ['password', 'id', 'burialSiteId'],
+            exclude: ['password'],
           },
         })
         .then(users => res.status(200).send(users));
@@ -88,7 +88,7 @@ class User {
   // /users/:id
   static modify(req, res) {
     try {
-      const hashedPassword = bcrypt.hashSync(req.body.password, 8);
+      const hashedPassword = bcrypt.hashSync(req.body.password, SALT_ROUNDS);
       const {
         name, burialSiteId
       } = req.body;
@@ -139,22 +139,17 @@ class User {
 *           description: userdetails successfully deleted.
 *       tags: ['Users']
 */
-  static delete(req, res) {
+  static async delete(req, res) {
     try {
-      return user
-        .findByPk(req.params.id)
-        .then((details) => {
-          if (!details) {
-            return res.status(404).send(errors.USER_NOT_FOUND);
-          }
-          return details
-            .destroy()
-            .then(() => res.status(200).send(success.USER_DELETED_SUCCESS))
-            .catch(error => res.status(400).send(error));
-        })
-        .catch(error => res.status(400).send(error));
+      const userDetails = await user.findByPk(parseInt(req.params.id))
+      if(_.isEmpty(userDetails)) {
+        throw USER_NOT_FOUND;
+      }
+      await userDetails.destroy()
+      res.status(200).send(success.USER_DELETED_SUCCESS);
     } catch (e) {
-      res.status(500).send({ error: e.message });
+      const { code, message } = exceptionparser(e);
+      res.status(code).send(message);
     }
   }
 
@@ -181,23 +176,28 @@ class User {
   }
   // /users/login
 
-  static login(req, res) {
+  static async login(req, res) {
     try {
-      user
-        .findOne({ where: { name: req.body.name } })
-        .then((user) => {
-          return User.createToken(user).then(userToken => res.status(200).send({
-            auth: true,
-            zone: user.zoneId,
-            token: userToken.token,
-            refreshToken: userToken.refreshToken,
-          }));
-        })
-        .catch((e) => {
-          res.status(500).send({ error: e.message });
-        });
+      validate(userValidator.create(req.body))
+      let { name, password } = req.body;
+      name = _.toLower(name)
+      const userDetails = await user.findOne({ where: { name } })
+      if(_.isEmpty(userDetails)) {
+        throw INCORRECT_USERNAME_PASSWORD
+      }
+      const isMatch = await bcrypt.compare(password, userDetails.password);
+      if(!isMatch) {
+        throw INCORRECT_USERNAME_PASSWORD
+      }
+      const userToken = await User.createToken(userDetails);
+      res.status(200).send({
+        auth: true,
+        token: userToken.token,
+        refreshToken: userToken.refreshToken,
+      })
     } catch (e) {
-      res.status(500).send({ error: e.message });
+      const { code, message } = exceptionparser(e);
+      res.status(code).send(message);
     }
   }
 

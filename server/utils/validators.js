@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { expectedSlotKeys } = require('../constant/constants');
+const { expectedSlotKeys, optionalKeys, USERNAME_AND_PASSWORD_REQUIRED } = require('../constant/constants');
 const { SLOT_UPDATE_TYPE, SITE_STATUS } = require('../constant/enum');
 const moment = require('moment-timezone');
 
@@ -45,7 +45,6 @@ module.exports = {
       const errors = [];
       const slotKeys = _.keys(slotDetails);
       const missingKeys = _.difference(expectedSlotKeys, slotKeys);
-      const optionalKeys = ['proofId', 'proofType', 'reasonForCancellation', 'updatedTime', 'createdTime'];
       const validMissingKeys = _.difference(missingKeys, optionalKeys);
       if (validMissingKeys.length) {
         errors.push({ message: `${validMissingKeys.toString()} key(s) are missing` });
@@ -66,6 +65,15 @@ module.exports = {
     }
 
   },
+  user: {
+    create: ({ name, password }) => {
+      const errors = [];
+      if(_.isEmpty(name) || _.isEmpty(password)) {
+        errors.push(USERNAME_AND_PASSWORD_REQUIRED)
+      }
+      return errors;
+    }
+  },
   validate: (errors) => {
     if (!_.isEmpty(errors)) {
       throw {
@@ -78,7 +86,8 @@ module.exports = {
     console.log(e);
     return {
       message: _.get(e, 'errors', [{ message: 'Unexpected error' }]),
-      code: _.get(e, 'statusCode', 500)
+      code: _.get(e, 'statusCode', 500),
+      meta: _.omit(e, ['errors', 'statusCode'])
     }
   }
 }

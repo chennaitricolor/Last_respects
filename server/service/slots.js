@@ -1,9 +1,9 @@
 const models = require('../models');
 const { slots, slotMeta, burialSites, Sequelize } = models;
 const moment = require('moment-timezone');
-const { DATE_RANGE, SLOT_NOT_FOUND, SLOT_UNAVAILABLE, BAD_REQUEST, expectedSlotKeys, SLOT_ACCESS_DENIED, SITE_NOT_FOUND, blockedSlots } = require('../constant/constants');
+const { DATE_RANGE, SLOT_NOT_FOUND, SLOT_UNAVAILABLE, BAD_REQUEST, expectedSlotKeys, SLOT_ACCESS_DENIED, SITE_NOT_FOUND, blockedSlots, BOOKING_EXISTS } = require('../constant/constants');
 const { SLOT_STATUS, SLOT_UPDATE_TYPE, SLOT_TYPE_STATUS_MAP } = require('../constant/enum');
-const { constructSlots, validateStateTransition, getTimeField } = require('../utils/helpers');
+const { constructSlots, validateStateTransition, getTimeField, getBookingId } = require('../utils/helpers');
 const { slots: slotsValidator, validate, exceptionparser } = require('../utils/validators');
 const BurialSitesService = require('./burial_sites');
 const UserService = require('./user');
@@ -149,10 +149,9 @@ class Slots {
       } else if (type === SLOT_UPDATE_TYPE.CANCEL) {
         await Slots.dbUpdateSlotData(slotDetails, userId, { status: toBeUpdatedStatus, reasonForCancellation: reason })
       } else if (type === SLOT_UPDATE_TYPE.REASSIGN) {
-        //TODO implement REASSIGN
         await sequelize.transaction(async function(transaction) {
           const options = { transaction, lock: transaction.LOCK.UPDATE };
-          await Slots.bookSlot(slotDetailsParam, userId, true, options);
+          await Slots.bookSlot({ ..._.omit(slotDetails.toJSON(), ['id']), ...slotDetailsParam }, userId, true, options);
           await Slots.dbUpdateSlotData(slotDetails, userId, { status: toBeUpdatedStatus, reasonForCancellation: reason }, options)
         });
       }
@@ -227,13 +226,30 @@ class Slots {
   }
 
   static async dBbookSlot(slotDetailsParam, options = {}) {
+    const [isAlreadyBooked, bookingId] = await Slots.isAlreadyBooked(slotDetailsParam, options);
+    if(isAlreadyBooked) {
+      throw {
+        ...BOOKING_EXISTS,
+        bookingId
+      }
+    }
     const isSlotAvailable = await Slots.isSlotAvailable(slotDetailsParam.burialSiteId, slotDetailsParam.slot, slotDetailsParam.dateOfCremation, options);
     if (isSlotAvailable) {
+      slotDetailsParam.bookingId = slotDetailsParam.bookingId || getBookingId() 
       const slotRecord = await slots.create(slotDetailsParam, options);
       return slotRecord
     } else {
       throw SLOT_UNAVAILABLE
     }
+  }
+
+  static async isAlreadyBooked({ aadharOfDeceased }, options) {
+    if(_.isEmpty(aadharOfDeceased)) {
+      return [ false ]
+    }
+    const slotWhere = { aadharOfDeceased, status: { [Sequelize.Op.in]: blockedSlots } }
+    const slotDetails = await slots.findOne({ where: slotWhere, ...options })
+    return [!_.isEmpty(slotDetails), _.get(slotDetails, 'bookingId')];
   }
 
   static async isSlotAvailable(siteId, slot, date, options) {
