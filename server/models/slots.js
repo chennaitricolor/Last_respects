@@ -1,6 +1,6 @@
 /* jshint indent: 2 */
 const _ = require('lodash');
-const { SLOT_STATUS } = require('../constant/enum');
+const { SLOT_STATUS, PLACE_OF_DEATH, CREMATION_TYPE, GENDER } = require('../constant/enum');
 
 module.exports = function (sequelize, DataTypes) {
   const slots = sequelize.define('slots', {
@@ -133,6 +133,34 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
       field: 'attender_type',
+    },
+    dependent: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: "dependent",
+    },
+    placeOfDeath: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: 'place_of_death',
+      values: _.keys(PLACE_OF_DEATH)
+    },
+    cremationType: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: 'place_of_death',
+      values: _.keys(CREMATION_TYPE)
+    },
+    sex: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: "sex",
+      values: _.keys(GENDER)
+    },
+    age: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      field: "age"
     },
     attenderAddress: {
       type: DataTypes.STRING,
