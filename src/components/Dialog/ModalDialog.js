@@ -145,10 +145,6 @@ const ModalDialog = (props) => {
   const siteId = payload.siteId;
   let availableTimeSlots = availableSlotDetails !== null ? Object.keys(availableSlotDetails[Object.keys(availableSlotDetails)[0]]) : [];
 
-  console.log("zone", zoneDetailsPayload.zoneName);
-  console.log("site", zoneDetailsPayload.siteName);
-  console.log("isActive", isActive);
-  console.log("isOwner", isOwner);
   const handleClose = () => {
     props.setOpenDialog(false);
   };
