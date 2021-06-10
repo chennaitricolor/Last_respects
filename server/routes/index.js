@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
 const {
-  health, inventory, burialSite, slots, zones, user
+  health, burialSite, slots, zones, user
 } = require('../service');
 
 const { verifyToken, verifySuperUser } = require('../utils/verifyToken');
@@ -18,6 +18,8 @@ router.get('/zones/:zoneId/sites', verifyToken, burialSite.list)
 router.get('/sites/:siteId/slots', verifyToken, slots.list);
 router.put('/sites/:siteId', verifyToken, burialSite.updateSiteStatus);
 router.get('/sites', verifyToken, burialSite.getAuthorizedSites);
+
+router.put('/machineryDowntimeAudit/:siteId', verifyToken, burialSite.getIncidents);
 
 router.post('/users/register', verifyToken, verifySuperUser, user.create); // API route for user to signup
 router.post('/users/login', user.login);
