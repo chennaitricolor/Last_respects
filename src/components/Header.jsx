@@ -115,7 +115,7 @@ const Header = () => {
       <List component="nav">
         <ListItemLink key={'Home'} primary={'Home'} to={'/slotBooking'} />
         <ListItemLink key={'MachineryManagement'} primary={'Machinery Management'} to={'/machinery'} />
-        <ListItemLink key={'InventoryManagement'} primary={'Inventory Management'} to={'/inventory'} />
+        {/*<ListItemLink key={'InventoryManagement'} primary={'Inventory Management'} to={'/inventory'} />*/}
       </List>
     </div>
   );

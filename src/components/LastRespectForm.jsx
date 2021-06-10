@@ -28,6 +28,9 @@ import {
   isTokenAlive,
   yesNoRadioButton,
   isMobile,
+  genderRadioButton,
+  buriedRadioButton,
+  placeOfDeathRadioButton,
 } from '../utils/CommonUtils';
 import moment from 'moment';
 import momentTimeZone from 'moment-timezone';
@@ -203,7 +206,7 @@ const renderRadioButtonField = (label, value, id, radioButtonList, handleOnChang
         className={`last-respect-form-${id}-radio-value`}
         style={{ display: 'inline-block' }}
         value={radioValue.length !== 0 ? radioValue[0].value : ''}
-        onChange={(event) => handleOnChange(event, id, type)}
+        onChange={(event) => handleOnChange(event, id, type, radioButtonList)}
       >
         {radioButtonList.map((radioButton, index) => {
           return (
@@ -273,12 +276,18 @@ const renderDropdownInput = (label, value, id, handleOnChange, list, styles, dis
 
 const initialState = {
   deceasedName: '',
+  dependent: '',
+  sex: '',
+  age: '',
+  attenderAddress: '',
+  cremationType: '',
   covidRelated: '',
   deathCertNo: '',
+  placeOfDeath: '',
   attenderName: '',
   attenderContact: '',
   attenderType: '',
-  attenderAddress: '',
+  aadharOfDeceased: '',
   proofType: '',
   status: 'BOOKED',
   reasonForCancellation: '',
@@ -316,7 +325,7 @@ const LastRespectForm = (props) => {
     }
   }, [props.type, props.details]);
 
-  const handleOnChange = (event, id, type) => {
+  const handleOnChange = (event, id, type, dropDownList = []) => {
     if (type === 'text') {
       if (event.target.value !== '') {
         setDetails({
@@ -330,11 +339,20 @@ const LastRespectForm = (props) => {
         });
       }
     }
-    if (type === 'radioButton') {
+    if (type === 'bookingRadioButton') {
       let radioValue =
         bookingStatus[props.details.status] !== undefined
           ? bookingStatus[props.details.status].filter((status) => status.value === event.target.value)
           : [];
+      if (event !== null) {
+        setDetails({
+          ...details,
+          [id]: radioValue.length !== 0 ? radioValue[0].id : '',
+        });
+      }
+    }
+    if (type === 'radioButton') {
+      let radioValue = dropDownList !== [] ? dropDownList.filter((values) => values.value === event.target.value) : [];
       if (event !== null) {
         setDetails({
           ...details,
@@ -371,18 +389,8 @@ const LastRespectForm = (props) => {
       return false;
     }
 
-    const {
-      deceasedName,
-      covidRelated,
-      attenderName,
-      attenderContact,
-      status,
-      reasonForCancellation,
-      attenderAddress,
-      attenderType,
-      proofType,
-      otherComments,
-    } = details;
+    const { deceasedName, covidRelated, attenderName, attenderContact, status, reasonForCancellation, attenderAddress, dependent, otherComments } =
+      details;
 
     if (props.type === 'ADD') {
       return (
@@ -390,10 +398,9 @@ const LastRespectForm = (props) => {
         covidRelated !== '' &&
         attenderName &&
         attenderContact &&
-        attenderContact.length === 10 &&
-        attenderType &&
+        attenderContact.length == 10 &&
+        dependent &&
         attenderAddress &&
-        proofType &&
         status
       );
     }
@@ -429,6 +436,7 @@ const LastRespectForm = (props) => {
         payload,
         requestMethod = 'POST';
       let slotDetails = details;
+      slotDetails.age = parseInt(slotDetails.age);
       slotDetails.slot = props.selectedTime;
       slotDetails.burialSiteId = parseInt(props.siteId);
       slotDetails.dateOfCremation = moment(props.selectedDate, 'DD-MM-YYYY').format('MM-DD-YYYY');
@@ -462,7 +470,7 @@ const LastRespectForm = (props) => {
 
       callFetchApi(api, null, requestMethod, payload, token)
         .then((response) => {
-          if (response.status === 200) {
+          if (response.status == 200) {
             setSaveLoader(false);
             dispatch({
               type: actionTypes.GET_SLOTS_BASED_SITE_ID,
@@ -478,8 +486,8 @@ const LastRespectForm = (props) => {
                 severity: 'success',
               },
             });
-            props.setType('EDIT')
             props.onCancel();
+            props.setType('EDIT');
           } else {
             setSaveLoader(false);
             dispatch({
@@ -531,7 +539,7 @@ const LastRespectForm = (props) => {
             </Typography>
             {props.type === 'EDIT' && enableReassignButtonStatus.includes(props.details.status) && (
               <div style={{ display: 'inline-block', float: 'right' }}>
-                {openDialog && <ModalDialog setOpenDialog={setOpenDialog} slotDetails={props.details}/>}
+                {openDialog && <ModalDialog setOpenDialog={setOpenDialog} slotDetails={props.details} />}
                 <Button
                   variant="outlined"
                   className={styles.reAssignButton}
@@ -548,8 +556,80 @@ const LastRespectForm = (props) => {
           <Typography className={styles.header} component={'div'}>
             Details
           </Typography>
+          {props.type === 'EDIT' && (
+            <div className="row ">
+              <Typography className={styles.fieldLabel} component={'div'} style={{ display: 'inline-block', marginLeft: '16px', marginTop: '8px' }}>
+                Booking Id: {details.bookingId}
+              </Typography>
+            </div>
+          )}
           <div className="row ">
-            {renderTextInput('Deceased Name', details.deceasedName, 'deceasedName', handleOnChange, styles, false, null, props.type === 'EDIT', true)}
+            {renderTextInput(
+              'Name of Deceased',
+              details.deceasedName,
+              'deceasedName',
+              handleOnChange,
+              styles,
+              false,
+              null,
+              props.type === 'EDIT',
+              true,
+            )}
+            {renderTextInput(
+              'Name of Father/Husband',
+              details.dependent,
+              'dependent',
+              handleOnChange,
+              styles,
+              false,
+              null,
+              props.type === 'EDIT',
+              true,
+            )}
+          </div>
+          {/*(3) Date of Death*/}
+          {/*(4) Place of Death (Home/Hospital)*/}
+          <div className="row ">
+            {renderRadioButtonField(
+              'Sex',
+              details.sex,
+              'sex',
+              genderRadioButton,
+              handleOnChange,
+              styles,
+              props.type === 'EDIT',
+              true,
+              false,
+              'radioButton',
+            )}
+            {renderNumberInput('Age', details.age, 'age', handleOnChange, '99', styles, props.type === 'EDIT', true)}
+          </div>
+          <div className="row ">
+            {renderTextInput(
+              'Address of deceased',
+              details.attenderAddress,
+              'attenderAddress',
+              handleOnChange,
+              styles,
+              true,
+              3,
+              props.type === 'EDIT',
+              true,
+            )}
+            {renderRadioButtonField(
+              'Buried or Burnt',
+              details.cremationType,
+              'cremationType',
+              buriedRadioButton,
+              handleOnChange,
+              styles,
+              props.type === 'EDIT',
+              true,
+              false,
+              'radioButton',
+            )}
+          </div>
+          <div className="row ">
             {renderRadioButtonField(
               'COVID 19?',
               details.covidRelated,
@@ -562,24 +642,34 @@ const LastRespectForm = (props) => {
               false,
               'yesNoRadioButton',
             )}
+            {details.covidRelated &&
+              renderRadioButtonField(
+                'Place of Death',
+                details.placeOfDeath,
+                'placeOfDeath',
+                placeOfDeathRadioButton,
+                handleOnChange,
+                styles,
+                props.type === 'EDIT',
+                true,
+                false,
+                'radioButton',
+              )}
           </div>
           <div className="row ">
             {renderTextInput(
-              'Death Certificate Number',
-              details.deathCertNo,
-              'deathCertNo',
+              'Name of Informant/Booking Person',
+              details.attenderName,
+              'attenderName',
               handleOnChange,
               styles,
               false,
               null,
               props.type === 'EDIT',
-              false,
+              true,
             )}
-            {renderTextInput('Attender Name', details.attenderName, 'attenderName', handleOnChange, styles, false, null, props.type === 'EDIT', true)}
-          </div>
-          <div className="row ">
             {renderNumberInput(
-              'Attender Contact Number',
+              'Phone Number',
               details.attenderContact,
               'attenderContact',
               handleOnChange,
@@ -588,6 +678,8 @@ const LastRespectForm = (props) => {
               props.type === 'EDIT',
               true,
             )}
+          </div>
+          <div className="row ">
             {renderDropdownInput(
               'Cremation Conducted by',
               details.attenderType,
@@ -598,10 +690,17 @@ const LastRespectForm = (props) => {
               props.type === 'EDIT',
               true,
             )}
-          </div>
-          <div className="row ">
-            {renderTextInput('Address', details.attenderAddress, 'attenderAddress', handleOnChange, styles, true, 3, props.type === 'EDIT', true)}
-            {renderDropdownInput('Address Proof', details.proofType, 'proofType', handleOnChange, addressProof, styles, props.type === 'EDIT', true)}
+            {/*{renderDropdownInput('Address Proof', details.proofType, 'proofType', handleOnChange, addressProof, styles, props.type === 'EDIT', true)}*/}
+            {renderNumberInput(
+              'Aadhar Number',
+              details.aadharOfDeceased,
+              'aadharOfDeceased',
+              handleOnChange,
+              '999999999999',
+              styles,
+              props.type === 'EDIT',
+              false,
+            )}
           </div>
           <div className="row ">
             {renderRadioButtonField(
@@ -614,7 +713,7 @@ const LastRespectForm = (props) => {
               !isOwnerForSelectedSite(),
               true,
               true,
-              'radioButton',
+              'bookingRadioButton',
             )}
           </div>
           {props.type === 'EDIT' && (

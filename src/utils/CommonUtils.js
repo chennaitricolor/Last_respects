@@ -39,11 +39,27 @@ export const yesNoRadioButton = [
   { id: false, value: 'No' },
 ];
 
+export const genderRadioButton = [
+  { id: 'MALE', value: 'Male' },
+  { id: 'FEMALE', value: 'Female' },
+  { id: 'TRANSGENDER', value: 'Transgender' },
+];
+
+export const buriedRadioButton = [
+  { id: 'BURIED', value: 'Buried' },
+  { id: 'BURNT', value: 'Burnt' },
+];
+
+export const placeOfDeathRadioButton = [
+  { id: 'HOME', value: 'Home' },
+  { id: 'HOSPITAL', value: 'Hospital' },
+];
+
 export const attenderRelationship = [
   { id: 'Family', name: 'Family' },
   { id: 'Government', name: 'Government' },
   { id: 'NGO', name: 'NGO' },
-  { id: 'Relative', name: 'Relative' },
+  { id: 'Others', name: 'Others' },
 ];
 
 export const addressProof = [
