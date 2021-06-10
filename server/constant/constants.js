@@ -128,6 +128,11 @@ const expectedSlotKeys = [
   'reasonForCancellation',
   'attenderContact',
   'attenderName',
+  'dependent',
+  'age',
+  'sex',
+  'cremationType',
+  'placeOfDeath',
   'covidRelated',
   'burialSiteId',
   'aadharOfDeceased',
@@ -148,6 +153,10 @@ const blockedSlots = [SLOT_STATUS.BOOKED, SLOT_STATUS.ARRIVED, SLOT_STATUS.START
 
 const SALT_ROUNDS = 10;
 
+const BOOKING_ID_PREFIXES = {
+  GCC: 'GCC-LR-'
+}
+
 module.exports = {
   success,
   refreshTokenExpiry,
@@ -161,5 +170,6 @@ module.exports = {
     VALUE: 3,
     UNIT: 'd'
   },
+  BOOKING_ID_PREFIXES,
   ...errors
 }

@@ -72,6 +72,25 @@ class BurialSites {
       const { code, message } = exceptionparser(e);
       res.status(code).send({ error: message });
     }
+  }
+
+  static async getIncidents(req, res) {
+    try {
+      const siteId = req.params.siteId
+      const machineryDowntimeWhere = {
+        burialSiteId: siteId,
+      }
+      const attributes = {
+        exclude: ['id', 'burialSiteId'],
+      }
+      const order = [['statusStartTime', 'DESC']];
+      const limit = 5;
+      const machineryDowntimeAuditCurrentRecords = await machineryDowntimeAudit.findAll({ where: machineryDowntimeWhere, attributes, order, limit  });
+      return res.status(200).send(machineryDowntimeAuditCurrentRecords);
+    } catch(e) {
+      const { code, message } = exceptionparser(e);
+      res.status(code).send({ error: message });
+    }
 
   }
 
