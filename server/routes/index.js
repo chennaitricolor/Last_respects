@@ -19,7 +19,7 @@ router.get('/sites/:siteId/slots', verifyToken, slots.list);
 router.put('/sites/:siteId', verifyToken, burialSite.updateSiteStatus);
 router.get('/sites', verifyToken, burialSite.getAuthorizedSites);
 
-router.put('/machineryDowntimeAudit/:siteId', verifyToken, burialSite.getIncidents);
+router.get('/machineryDowntimeAudit/:siteId', verifyToken, burialSite.getIncidents);
 
 router.post('/users/register', verifyToken, verifySuperUser, user.create); // API route for user to signup
 router.post('/users/login', user.login);
