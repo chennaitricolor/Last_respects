@@ -149,12 +149,6 @@ const SlotBookingContainer = (props) => {
           siteName: '',
           siteId: '',
         });
-        dispatch({
-          type: actionTypes.SET_ZONE_NAME,
-          payload: {
-            zoneName: event,
-          },
-        });
       }
       if (id === 'siteName') {
         let siteId = siteList.filter((site) => site.siteName === event)[0].id;
@@ -169,6 +163,13 @@ const SlotBookingContainer = (props) => {
             isActive: siteList[0].isActive,
             isOwner: siteList[0].isOwner,
             siteId: siteId,
+          },
+        });
+        dispatch({
+          type: actionTypes.SET_ZONE_AND_SITE_NAME,
+          payload: {
+            zoneName: siteDetails.zoneName,
+            siteName: event,
           },
         });
       }

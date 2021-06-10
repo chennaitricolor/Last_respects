@@ -138,6 +138,7 @@ const ModalDialog = (props) => {
   const zoneList = useSelector((state) => state.getAllZoneReducer.zoneList);
   const siteList = useSelector((state) => state.getSitesBasedOnZoneIdReducer.siteList);
   const zoneName = useSelector((state) => state.getAllZoneReducer.zoneName);
+  const siteName = useSelector((state) => state.getAllZoneReducer.siteName);
   const payload = useSelector((state) => state.getSitesBasedOnZoneIdReducer.payload);
   const availableSlotDetails = useSelector((state) => state.getAvailableSlotDetailsBasedOnSiteIdReducer.slotDetails);
   const isActive = payload.isActive;
@@ -158,8 +159,9 @@ const ModalDialog = (props) => {
   useEffect(() => {
     setSiteDetails({
       zoneName: zoneName,
+      siteName: siteName,
     });
-  }, [zoneName]);
+  }, [zoneName,siteName]);
 
   useEffect(() => {
     dispatch({
@@ -334,11 +336,12 @@ const ModalDialog = (props) => {
                   size={'small'}
                   className={styles.dropDownSelect}
                   value={siteDetails.siteName}
+                  disabled={!isActive}
                   onChange={(e) => handleOnChange(e.target.value, 'siteName')}
                 >
                   {siteList.map((item) => {
                     return (
-                      <MenuItem key={item.id} value={item.siteName}>
+                      <MenuItem disabled={!isActive} key={item.id} value={item.siteName}>
                         {item.siteName}
                       </MenuItem>
                     );
