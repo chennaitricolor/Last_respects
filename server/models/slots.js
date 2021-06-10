@@ -148,7 +148,7 @@ module.exports = function (sequelize, DataTypes) {
     cremationType: {
       type: DataTypes.STRING,
       allowNull: false,
-      field: 'place_of_death',
+      field: 'cremation_type',
       values: _.keys(CREMATION_TYPE)
     },
     sex: {
