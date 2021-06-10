@@ -31,6 +31,7 @@ import {
   genderRadioButton,
   buriedRadioButton,
   placeOfDeathRadioButton,
+  getMomentDateStr,
 } from '../utils/CommonUtils';
 import moment from 'moment';
 import momentTimeZone from 'moment-timezone';
@@ -40,6 +41,8 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Alert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
+import DateFnsUtils from '@date-io/date-fns';
+import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -133,6 +136,33 @@ const useStyles = makeStyles((theme) => ({
     '& div': {
       fontSize: '16px',
       color: '#4F4F4F',
+    },
+  },
+  datePicker: {
+    width: '94%',
+    height: '40px',
+
+    '& div': {
+      backgroundColor: '#fff',
+      height: '40px',
+
+      '& input': {
+        color: '#4F4F4F',
+      },
+
+      '& fieldset': {
+        border: '1px solid #707070 !important',
+      },
+    },
+  },
+  datePickerDisabled: {
+    '& div': {
+      '& input': {
+        color: '#4F4F4F',
+      },
+      '& fieldset': {
+        // background: '#E0E0E0'
+      },
     },
   },
   saveButton: {
@@ -274,11 +304,38 @@ const renderDropdownInput = (label, value, id, handleOnChange, list, styles, dis
   );
 };
 
+const renderDateField = (label, value, id, handleOnChange, styles, disabled, isRequired = false) => {
+  return (
+    <div className="col-md-6 col-sm-12 col-12" style={{ marginTop: '16px' }}>
+      <Typography component={'div'} className={styles.fieldLabel}>
+        {label}
+        {isRequired && <RequiredFieldMarker />}
+      </Typography>
+      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <DatePicker
+          className={clsx(styles.datePicker, disabled ? styles.datePickerDisabled : '')}
+          disabled={disabled}
+          disableFuture
+          disableToolbar
+          variant="inline"
+          format="dd-MM-yyyy"
+          inputVariant="outlined"
+          autoOk
+          margin="normal"
+          value={value !== undefined ? value : null}
+          onChange={(e) => handleOnChange(e, id, 'date')}
+        />
+      </MuiPickersUtilsProvider>
+    </div>
+  );
+};
+
 const initialState = {
   deceasedName: '',
   dependent: '',
   sex: '',
   age: '',
+  dateOfDeath: null,
   attenderAddress: '',
   cremationType: '',
   covidRelated: '',
@@ -287,6 +344,7 @@ const initialState = {
   attenderName: '',
   attenderContact: '',
   attenderType: '',
+  otherAttenderType: '',
   aadharOfDeceased: '',
   proofType: '',
   status: 'BOOKED',
@@ -376,6 +434,14 @@ const LastRespectForm = (props) => {
         });
       }
     }
+    if (type === 'date') {
+      if (event !== null) {
+        setDetails({
+          ...details,
+          [id]: getMomentDateStr(event, 'YYYY-MM-DD'),
+        });
+      }
+    }
   };
 
   const handleCloseSnackBar = () => {
@@ -389,18 +455,41 @@ const LastRespectForm = (props) => {
       return false;
     }
 
-    const { deceasedName, covidRelated, attenderName, attenderContact, status, reasonForCancellation, attenderAddress, dependent, otherComments } =
-      details;
+    const {
+      deceasedName,
+      dependent,
+      sex,
+      age,
+      attenderAddress,
+      cremationType,
+      covidRelated,
+      placeOfDeath,
+      attenderName,
+      attenderContact,
+      attenderType,
+      otherAttenderType,
+      status,
+      reasonForCancellation,
+      otherComments,
+    } = details;
 
     if (props.type === 'ADD') {
+      let covidRelatedFieldsCheck = false;
+      if (covidRelated !== '') {
+        covidRelatedFieldsCheck = covidRelated === false || (covidRelated === true && placeOfDeath !== '');
+      }
       return (
         deceasedName &&
-        covidRelated !== '' &&
+        dependent &&
+        sex &&
+        age &&
+        attenderAddress &&
+        cremationType &&
+        covidRelatedFieldsCheck &&
         attenderName &&
         attenderContact &&
         attenderContact.length == 10 &&
-        dependent &&
-        attenderAddress &&
+        attenderType &&
         status
       );
     }
@@ -409,7 +498,7 @@ const LastRespectForm = (props) => {
       if (!isOwnerForSelectedSite()) return false;
 
       let statusCheck = false;
-      if (status !== 'BOOKED') statusCheck = true;
+      if (status !== props.details.status) statusCheck = true;
       if (status === 'CANCEL') {
         if (!reasonForCancellation) statusCheck = false;
         if (reasonForCancellation === 'Others' && !otherComments) statusCheck = false;
@@ -435,11 +524,14 @@ const LastRespectForm = (props) => {
       let api,
         payload,
         requestMethod = 'POST';
+
       let slotDetails = details;
       slotDetails.age = parseInt(slotDetails.age);
       slotDetails.slot = props.selectedTime;
       slotDetails.burialSiteId = parseInt(props.siteId);
       slotDetails.dateOfCremation = moment(props.selectedDate, 'DD-MM-YYYY').format('MM-DD-YYYY');
+
+      if (!slotDetails.covidRelated) slotDetails.placeOfDeath = '';
 
       if (props.type === 'ADD') {
         payload = {
@@ -587,9 +679,8 @@ const LastRespectForm = (props) => {
               true,
             )}
           </div>
-          {/*(3) Date of Death*/}
-          {/*(4) Place of Death (Home/Hospital)*/}
           <div className="row ">
+            {renderDateField('Date of Death', details.dateOfDeath, 'dateOfDeath', handleOnChange, styles, props.type === 'EDIT', true)}
             {renderRadioButtonField(
               'Sex',
               details.sex,
@@ -602,11 +693,11 @@ const LastRespectForm = (props) => {
               false,
               'radioButton',
             )}
-            {renderNumberInput('Age', details.age, 'age', handleOnChange, '99', styles, props.type === 'EDIT', true)}
           </div>
           <div className="row ">
+            {renderNumberInput('Age', details.age, 'age', handleOnChange, '99', styles, props.type === 'EDIT', true)}
             {renderTextInput(
-              'Address of deceased',
+              'Address of Deceased Person',
               details.attenderAddress,
               'attenderAddress',
               handleOnChange,
@@ -616,6 +707,8 @@ const LastRespectForm = (props) => {
               props.type === 'EDIT',
               true,
             )}
+          </div>
+          <div className="row ">
             {renderRadioButtonField(
               'Buried or Burnt',
               details.cremationType,
@@ -690,6 +783,18 @@ const LastRespectForm = (props) => {
               props.type === 'EDIT',
               true,
             )}
+            {details.attenderType === 'Others' &&
+              renderTextInput(
+                'Other Comments',
+                details.otherAttenderType,
+                'otherAttenderType',
+                handleOnChange,
+                styles,
+                false,
+                null,
+                props.type === 'EDIT',
+                details.attenderType === 'Others',
+              )}
             {/*{renderDropdownInput('Address Proof', details.proofType, 'proofType', handleOnChange, addressProof, styles, props.type === 'EDIT', true)}*/}
             {renderNumberInput(
               'Aadhar Number',
