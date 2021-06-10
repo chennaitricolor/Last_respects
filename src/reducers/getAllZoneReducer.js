@@ -16,7 +16,7 @@ const getAllZoneReducer = (state = defaultState, action) => {
     case actionTypes.GET_ALL_ZONES_FAILURE:
       return Object.assign({}, state, { isLoading: false, error: action.error });
     case actionTypes.SET_ZONE_AND_SITE_NAME:
-      return Object.assign({}, state, { zoneName: action.payload.zoneName, siteName : action.payload.siteName});
+      return Object.assign({}, state, { payload: action.payload });
     case actionTypes.RESET_DATA_UNMOUNT_SLOT_BOOKING:
       return Object.assign({}, state, defaultState);
     case actionTypes.LOGOUT_SUCCESS:

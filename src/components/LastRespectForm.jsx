@@ -308,7 +308,8 @@ const LastRespectForm = (props) => {
   });
 
   const snackBarInfo = useSelector((state) => state.showSnackBarMessageReducer);
-
+  const siteInfo = useSelector((state) => state.getSitesBasedOnZoneIdReducer.payload);
+  console.log('siteInfo', siteInfo);
   useEffect(() => {
     setSnackInfo({
       openSnack: snackBarInfo.openSnack,
@@ -548,7 +549,7 @@ const LastRespectForm = (props) => {
                     setOpenDialog(!openDialog);
                   }}
                 >
-                  Re-Assign
+                  {siteInfo.isActive ? 'Re-Schedule' : 'Re-Assign'}
                 </Button>
               </div>
             )}

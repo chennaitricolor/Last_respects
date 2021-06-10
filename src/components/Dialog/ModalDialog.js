@@ -137,8 +137,7 @@ const ModalDialog = (props) => {
 
   const zoneList = useSelector((state) => state.getAllZoneReducer.zoneList);
   const siteList = useSelector((state) => state.getSitesBasedOnZoneIdReducer.siteList);
-  const zoneName = useSelector((state) => state.getAllZoneReducer.zoneName);
-  const siteName = useSelector((state) => state.getAllZoneReducer.siteName);
+  const zoneDetailsPayload = useSelector((state) => state.getAllZoneReducer.payload);
   const payload = useSelector((state) => state.getSitesBasedOnZoneIdReducer.payload);
   const availableSlotDetails = useSelector((state) => state.getAvailableSlotDetailsBasedOnSiteIdReducer.slotDetails);
   const isActive = payload.isActive;
@@ -146,6 +145,10 @@ const ModalDialog = (props) => {
   const siteId = payload.siteId;
   let availableTimeSlots = availableSlotDetails !== null ? Object.keys(availableSlotDetails[Object.keys(availableSlotDetails)[0]]) : [];
 
+  console.log("zone", zoneDetailsPayload.zoneName);
+  console.log("site", zoneDetailsPayload.siteName);
+  console.log("isActive", isActive);
+  console.log("isOwner", isOwner);
   const handleClose = () => {
     props.setOpenDialog(false);
   };
@@ -158,10 +161,10 @@ const ModalDialog = (props) => {
 
   useEffect(() => {
     setSiteDetails({
-      zoneName: zoneName,
-      siteName: siteName,
+      zoneName: zoneDetailsPayload.zoneName,
+      siteName: zoneDetailsPayload.siteName,
     });
-  }, [zoneName,siteName]);
+  }, [zoneDetailsPayload.zoneName,zoneDetailsPayload.siteName]);
 
   useEffect(() => {
     dispatch({
@@ -202,7 +205,7 @@ const ModalDialog = (props) => {
   const enableSubmitAction = () => {
     let result = false;
     result =
-      zoneName !== '' &&
+      siteDetails.zoneName !== '' &&
       siteDetails.siteName !== '' &&
       selectedDate !== null &&
       selectedDate !== '' &&
@@ -218,7 +221,7 @@ const ModalDialog = (props) => {
   //handle submit
   useEffect( () => {
     enableSubmitAction();
-  },[zoneName ,siteDetails.siteName,selectedDate,selectedTime,selectedReason,isOwner,commentVal]);
+  },[zoneDetailsPayload.zoneName ,siteDetails.siteName,selectedDate,selectedTime,selectedReason,isOwner,commentVal]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -311,14 +314,14 @@ const ModalDialog = (props) => {
                 <Select
                   variant={'outlined'}
                   size={'small'}
-                  disabled={!isActive}
-                  className={clsx(styles.dropDownSelect, !isActive ? styles.disabledField : '')}
+                  disabled={isActive}
+                  className={clsx(styles.dropDownSelect, isActive ? styles.disabledField : '')}
                   value={siteDetails.zoneName}
                   onChange={(e) => handleOnChange(e.target.value, 'zoneName')}
                 >
                   {zoneList.map((item) => {
                     return (
-                      <MenuItem disabled={!isActive} key={item.zone_or_division_id} value={item.zone_or_division}>
+                      <MenuItem disabled={isActive} key={item.zone_or_division_id} value={item.zone_or_division}>
                         {item.zone_or_division}
                       </MenuItem>
                     );
@@ -334,14 +337,14 @@ const ModalDialog = (props) => {
                 <Select
                   variant={'outlined'}
                   size={'small'}
-                  className={styles.dropDownSelect}
+                  className={clsx(styles.dropDownSelect, isActive ? styles.disabledField : '')}
                   value={siteDetails.siteName}
-                  disabled={!isActive}
+                  disabled={isActive}
                   onChange={(e) => handleOnChange(e.target.value, 'siteName')}
                 >
                   {siteList.map((item) => {
                     return (
-                      <MenuItem disabled={!isActive} key={item.id} value={item.siteName}>
+                      <MenuItem disabled={isActive} key={item.id} value={item.siteName}>
                         {item.siteName}
                       </MenuItem>
                     );
