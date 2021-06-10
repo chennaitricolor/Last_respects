@@ -6,6 +6,7 @@ import getSlotsBasedOnSiteIdReducer from './getSlotsBasedOnSiteIdReducer';
 import getSlotDetailsBasedOnSlotIdReducer from './getSlotDetailsBasedOnSlotIdReducer';
 import getAvailableSlotDetailsBasedOnSiteIdReducer from './getAvailableSlotDetailsBasedOnSiteIdReducer';
 import showSnackBarMessageReducer from './showSnackBarMessageReducer';
+import putSiteStatusReducer from './putSiteStatusReducer';
 
 const reducers = combineReducers({
   loginResponse,
@@ -15,6 +16,7 @@ const reducers = combineReducers({
   getSlotDetailsBasedOnSlotIdReducer,
   getAvailableSlotDetailsBasedOnSiteIdReducer,
   showSnackBarMessageReducer,
+  putSiteStatusReducer,
 });
 
 export default reducers;
