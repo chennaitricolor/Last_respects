@@ -3,7 +3,7 @@ const nanoId = require('nanoid');
 const idGenerator = nanoId.customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890', 8)
 const _ = require('lodash');
 const { SLOT_STATUS } = require('../constant/enum');
-const { SLOT_STATUS_TRANSITION_NOT_ALLOWED, blockedSlots } = require('../constant/constants');
+const { SLOT_STATUS_TRANSITION_NOT_ALLOWED, blockedSlots, BOOKING_ID_PREFIXES } = require('../constant/constants');
 
 const getSlotsForADate = (slotDetails, bookedSlots, date, onlyFreeSlots) => {
   const slots = _.reduce(slotDetails, (acc, { slot, slotOrder }) => {
@@ -44,7 +44,7 @@ module.exports = {
     }[status];
   },
   getBookingId: () => {
-    return idGenerator()
+    return `${BOOKING_ID_PREFIXES.GCC}${idGenerator()}`
   },
   validateStateTransition: (prev = SLOT_STATUS.BOOKED, next) => {
     const acceptedTransitions = {
