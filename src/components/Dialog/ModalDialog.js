@@ -11,14 +11,14 @@ import clsx from 'clsx';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DateFnsUtils from '@date-io/date-fns';
-import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
+import {MuiPickersUtilsProvider, DatePicker} from '@material-ui/pickers';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionTypes } from '../../utils/actionTypes';
 import Typography from '@material-ui/core/Typography';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import { getReassignReasons, getMomentDateStr, getCookie, isTokenAlive } from '../../utils/CommonUtils';
+import { getReassignReasons, getMomentDateStr, getCookie, isTokenAlive, isCurrentTimeCrossedSlotTime } from '../../utils/CommonUtils';
 import { apiUrls } from '../../utils/constants';
 import { callFetchApi } from '../../services/api';
 import moment from 'moment';
@@ -134,6 +134,7 @@ const ModalDialog = (props) => {
   const [maxDate, setMaxDate] = useState(date.setDate(new Date().getDate() + 1));
   const [showError, setShowError] = useState(false);
   const [enableSubmit, setEnableSubmit] = useState(false);
+  const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
 
   const zoneList = useSelector((state) => state.getAllZoneReducer.zoneList);
   const siteList = useSelector((state) => state.getSitesBasedOnZoneIdReducer.siteList);
@@ -143,7 +144,18 @@ const ModalDialog = (props) => {
   const isActive = payload.isActive;
   const isOwner = payload.isOwner;
   const siteId = payload.siteId;
-  let availableTimeSlots = availableSlotDetails !== null ? Object.keys(availableSlotDetails[Object.keys(availableSlotDetails)[0]]) : [];
+
+  useEffect(() => {
+    if (availableSlotDetails !== null) {
+      let formattedDate = moment(selectedDate).format('DD-MM-YYYY');
+      let timeArray = Object.keys(availableSlotDetails[Object.keys(availableSlotDetails)[0]]);
+      let availableTime = [];
+      timeArray.forEach((time) => {
+        if (!isCurrentTimeCrossedSlotTime(time, formattedDate)) availableTime.push(time);
+      });
+      setAvailableTimeSlots(availableTime);
+    }
+  }, [availableSlotDetails]);
 
   const handleClose = () => {
     props.setOpenDialog(false);
@@ -160,7 +172,7 @@ const ModalDialog = (props) => {
       zoneName: zoneDetailsPayload.zoneName,
       siteName: zoneDetailsPayload.siteName,
     });
-  }, [zoneDetailsPayload.zoneName,zoneDetailsPayload.siteName]);
+  }, [zoneDetailsPayload.zoneName, zoneDetailsPayload.siteName]);
 
   useEffect(() => {
     dispatch({
@@ -206,18 +218,18 @@ const ModalDialog = (props) => {
       selectedDate !== null &&
       selectedDate !== '' &&
       selectedTime !== '' &&
-      selectedReason !== ''
-      && isOwner;
+      selectedReason !== '' &&
+      isOwner;
 
     result = showReAssignComment ? commentVal !== '' : result;
 
-    result  ? setEnableSubmit(true) : setEnableSubmit(false);
+    result ? setEnableSubmit(true) : setEnableSubmit(false);
   };
 
   //handle submit
-  useEffect( () => {
+  useEffect(() => {
     enableSubmitAction();
-  },[zoneDetailsPayload.zoneName ,siteDetails.siteName,selectedDate,selectedTime,selectedReason,isOwner,commentVal]);
+  }, [zoneDetailsPayload.zoneName, siteDetails.siteName, selectedDate, selectedTime, selectedReason, isOwner, commentVal]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -284,7 +296,18 @@ const ModalDialog = (props) => {
               siteId: siteId,
             },
           });
+          let formattedDate = moment(selectedDate).format('MMM-DD');
+          let message = isActive ? `Slot Re-Scheduled to ${formattedDate + ' ' + selectedTime}` : `Slot Re-Assigned to ${formattedDate + ' ' + selectedTime}`
+          dispatch({
+            type: actionTypes.SHOW_SNACKBAR,
+            payload: {
+              openSnack: true,
+              message: message,
+              severity: 'success',
+            },
+          });
           props.setOpenDialog(false);
+          props.closeBookingForm();
         } else {
           setShowError(true);
         }
@@ -295,7 +318,7 @@ const ModalDialog = (props) => {
   return (
     <div>
       <Dialog fullScreen={fullScreen} open={true} onClose={handleClose} aria-labelledby="dialog-title" disableBackdropClick>
-        <DialogTitle id="responsive-dialog-title">{'Re-Assign Booking'}</DialogTitle>
+        <DialogTitle id="responsive-dialog-title">{isActive ? 'Re-Schedule Booking' : 'Re-Assign Booking'}</DialogTitle>
         <div className={`container ${styles.reassignModal}`}>
           <span className={`${styles.close}`} onClick={handleClose}>
             X Close
@@ -350,7 +373,7 @@ const ModalDialog = (props) => {
             </div>
             <div className="col-12 mb-4">
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <KeyboardDatePicker
+                <DatePicker
                   className={styles.datePickerRoot}
                   disableToolbar
                   disablePast
@@ -360,7 +383,7 @@ const ModalDialog = (props) => {
                   autoOk
                   margin="normal"
                   id="date-picker-inline"
-                  label="Date picker inline"
+                  label={isActive ? 'Re-Schedule Date' : 'Re-Assign Date'}
                   value={selectedDate}
                   maxDate={maxDate}
                   onChange={handleDateChange}
@@ -394,7 +417,7 @@ const ModalDialog = (props) => {
             </div>
             <div className="col-12 mb-4">
               <Typography className={styles.dropDownLabel} component={'div'}>
-                Re-Assign Reason
+                {isActive ? 'Re-Schedule Reason' : 'Re-Assign Reason'}
               </Typography>
               <FormControl className={styles.dropDown}>
                 <Select

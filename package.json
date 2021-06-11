@@ -76,7 +76,7 @@
     "workbox-webpack-plugin": "5.1.4"
   },
   "scripts": {
-    "start": "env-cmd -e local node scripts/start.js",
+    "start": "node scripts/start.js",
     "build": "env-cmd -e prod node scripts/build.js",
     "test": "node scripts/test.js",
     "clean": "rimraf node_modules package-lock.json && npm cache clean -f",

@@ -368,7 +368,7 @@ const LastRespectForm = (props) => {
 
   const snackBarInfo = useSelector((state) => state.showSnackBarMessageReducer);
   const siteInfo = useSelector((state) => state.getSitesBasedOnZoneIdReducer.payload);
-  console.log('siteInfo', siteInfo);
+
   useEffect(() => {
     setSnackInfo({
       openSnack: snackBarInfo.openSnack,
@@ -665,7 +665,7 @@ const LastRespectForm = (props) => {
             </Typography>
             {props.type === 'EDIT' && enableReassignButtonStatus.includes(props.details.status) && (
               <div style={{ display: 'inline-block', float: 'right' }}>
-                {openDialog && <ModalDialog setOpenDialog={setOpenDialog} slotDetails={props.details} />}
+                {openDialog && <ModalDialog setOpenDialog={setOpenDialog} slotDetails={props.details} closeBookingForm={props.onCancel} />}
                 <Button
                   variant="outlined"
                   className={styles.reAssignButton}
