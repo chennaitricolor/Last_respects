@@ -179,6 +179,7 @@ const MachineryManagementContainer = () => {
             isActive: siteListSelector[0].isActive,
             isOwner: siteListSelector[0].isOwner,
             siteId: siteDetail.id,
+            siteName: event,
           },
         });
       }
@@ -222,12 +223,30 @@ const MachineryManagementContainer = () => {
     SetMachineryManageNotification(machineryManagementStatus ? machineryManageOnNotification : machineryManageOffNotification);
   }, [machineryManagementStatus]);
 
+  const handleOnBackClick = () => {
+    dispatch({
+      type: actionTypes.SET_ZONE_NAME,
+      payload: {
+        zoneName: '',
+      },
+    });
+    dispatch({
+      type: actionTypes.SET_ACTIVE_FLAG,
+      payload: {
+        isActive: false,
+        isOwner: false,
+        siteId: '',
+        siteName: '',
+      },
+    });
+  };
+
   return (
     <>
       <Header />
       <div className={styles.headerSection}>
         <div>
-          <Button className={styles.backButton} component={Link} to="/slotBooking">
+          <Button className={styles.backButton} component={Link} onClick={handleOnBackClick} to="/slotBooking">
             {'<- Back to Home'}
           </Button>
         </div>
