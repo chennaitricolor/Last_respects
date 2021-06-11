@@ -82,8 +82,11 @@ class BurialSites {
   static async getIncidents(req, res) {
     try {
       const siteId = req.params.siteId
+      const status = req.query.status;
+      validate(burialSitesValidator.getIncidents({ status }));
       const machineryDowntimeWhere = {
         burialSiteId: siteId,
+        ...(!_.isEmpty(status) && { status })
       }
       const attributes = {
         exclude: ['id', 'burialSiteId'],

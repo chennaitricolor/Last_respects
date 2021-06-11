@@ -53,6 +53,14 @@ module.exports = {
     }
   },
   burialSites: {
+    getIncidents: ({ status }) => {
+      const errors = [];
+      const siteStatus = _.values(SITE_STATUS);
+      if(!siteStatus.includes(status) && !_.isEmpty(status)) {
+        errors.push({ message: `status should be one of ${siteStatus.toString()} ` });
+      }
+      return errors;
+    },
     update: ({ siteId, status}) => {
       const errors = [];
       const siteStatus = _.values(SITE_STATUS);
