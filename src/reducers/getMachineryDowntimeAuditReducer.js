@@ -5,13 +5,13 @@ const defaultState = {
   error: '',
 };
 
-const putSiteStatusReducer = (state = defaultState, action) => {
+const getMachineryDowntimeAuditReducer = (state = defaultState, action) => {
   switch (action.type) {
-    case actionTypes.PUT_SITE_STATUS:
+    case actionTypes.GET_DOWNTIME_AUDIT:
       return Object.assign({}, state, { isLoading: true });
-    case actionTypes.PUT_SITE_STATUS_SUCCESS:
-      return Object.assign({}, state, { isLoading: false });
-    case actionTypes.PUT_SITE_STATUS_FAILURE:
+    case actionTypes.GET_DOWNTIME_AUDIT_SUCCESS:
+      return Object.assign({}, state, { isLoading: false, auditList: action.response });
+    case actionTypes.GET_DOWNTIME_AUDIT_FAILURE:
       return Object.assign({}, state, { isLoading: false });
     case actionTypes.LOGOUT_SUCCESS:
       return Object.assign({}, state, defaultState);
@@ -20,4 +20,4 @@ const putSiteStatusReducer = (state = defaultState, action) => {
   }
 };
 
-export default putSiteStatusReducer;
+export default getMachineryDowntimeAuditReducer;

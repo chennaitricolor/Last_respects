@@ -4,12 +4,12 @@ import Button from '@material-ui/core/Button';
 import SwitchComponent from './../components/common/SwitchComponent';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import TableComponent from './../components/common/TableComponent';
 import Header from './../components/Header';
 import { Link } from 'react-router-dom';
 import ZoneSelection from '../views/ZoneSelection/ZoneSelection';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionTypes } from './../utils/actionTypes';
+import MachineryAuditList from './../components/Machinery/MachineryAuditList';
 
 //styles
 const useStyles = makeStyles(() => ({
@@ -260,6 +260,8 @@ const MachineryManagementContainer = () => {
                     background: `${machineryManagementStatus ? '' : '#00AB88'}`,
                     border: `${machineryManagementStatus ? '1px solid #C4C4C4' : '1px solid #00AB88'}`,
                   }}
+                  component={Link}
+                  to="/slotBooking"
                 >
                   Re-Assign
                 </Button>
@@ -273,7 +275,7 @@ const MachineryManagementContainer = () => {
         <strong>Last 5 activities</strong>
       </div>
       <div className={styles.tableDiv}>
-        <TableComponent />
+        <MachineryAuditList siteId={siteDetails.siteId} />
       </div>
     </>
   );
