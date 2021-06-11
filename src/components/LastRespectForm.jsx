@@ -489,7 +489,7 @@ const LastRespectForm = (props) => {
         covidRelatedFieldsCheck &&
         attenderName &&
         attenderContact &&
-        attenderContact.length == 10 &&
+        attenderContact.length === 10 &&
         attenderType &&
         status
       );

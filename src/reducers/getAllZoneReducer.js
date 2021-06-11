@@ -4,7 +4,7 @@ const defaultState = {
   isLoading: false,
   zoneList: [],
   error: '',
-  zoneName: 'Zone1',
+  zoneName: '',
 };
 
 const getAllZoneReducer = (state = defaultState, action) => {
