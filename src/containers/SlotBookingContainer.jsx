@@ -154,18 +154,18 @@ const SlotBookingContainer = (props) => {
         });
       }
       if (id === 'siteName') {
-        let siteId = siteList.filter((site) => site.siteName === event)[0].id;
+        let selectedSite = siteList.find((site) => site.siteName === event);
         setSiteDetails({
           ...siteDetails,
           siteName: event,
-          siteId: siteId,
+          siteId: selectedSite !== undefined ? selectedSite.id : '',
         });
         dispatch({
           type: actionTypes.SET_ACTIVE_FLAG,
           payload: {
-            isActive: siteList[0].isActive,
-            isOwner: siteList[0].isOwner,
-            siteId: siteId,
+            isActive: selectedSite !== undefined ? selectedSite.isActive : false,
+            isOwner: selectedSite !== undefined ? selectedSite.isOwner : false,
+            siteId: selectedSite !== undefined ? selectedSite.id : '',
             siteName: event,
           },
         });

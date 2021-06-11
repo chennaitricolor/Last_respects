@@ -34,6 +34,24 @@ const isTokenAlive = (token) => {
   return currentTime <= expiryTime;
 };
 
+export const isCurrentTimeCrossedSlotTime = (time, date) => {
+  let currentDate = moment().format('DD-MM-YYYY');
+  if (currentDate === date) {
+    let timeArray = time.split('-');
+    let trimmedTimeArray = [];
+
+    timeArray.forEach((timeValue) => {
+      trimmedTimeArray.push(timeValue.trim());
+    });
+
+    if (trimmedTimeArray.length === 2) {
+      if (moment(trimmedTimeArray[1], 'hh:mm A').isBefore(moment())) return true;
+    }
+    return false;
+  }
+  return false;
+};
+
 export const yesNoRadioButton = [
   { id: true, value: 'Yes' },
   { id: false, value: 'No' },
