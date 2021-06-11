@@ -51,12 +51,17 @@ class BurialSites {
       }
     } catch (e) {
       const { code, message } = exceptionparser(e);
-      res.status(code).send({ error: message });
+      res.status(code).send(message);
     }
   }
 
-  static async isSiteAvailable(siteId, options) {
+  static async getSiteFromId (siteId, options = {}) {
     const site = await burialSites.findByPk(siteId, options);
+    return site;
+  }
+
+  static async isSiteAvailable(siteId, options) {
+    const site = await BurialSites.getSiteFromId(siteId, options);
     if (_.isEmpty(site) || !site.isActive) {
       return { isSiteAvailable: false, site };
     } else {
@@ -70,7 +75,7 @@ class BurialSites {
       return res.status(200).send(sites);
     } catch(e) {
       const { code, message } = exceptionparser(e);
-      res.status(code).send({ error: message });
+      res.status(code).send(message);
     }
   }
 
@@ -89,7 +94,7 @@ class BurialSites {
       return res.status(200).send(machineryDowntimeAuditCurrentRecords);
     } catch(e) {
       const { code, message } = exceptionparser(e);
-      res.status(code).send({ error: message });
+      res.status(code).send(message);
     }
 
   }
@@ -135,7 +140,7 @@ class BurialSites {
       })
     } catch(e) {
       const { code, message } = exceptionparser(e);
-      res.status(code).send({ error: message });
+      res.status(code).send(message);
     }
 
   }

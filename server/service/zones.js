@@ -19,7 +19,7 @@ class Zones {
         .then(zones => res.status(200).send(zones));
     } catch (e) {
       const { code, message } = exceptionparser(e);
-      res.status(code).send({ error: message });
+      res.status(code).send(message);
     }
   }
 }

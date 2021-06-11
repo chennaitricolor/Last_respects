@@ -85,9 +85,11 @@ module.exports = {
   exceptionparser: (e) => {
     console.log(e);
     return {
-      message: _.get(e, 'errors', [{ message: 'Unexpected error' }]),
       code: _.get(e, 'statusCode', 500),
-      meta: _.omit(e, ['errors', 'statusCode'])
+      message: {
+        error: _.get(e, 'errors', [{ message: 'Unexpected error' }]),
+        meta: _.omit(e, ['errors', 'statusCode'])
+      },
     }
   }
 }

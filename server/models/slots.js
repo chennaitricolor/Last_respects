@@ -84,7 +84,7 @@ module.exports = function (sequelize, DataTypes) {
     },
     deathCertNo: {
       type: DataTypes.BIGINT,
-      allowNull: false,
+      allowNull: true,
       field: 'death_cert_no'
     },
     proofType: {

@@ -54,7 +54,7 @@ class User {
 
     } catch (e) {
       const { code, message } = exceptionparser(e);
-      res.status(code).send({ error: message });
+      res.status(code).send(message);
     }
   }
 

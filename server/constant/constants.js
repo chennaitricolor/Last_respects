@@ -145,6 +145,7 @@ const optionalKeys = [
   'updatedTime',
   'createdTime',
   'aadharOfDeceased',
+  'deathCertNo'
 ];
 
 const secret = process.env.JWT_TOKEN_SECRET;

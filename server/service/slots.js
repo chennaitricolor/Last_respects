@@ -9,6 +9,7 @@ const BurialSitesService = require('./burial_sites');
 const UserService = require('./user');
 const _ = require('lodash');
 const { sequelize } = require('../models');
+const BurialSites = require('./burial_sites');
 
 class Slots {
   /**
@@ -97,7 +98,7 @@ class Slots {
       res.status(200).send(result);
     } catch (e) {
       const { code, message } = exceptionparser(e);
-      res.status(code).send({ error: message });
+      res.status(code).send(message);
     }
   }
 
@@ -115,7 +116,7 @@ class Slots {
       }
     } catch (e) {
       const { code, message } = exceptionparser(e);
-      res.status(code).send({ error: message });
+      res.status(code).send(message);
     }
 
   }
@@ -151,7 +152,9 @@ class Slots {
       } else if (type === SLOT_UPDATE_TYPE.REASSIGN) {
         await sequelize.transaction(async function(transaction) {
           const options = { transaction, lock: transaction.LOCK.UPDATE };
-          await Slots.bookSlot({ ..._.omit(slotDetails.toJSON(), ['id']), ...slotDetailsParam }, userId, true, options);
+          const overrideOptions = { previouslyBookedId: slotDetails.id}
+          const newSlotDetails = { ..._.omit(slotDetails.toJSON(), ['id']), ...slotDetailsParam }
+          await Slots.bookSlot(newSlotDetails, userId, true, options, overrideOptions);
           await Slots.dbUpdateSlotData(slotDetails, userId, { status: toBeUpdatedStatus, reasonForCancellation: reason }, options)
         });
       }
@@ -159,7 +162,7 @@ class Slots {
 
     } catch (e) {
       const { code, message } = exceptionparser(e);
-      res.status(code).send({ error: message });
+      res.status(code).send(message);
     }
   }
 
@@ -172,7 +175,7 @@ class Slots {
       return res.status(200).send({ slotId: bookedSlot.id })
   } catch (e) {
       const { code, message } = exceptionparser(e);
-      res.status(code).send({ error: message });
+      res.status(code).send(message);
     }
   }
 
@@ -207,7 +210,7 @@ class Slots {
     }
   }
 
-  static async bookSlot(slotDetailsParam, userId, crossBookOverride, options = {}) {
+  static async bookSlot(slotDetailsParam, userId, crossBookOverride, options = {}, overrideOptions) {
     await Slots.authorizeBooking(slotDetailsParam, userId, crossBookOverride)
     const currentDate = moment()
     slotDetailsParam.createdTime = currentDate;
@@ -218,19 +221,25 @@ class Slots {
     if (_.isEmpty(options.transaction)) {
       return await sequelize.transaction(async transaction => {
         const options = { transaction, lock: transaction.LOCK.UPDATE };
-        return await Slots.dBbookSlot(slotDetailsParam, options);
+        return await Slots.dBbookSlot(slotDetailsParam, options, overrideOptions);
       })
     } else {
-      return await Slots.dBbookSlot(slotDetailsParam, { lock: options.transaction.LOCK.UPDATE, ...options })
+      return await Slots.dBbookSlot(slotDetailsParam, { lock: options.transaction.LOCK.UPDATE, ...options }, overrideOptions)
     }
   }
 
-  static async dBbookSlot(slotDetailsParam, options = {}) {
-    const [isAlreadyBooked, bookingId] = await Slots.isAlreadyBooked(slotDetailsParam, options);
+  static async dBbookSlot(slotDetailsParam, options = {}, overrideOptions={}) {
+    const [isAlreadyBooked, slotDetails = {}] = await Slots.isAlreadyBooked(slotDetailsParam, options);
     if(isAlreadyBooked) {
-      throw {
-        ...BOOKING_EXISTS,
-        bookingId
+      if(slotDetails.id !== overrideOptions.previouslyBookedId) {
+        const site = await BurialSites.getSiteFromId(slotDetails.burialSiteId, options);
+        throw {
+          ...BOOKING_EXISTS,
+          bookingId: slotDetails.bookingId,
+          dateOfCremation: slotDetails.dateOfCremation,
+          slot: slotDetails.slot,
+          site: _.pick(site.toJSON(), ['contactNo', 'zoneOrDivisionId', 'siteName', 'zoneOrDivision', 'address', 'city', 'id'])
+        }
       }
     }
     const isSlotAvailable = await Slots.isSlotAvailable(slotDetailsParam.burialSiteId, slotDetailsParam.slot, slotDetailsParam.dateOfCremation, options);
@@ -249,7 +258,7 @@ class Slots {
     }
     const slotWhere = { aadharOfDeceased, status: { [Sequelize.Op.in]: blockedSlots } }
     const slotDetails = await slots.findOne({ where: slotWhere, ...options })
-    return [!_.isEmpty(slotDetails), _.get(slotDetails, 'bookingId')];
+    return [!_.isEmpty(slotDetails), slotDetails];
   }
 
   static async isSlotAvailable(siteId, slot, date, options) {
