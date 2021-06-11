@@ -144,7 +144,8 @@ const ModalDialog = (props) => {
   const isActive = payload.isActive;
   const isOwner = payload.isOwner;
   const siteId = payload.siteId;
-
+  let reAssignSiteId = 0;
+  
   useEffect(() => {
     if (availableSlotDetails !== null) {
       let formattedDate = moment(selectedDate).format('DD-MM-YYYY');
@@ -200,6 +201,7 @@ const ModalDialog = (props) => {
       const siteFilterCdn = siteList.filter((site) => site.site_name === siteDetails.siteName);
       if (siteFilterCdn.length > 0) {
         let siteId = siteFilterCdn[0].id;
+        reAssignSiteId = siteId;
         dispatch({
           type: actionTypes.GET_SLOTS_BASED_SITE_ID,
           payload: {
@@ -218,8 +220,7 @@ const ModalDialog = (props) => {
       selectedDate !== null &&
       selectedDate !== '' &&
       selectedTime !== '' &&
-      selectedReason !== '' &&
-      isOwner;
+      selectedReason !== '';
 
     result = showReAssignComment ? commentVal !== '' : result;
 
@@ -277,23 +278,25 @@ const ModalDialog = (props) => {
     if (token !== '' && isTokenAlive(token)) {
       let api = apiUrls.updateSlotStatus.replace(':slotId', props.slotDetails.id);
       let slotDetails = props.slotDetails;
+      const finalSiteId =  isActive ? parseInt(siteId) : parseInt(reAssignSiteId) ;
+      slotDetails.burialSiteId = finalSiteId;
+
       slotDetails.id = undefined;
       slotDetails.slot = selectedTime;
       slotDetails.dateOfCremation = moment(selectedDate, 'DD-MM-YYYY').format('MM-DD-YYYY');
-      slotDetails.burialSiteId = parseInt(siteId);
 
-      let reAssignPayload = {
+      let putPayload = {
         slotDetails: slotDetails,
         type: 'REASSIGN',
         reason: showReAssignComment ? selectedReason + ' - ' + commentVal : selectedReason,
       };
 
-      callFetchApi(api, null, 'PUT', reAssignPayload, token).then((response) => {
+      callFetchApi(api, null, 'PUT', putPayload, token).then((response) => {
         if (response.status === 200) {
           dispatch({
             type: actionTypes.GET_SLOTS_BASED_SITE_ID,
             payload: {
-              siteId: siteId,
+              siteId: finalSiteId,
             },
           });
           let formattedDate = moment(selectedDate).format('MMM-DD');
