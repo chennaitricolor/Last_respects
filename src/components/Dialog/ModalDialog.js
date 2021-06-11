@@ -132,9 +132,9 @@ const ModalDialog = (props) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState('');
   const [maxDate] = useState(date.setDate(new Date().getDate() + 1));
-  const [showError, setShowError] = useState(false);
   const [enableSubmit, setEnableSubmit] = useState(false);
   const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
+  const [reAssignSiteId, setReAssignSiteId] = useState(0);
 
   const zoneList = useSelector((state) => state.getAllZoneReducer.zoneList);
   const siteList = useSelector((state) => state.getSitesBasedOnZoneIdReducer.siteList);
@@ -144,7 +144,6 @@ const ModalDialog = (props) => {
   const isActive = payload.isActive;
   const isOwner = payload.isOwner;
   const siteId = payload.siteId;
-  let reAssignSiteId = 0;
   
   useEffect(() => {
     if (availableSlotDetails !== null) {
@@ -198,10 +197,10 @@ const ModalDialog = (props) => {
 
   useEffect(() => {
     if (siteDetails.zoneName !== '' && siteDetails.siteName !== '') {
-      const siteFilterCdn = siteList.filter((site) => site.site_name === siteDetails.siteName);
+      const siteFilterCdn = siteList.filter((site) => site.siteName === siteDetails.siteName);
       if (siteFilterCdn.length > 0) {
         let siteId = siteFilterCdn[0].id;
-        reAssignSiteId = siteId;
+        setReAssignSiteId(siteId);
         dispatch({
           type: actionTypes.GET_SLOTS_BASED_SITE_ID,
           payload: {
@@ -221,11 +220,8 @@ const ModalDialog = (props) => {
       selectedDate !== '' &&
       selectedTime !== '' &&
       selectedReason !== '' &&
-      isOwner ;
-    
-    if(!isActive){
-      result = true; 
-    }
+      isOwner &&
+      !isActive;
     
     result = showReAssignComment ? commentVal !== '' : result;
 
@@ -277,7 +273,6 @@ const ModalDialog = (props) => {
   };
 
   const handleSubmit = () => {
-    setShowError(false);
     setEnableSubmit(false);
     let token = getCookie('lrToken');
     if (token !== '' && isTokenAlive(token)) {
@@ -285,6 +280,7 @@ const ModalDialog = (props) => {
       let slotDetails = props.slotDetails;
       const finalSiteId =  isActive ? parseInt(siteId) : parseInt(reAssignSiteId) ;
       slotDetails.burialSiteId = finalSiteId;
+      debugger;
 
       slotDetails.id = undefined;
       slotDetails.slot = selectedTime;
@@ -305,7 +301,7 @@ const ModalDialog = (props) => {
             },
           });
           let formattedDate = moment(selectedDate).format('MMM-DD');
-          let message = isActive ? `Slot Re-Scheduled to ${formattedDate + ' ' + selectedTime}` : `Slot Re-Assigned to ${formattedDate + ' ' + selectedTime}`
+          let message = isActive ? `Slot Re-Scheduled to ${formattedDate + ' ' + selectedTime}` : `Slot Re-Assigned to ${formattedDate + ' ' + selectedTime}`;
           dispatch({
             type: actionTypes.SHOW_SNACKBAR,
             payload: {
@@ -317,7 +313,27 @@ const ModalDialog = (props) => {
           props.setOpenDialog(false);
           props.closeBookingForm();
         } else {
-          setShowError(true);
+          const errorMessage = isActive ? `Slot Re-Schedule Failed`  : `Slot Re-Assign Failed`
+          dispatch({
+            type: actionTypes.SHOW_SNACKBAR,
+            payload: {
+              openSnack: true,
+              message: errorMessage,
+              severity: 'error',
+            },
+          });
+        }
+      }).catch((error) => {
+        if (error.response !== undefined && error.response.data !== undefined && error.response.data.error !== undefined) {
+          let errorMessage = error.response.data.error[0];
+          dispatch({
+            type: actionTypes.SHOW_SNACKBAR,
+            payload: {
+              openSnack: true,
+              message: errorMessage.message,
+              severity: 'error',
+            },
+          });
         }
       });
     }
@@ -332,7 +348,6 @@ const ModalDialog = (props) => {
             X Close
           </span>
           <div className="row">
-            {showError && <ErrorMessage />}
             <div className="col-12 mb-4">
               <Typography className={styles.dropDownLabel} component={'div'}>
                 Zone
