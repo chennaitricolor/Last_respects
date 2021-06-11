@@ -131,7 +131,7 @@ const ModalDialog = (props) => {
   let date = new Date();
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState('');
-  const [maxDate, setMaxDate] = useState(date.setDate(new Date().getDate() + 1));
+  const [maxDate] = useState(date.setDate(new Date().getDate() + 1));
   const [showError, setShowError] = useState(false);
   const [enableSubmit, setEnableSubmit] = useState(false);
   const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
@@ -390,9 +390,6 @@ const ModalDialog = (props) => {
                   value={selectedDate}
                   maxDate={maxDate}
                   onChange={handleDateChange}
-                  KeyboardButtonProps={{
-                    'aria-label': 'change date',
-                  }}
                 />
               </MuiPickersUtilsProvider>
             </div>
