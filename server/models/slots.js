@@ -134,6 +134,11 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: false,
       field: 'attender_type',
     },
+    dateOfDeath: {
+      type: DataTypes.DATEONLY,
+      allowNull: false,
+      field: 'date_of_death'
+    },
     dependent: {
       type: DataTypes.STRING,
       allowNull: false,

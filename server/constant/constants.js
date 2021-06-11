@@ -121,6 +121,7 @@ const expectedSlotKeys = [
   'proofId',
   'proofType',
   'deathCertNo',
+  'dateOfDeath',
   'deceasedName',
   'dateOfCremation',
   'attenderType',
