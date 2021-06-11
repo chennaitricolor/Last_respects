@@ -188,6 +188,13 @@ const TimeSlotSelection = (props) => {
     return false;
   };
 
+  const isSiteActive = () => {
+    let currentSiteDetails = props.siteList.filter((site) => site.id === props.siteDetails.siteId);
+    let isActive = currentSiteDetails.length !== 0 ? currentSiteDetails[0].isActive : false;
+
+    return isActive;
+  };
+
   return (
     <div className="col-xs-12 col-md-3 pr-0">
       <div className={`row ${styles.rowFullWidth}`}>
@@ -208,7 +215,7 @@ const TimeSlotSelection = (props) => {
           return (
             <ListItem key={index} button disabled={isDisabledTime(time)} onClick={() => selectTime(time)} style={{ padding: 0 }}>
               <ListItemText className={getClassesForTimeSlot(time)}>
-                {time}
+                {time} {!isSlotAvailable(time) && !isSiteActive() && !isCurrentTimeCrossedSlotTime(time) ? '(Re-Assign)' : ''}
                 {isTimeSlotCompleted(time) && <Success style={{ marginTop: '4px', float: 'right' }} />}
                 {isCurrentTimeCrossedSlotTime(time) && isTimeSlotInProgress(time) && <PendingAction style={{ marginTop: '4px', float: 'right' }} />}
               </ListItemText>

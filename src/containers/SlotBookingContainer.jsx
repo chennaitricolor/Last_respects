@@ -56,12 +56,16 @@ const SlotBookingContainer = (props) => {
   const styles = useStyles();
   const dispatch = useDispatch();
 
+  //use preselected zone and site from machinery management screen
+  const zoneName = useSelector((state) => state.getAllZoneReducer.zoneName);
+  const sitePayload = useSelector((state) => state.getSitesBasedOnZoneIdReducer.payload);
+
   const [isFormOpen, setFormOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(moment(new Date()).format('DD-MM-YYYY'));
   const [siteDetails, setSiteDetails] = useState({
-    zoneName: '',
-    siteName: '',
-    siteId: '',
+    zoneName: zoneName !== null ? zoneName : '',
+    siteName: sitePayload.siteName !== null ? sitePayload.siteName : '',
+    siteId: sitePayload.siteId !== null ? sitePayload.siteId : '',
   });
   const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
   const [type, setType] = useState('ADD');
@@ -76,7 +80,6 @@ const SlotBookingContainer = (props) => {
   const siteList = useSelector((state) => state.getSitesBasedOnZoneIdReducer.siteList);
   const dateTimeSlotDetails = useSelector((state) => state.getSlotsBasedOnSiteIdReducer.slotDetails);
   const snackBarInfo = useSelector((state) => state.showSnackBarMessageReducer);
-
   const mobileCheck = isMobile();
 
   useEffect(() => {
@@ -104,7 +107,7 @@ const SlotBookingContainer = (props) => {
   }, []);
 
   useEffect(() => {
-    if (siteDetails.zoneName !== '') {
+    if (siteDetails.zoneName !== '' && zoneList?.length > 0) {
       let zoneId = zoneList.filter((zone) => zone.zone_or_division === siteDetails.zoneName)[0].zone_or_division_id;
       dispatch({
         type: actionTypes.GET_SITES_BASED_ZONE_ID,
@@ -149,12 +152,6 @@ const SlotBookingContainer = (props) => {
           siteName: '',
           siteId: '',
         });
-        dispatch({
-          type: actionTypes.SET_ZONE_NAME,
-          payload: {
-            zoneName: event,
-          },
-        });
       }
       if (id === 'siteName') {
         let siteId = siteList.filter((site) => site.siteName === event)[0].id;
@@ -169,6 +166,14 @@ const SlotBookingContainer = (props) => {
             isActive: siteList[0].isActive,
             isOwner: siteList[0].isOwner,
             siteId: siteId,
+            siteName: event,
+          },
+        });
+        dispatch({
+          type: actionTypes.SET_ZONE_AND_SITE_NAME,
+          payload: {
+            zoneName: siteDetails.zoneName,
+            siteName: event,
           },
         });
       }

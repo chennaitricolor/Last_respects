@@ -137,7 +137,7 @@ const ModalDialog = (props) => {
 
   const zoneList = useSelector((state) => state.getAllZoneReducer.zoneList);
   const siteList = useSelector((state) => state.getSitesBasedOnZoneIdReducer.siteList);
-  const zoneName = useSelector((state) => state.getAllZoneReducer.zoneName);
+  const zoneDetailsPayload = useSelector((state) => state.getAllZoneReducer.payload);
   const payload = useSelector((state) => state.getSitesBasedOnZoneIdReducer.payload);
   const availableSlotDetails = useSelector((state) => state.getAvailableSlotDetailsBasedOnSiteIdReducer.slotDetails);
   const isActive = payload.isActive;
@@ -157,9 +157,10 @@ const ModalDialog = (props) => {
 
   useEffect(() => {
     setSiteDetails({
-      zoneName: zoneName,
+      zoneName: zoneDetailsPayload.zoneName,
+      siteName: zoneDetailsPayload.siteName,
     });
-  }, [zoneName]);
+  }, [zoneDetailsPayload.zoneName,zoneDetailsPayload.siteName]);
 
   useEffect(() => {
     dispatch({
@@ -200,7 +201,7 @@ const ModalDialog = (props) => {
   const enableSubmitAction = () => {
     let result = false;
     result =
-      zoneName !== '' &&
+      siteDetails.zoneName !== '' &&
       siteDetails.siteName !== '' &&
       selectedDate !== null &&
       selectedDate !== '' &&
@@ -216,7 +217,7 @@ const ModalDialog = (props) => {
   //handle submit
   useEffect( () => {
     enableSubmitAction();
-  },[zoneName ,siteDetails.siteName,selectedDate,selectedTime,selectedReason,isOwner,commentVal]);
+  },[zoneDetailsPayload.zoneName ,siteDetails.siteName,selectedDate,selectedTime,selectedReason,isOwner,commentVal]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -309,14 +310,14 @@ const ModalDialog = (props) => {
                 <Select
                   variant={'outlined'}
                   size={'small'}
-                  disabled={!isActive}
-                  className={clsx(styles.dropDownSelect, !isActive ? styles.disabledField : '')}
+                  disabled={isActive}
+                  className={clsx(styles.dropDownSelect, isActive ? styles.disabledField : '')}
                   value={siteDetails.zoneName}
                   onChange={(e) => handleOnChange(e.target.value, 'zoneName')}
                 >
                   {zoneList.map((item) => {
                     return (
-                      <MenuItem disabled={!isActive} key={item.zone_or_division_id} value={item.zone_or_division}>
+                      <MenuItem disabled={isActive} key={item.zone_or_division_id} value={item.zone_or_division}>
                         {item.zone_or_division}
                       </MenuItem>
                     );
@@ -332,13 +333,14 @@ const ModalDialog = (props) => {
                 <Select
                   variant={'outlined'}
                   size={'small'}
-                  className={styles.dropDownSelect}
+                  className={clsx(styles.dropDownSelect, isActive ? styles.disabledField : '')}
                   value={siteDetails.siteName}
+                  disabled={isActive}
                   onChange={(e) => handleOnChange(e.target.value, 'siteName')}
                 >
                   {siteList.map((item) => {
                     return (
-                      <MenuItem key={item.id} value={item.siteName}>
+                      <MenuItem disabled={isActive} key={item.id} value={item.siteName}>
                         {item.siteName}
                       </MenuItem>
                     );
