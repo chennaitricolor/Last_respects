@@ -7,7 +7,6 @@ import Typography from '@material-ui/core/Typography';
 import { useEffect } from 'react';
 
 const SwitchComponent = ({ isOn = false, offLabelText = 'OFF', onLabelText = 'ON', onSwitchChangeCallback }) => {
-  console.log(isOn);
   const DefaultColor = '#466783';
   const useStyles = makeStyles({
     switchBase: {

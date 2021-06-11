@@ -10,6 +10,10 @@ import ZoneSelection from '../views/ZoneSelection/ZoneSelection';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionTypes } from './../utils/actionTypes';
 import MachineryAuditList from './../components/Machinery/MachineryAuditList';
+import Snackbar from '@material-ui/core/Snackbar';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import Alert from '@material-ui/lab/Alert';
 
 //styles
 const useStyles = makeStyles(() => ({
@@ -120,9 +124,12 @@ const MachineryManagementContainer = () => {
   const [siteSelected, SetSiteSelected] = useState(siteDetails.siteId !== '');
   const [isSiteOwner, setIsSiteOwner] = useState(siteDetails.siteId !== '');
   const [siteList, setSiteList] = useState([]);
+  const [showSnackBar, setShowSnackBar] = useState(false);
 
   const zoneList = useSelector((state) => state.getAllZoneReducer.zoneList);
   const siteListSelector = useSelector((state) => state.getSitesBasedOnZoneIdReducer.siteList);
+  const siteUpdateSuccess = useSelector((state) => state.putSiteStatusReducer.response);
+  const siteUpdateFailure = useSelector((state) => state.putSiteStatusReducer.error);
 
   useEffect(() => {
     dispatch({
@@ -220,15 +227,43 @@ const MachineryManagementContainer = () => {
     setSiteList(newSiteDetails);
   };
 
+  //handle site update success
+  useEffect(() => {
+    if (siteDetails.siteId !== '') {
+      dispatch({
+        type: actionTypes.GET_DOWNTIME_AUDIT,
+        payload: {
+          siteId: siteDetails.siteId,
+        },
+      });
+    }
+  }, [siteUpdateSuccess]);
+
+  //handle site update failure
+  useEffect(() => {
+    if (siteUpdateFailure !== null && siteUpdateFailure !== '') {
+      siteDetails.isActive = !siteDetails.isActive;
+      setSiteDetails(siteDetails);
+      SetMachineryManagementStatus(siteDetails.isActive);
+      updateAndReplaceCurrentSite();
+      setShowSnackBar(true);
+    }
+  }, [siteUpdateFailure]);
+
   useEffect(() => {
     SetMachineryManageNotification(machineryManagementStatus ? machineryManageOnNotification : machineryManageOffNotification);
   }, [machineryManagementStatus]);
 
+  const handleCloseSnackBar = () => {
+    setShowSnackBar(false);
+  };
+
   const handleOnBackClick = () => {
     dispatch({
-      type: actionTypes.SET_ZONE_NAME,
+      type: actionTypes.SET_ZONE_AND_SITE_NAME,
       payload: {
         zoneName: '',
+        siteName: '',
       },
     });
     dispatch({
@@ -297,6 +332,22 @@ const MachineryManagementContainer = () => {
       <div className={styles.tableDiv}>
         <MachineryAuditList siteId={siteDetails.siteId} />
       </div>
+      <Snackbar
+        open={showSnackBar}
+        autoHideDuration={6000}
+        action={
+          <React.Fragment>
+            <IconButton aria-label="close" color="inherit" onClick={handleCloseSnackBar}>
+              <CloseIcon />
+            </IconButton>
+          </React.Fragment>
+        }
+        onClose={handleCloseSnackBar}
+      >
+        <Alert onClose={handleCloseSnackBar} severity="error">
+          'Error occurred while updating site info'
+        </Alert>
+      </Snackbar>
     </>
   );
 };
