@@ -152,26 +152,27 @@ const SlotBookingContainer = (props) => {
           siteName: '',
           siteId: '',
         });
-        dispatch({
-          type: actionTypes.SET_ZONE_NAME,
-          payload: {
-            zoneName: event,
-          },
-        });
       }
       if (id === 'siteName') {
-        let siteId = siteList.filter((site) => site.siteName === event)[0].id;
+        let selectedSite = siteList.find((site) => site.siteName === event);
         setSiteDetails({
           ...siteDetails,
           siteName: event,
-          siteId: siteId,
+          siteId: selectedSite !== undefined ? selectedSite.id : '',
         });
         dispatch({
           type: actionTypes.SET_ACTIVE_FLAG,
           payload: {
-            isActive: siteList[0].isActive,
-            isOwner: siteList[0].isOwner,
-            siteId: siteId,
+            isActive: selectedSite !== undefined ? selectedSite.isActive : false,
+            isOwner: selectedSite !== undefined ? selectedSite.isOwner : false,
+            siteId: selectedSite !== undefined ? selectedSite.id : '',
+            siteName: event,
+          },
+        });
+        dispatch({
+          type: actionTypes.SET_ZONE_AND_SITE_NAME,
+          payload: {
+            zoneName: siteDetails.zoneName,
             siteName: event,
           },
         });
@@ -190,6 +191,11 @@ const SlotBookingContainer = (props) => {
     dispatch({
       type: actionTypes.RESET_SNACKBAR,
     });
+  };
+
+  const handleCancel = () => {
+    window.scrollTo(0, 0);
+    setFormOpen(false);
   };
 
   return (
@@ -222,7 +228,7 @@ const SlotBookingContainer = (props) => {
                       type={type}
                       setType={setType}
                       editSlotDetails={selectedSlotDetails}
-                      onCancel={() => setFormOpen(false)}
+                      onCancel={handleCancel}
                     />
                   )}
                 </div>
@@ -247,7 +253,7 @@ const SlotBookingContainer = (props) => {
           siteId={siteDetails.siteId}
           type={type}
           editSlotDetails={selectedSlotDetails}
-          onCancel={() => setFormOpen(false)}
+          onCancel={handleCancel}
         />
       )}
       <Snackbar

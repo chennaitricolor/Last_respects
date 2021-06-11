@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
 import moment from 'moment';
 import clsx from 'clsx';
+import {isCurrentTimeCrossedSlotTime} from "../../utils/CommonUtils";
 
 const useStyles = makeStyles({
   dateSelectionDiv: {
@@ -68,24 +69,6 @@ const DateSelection = (props) => {
   };
 
   let dateArray = props.dateTimeSlotDetails !== null ? Object.keys(props.dateTimeSlotDetails) : null;
-
-  const isCurrentTimeCrossedSlotTime = (time, date) => {
-    let currentDate = moment().format('DD-MM-YYYY');
-    if (currentDate === date) {
-      let timeArray = time.split('-');
-      let trimmedTimeArray = [];
-
-      timeArray.forEach((timeValue) => {
-        trimmedTimeArray.push(timeValue.trim());
-      });
-
-      if (trimmedTimeArray.length === 2) {
-        if (moment(trimmedTimeArray[1], 'hh:mm A').isBefore(moment())) return true;
-      }
-      return false;
-    }
-    return false;
-  };
 
   const getAvailableSlotCount = (date) => {
     let yesterdayDate = moment().subtract(1, 'days').format('DD-MM-YYYY');

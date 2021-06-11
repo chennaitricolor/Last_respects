@@ -157,12 +157,6 @@ const MachineryManagementContainer = () => {
           siteName: '',
           siteId: '',
         });
-        dispatch({
-          type: actionTypes.SET_ZONE_NAME,
-          payload: {
-            zoneName: event,
-          },
-        });
       }
       if (id === 'siteName') {
         let siteDetail = siteListSelector.filter((site) => site.siteName === event)[0];
@@ -179,6 +173,13 @@ const MachineryManagementContainer = () => {
             isActive: siteListSelector[0].isActive,
             isOwner: siteListSelector[0].isOwner,
             siteId: siteDetail.id,
+            siteName: event,
+          },
+        });
+        dispatch({
+          type: actionTypes.SET_ZONE_AND_SITE_NAME,
+          payload: {
+            zoneName: siteDetails.zoneName,
             siteName: event,
           },
         });

@@ -12,6 +12,10 @@ const LastRespectFormContainer = (props) => {
   const slotDetails = useSelector((state) => state.getSlotDetailsBasedOnSlotIdReducer.slotDetails);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     if (props.type === 'EDIT' && props.editSlotDetails !== null) {
       dispatch({
         type: actionTypes.GET_SLOT_DETAILS_BASED_SLOT_ID,
@@ -27,7 +31,7 @@ const LastRespectFormContainer = (props) => {
   }, [slotDetails]);
 
   return (
-    <div  className="col-md-8 col-12">
+    <div className="col-md-8 col-12">
       {props.type === 'ADD' ? (
         <LastRespectForm
           selectedDate={props.date}

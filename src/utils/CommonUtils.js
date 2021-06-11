@@ -34,16 +34,50 @@ const isTokenAlive = (token) => {
   return currentTime <= expiryTime;
 };
 
+export const isCurrentTimeCrossedSlotTime = (time, date) => {
+  let currentDate = moment().format('DD-MM-YYYY');
+  if (currentDate === date) {
+    let timeArray = time.split('-');
+    let trimmedTimeArray = [];
+
+    timeArray.forEach((timeValue) => {
+      trimmedTimeArray.push(timeValue.trim());
+    });
+
+    if (trimmedTimeArray.length === 2) {
+      if (moment(trimmedTimeArray[1], 'hh:mm A').isBefore(moment())) return true;
+    }
+    return false;
+  }
+  return false;
+};
+
 export const yesNoRadioButton = [
   { id: true, value: 'Yes' },
   { id: false, value: 'No' },
+];
+
+export const genderRadioButton = [
+  { id: 'MALE', value: 'Male' },
+  { id: 'FEMALE', value: 'Female' },
+  { id: 'TRANSGENDER', value: 'Transgender' },
+];
+
+export const buriedRadioButton = [
+  { id: 'BURIED', value: 'Buried' },
+  { id: 'BURNT', value: 'Burnt' },
+];
+
+export const placeOfDeathRadioButton = [
+  { id: 'HOME', value: 'Home' },
+  { id: 'HOSPITAL', value: 'Hospital' },
 ];
 
 export const attenderRelationship = [
   { id: 'Family', name: 'Family' },
   { id: 'Government', name: 'Government' },
   { id: 'NGO', name: 'NGO' },
-  { id: 'Relative', name: 'Relative' },
+  { id: 'Others', name: 'Others' },
 ];
 
 export const addressProof = [
@@ -65,20 +99,18 @@ export const bookingStatus = {
   BOOKED: [
     { id: 'BOOKED', value: 'Booked' },
     { id: 'ARRIVED', value: 'Arrived' },
-    { id: 'NOSHOW', value: 'No Show' },
     { id: 'CANCEL', value: 'Cancelled Booking' },
   ],
   ARRIVED: [
     { id: 'ARRIVED', value: 'Arrived' },
     { id: 'STARTED', value: 'Started' },
-    { id: 'NOSHOW', value: 'No Show' },
     { id: 'CANCEL', value: 'Cancelled Booking' },
   ],
   STARTED: [
     { id: 'STARTED', value: 'Started' },
-    { id: 'COMPLETE', value: 'Completed' },
+    { id: 'COMPLETE', value: 'Cremated' },
   ],
-  COMPLETED: [{ id: 'COMPLETED', value: 'Completed' }],
+  COMPLETED: [{ id: 'COMPLETED', value: 'Cremated' }],
   CANCELLED: [{ id: 'CANCELLED', value: 'Cancelled Booking' }],
   REASSIGNED: [{ id: 'REASSIGNED', value: 'Re-Assigned' }],
   NOSHOW: [{ id: 'NOSHOW', value: 'No Show' }],
