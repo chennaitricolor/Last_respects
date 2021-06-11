@@ -189,6 +189,11 @@ const SlotBookingContainer = (props) => {
     });
   };
 
+  const handleCancel = () => {
+    window.scrollTo(0, 0);
+    setFormOpen(false);
+  };
+
   return (
     <>
       <Header />
@@ -219,7 +224,7 @@ const SlotBookingContainer = (props) => {
                       type={type}
                       setType={setType}
                       editSlotDetails={selectedSlotDetails}
-                      onCancel={() => setFormOpen(false)}
+                      onCancel={handleCancel}
                     />
                   )}
                 </div>
@@ -244,7 +249,7 @@ const SlotBookingContainer = (props) => {
           siteId={siteDetails.siteId}
           type={type}
           editSlotDetails={selectedSlotDetails}
-          onCancel={() => setFormOpen(false)}
+          onCancel={handleCancel}
         />
       )}
       <Snackbar

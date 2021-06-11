@@ -44,6 +44,7 @@ const useStyles = makeStyles({
   timeSlotWrapper: {
     listStyleType: 'none',
     margin: 0,
+    marginBottom: '32px',
     padding: 0,
     height: '100%',
     maxHeight: 1000,
