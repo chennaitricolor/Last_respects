@@ -11,7 +11,7 @@ import clsx from 'clsx';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DateFnsUtils from '@date-io/date-fns';
-import {MuiPickersUtilsProvider, DatePicker} from '@material-ui/pickers';
+import { MuiPickersUtilsProvider, DatePicker } from '@material-ui/pickers';
 import { useDispatch, useSelector } from 'react-redux';
 import { actionTypes } from '../../utils/actionTypes';
 import Typography from '@material-ui/core/Typography';
@@ -22,6 +22,10 @@ import { getReassignReasons, getMomentDateStr, getCookie, isTokenAlive, isCurren
 import { apiUrls } from '../../utils/constants';
 import { callFetchApi } from '../../services/api';
 import moment from 'moment';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import Alert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
 
 const useStyles = makeStyles({
   dropDownLabel: {
@@ -135,16 +139,23 @@ const ModalDialog = (props) => {
   const [enableSubmit, setEnableSubmit] = useState(false);
   const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
   const [reAssignSiteId, setReAssignSiteId] = useState(0);
+  const [snackInfo, setSnackInfo] = useState({
+    openSnack: false,
+    message: '',
+    severity: 'success',
+  });
 
   const zoneList = useSelector((state) => state.getAllZoneReducer.zoneList);
   const siteList = useSelector((state) => state.getSitesBasedOnZoneIdReducer.siteList);
   const zoneDetailsPayload = useSelector((state) => state.getAllZoneReducer.payload);
   const payload = useSelector((state) => state.getSitesBasedOnZoneIdReducer.payload);
+  const snackBarInfo = useSelector((state) => state.showSnackBarMessageReducer);
   const availableSlotDetails = useSelector((state) => state.getAvailableSlotDetailsBasedOnSiteIdReducer.slotDetails);
+
   const isActive = payload.isActive;
   const isOwner = payload.isOwner;
   const siteId = payload.siteId;
-  
+
   useEffect(() => {
     if (availableSlotDetails !== null) {
       let formattedDate = moment(selectedDate).format('DD-MM-YYYY');
@@ -156,6 +167,14 @@ const ModalDialog = (props) => {
       setAvailableTimeSlots(availableTime);
     }
   }, [availableSlotDetails]);
+
+  useEffect(() => {
+    setSnackInfo({
+      openSnack: snackBarInfo.openSnack,
+      message: snackBarInfo.message,
+      severity: snackBarInfo.severity,
+    });
+  }, [dispatch, snackBarInfo]);
 
   const handleClose = () => {
     props.setOpenDialog(false);
@@ -222,7 +241,7 @@ const ModalDialog = (props) => {
       selectedReason !== '' &&
       isOwner &&
       !isActive;
-    
+
     result = showReAssignComment ? commentVal !== '' : result;
 
     result ? setEnableSubmit(true) : setEnableSubmit(false);
@@ -277,12 +296,11 @@ const ModalDialog = (props) => {
     let token = getCookie('lrToken');
     if (token !== '' && isTokenAlive(token)) {
       let api = apiUrls.updateSlotStatus.replace(':slotId', props.slotDetails.id);
-      let slotDetails = props.slotDetails;
-      const finalSiteId =  isActive ? parseInt(siteId) : parseInt(reAssignSiteId) ;
-      slotDetails.burialSiteId = finalSiteId;
-      debugger;
 
-      slotDetails.id = undefined;
+      let slotDetails = props.slotDetails;
+      const finalSiteId = isActive ? parseInt(siteId) : parseInt(reAssignSiteId);
+
+      slotDetails.burialSiteId = finalSiteId;
       slotDetails.slot = selectedTime;
       slotDetails.dateOfCremation = moment(selectedDate, 'DD-MM-YYYY').format('MM-DD-YYYY');
 
@@ -292,51 +310,61 @@ const ModalDialog = (props) => {
         reason: showReAssignComment ? selectedReason + ' - ' + commentVal : selectedReason,
       };
 
-      callFetchApi(api, null, 'PUT', putPayload, token).then((response) => {
-        if (response.status === 200) {
-          dispatch({
-            type: actionTypes.GET_SLOTS_BASED_SITE_ID,
-            payload: {
-              siteId: finalSiteId,
-            },
-          });
-          let formattedDate = moment(selectedDate).format('MMM-DD');
-          let message = isActive ? `Slot Re-Scheduled to ${formattedDate + ' ' + selectedTime}` : `Slot Re-Assigned to ${formattedDate + ' ' + selectedTime}`;
-          dispatch({
-            type: actionTypes.SHOW_SNACKBAR,
-            payload: {
-              openSnack: true,
-              message: message,
-              severity: 'success',
-            },
-          });
-          props.setOpenDialog(false);
-          props.closeBookingForm();
-        } else {
-          const errorMessage = isActive ? `Slot Re-Schedule Failed`  : `Slot Re-Assign Failed`
-          dispatch({
-            type: actionTypes.SHOW_SNACKBAR,
-            payload: {
-              openSnack: true,
-              message: errorMessage,
-              severity: 'error',
-            },
-          });
-        }
-      }).catch((error) => {
-        if (error.response !== undefined && error.response.data !== undefined && error.response.data.error !== undefined) {
-          let errorMessage = error.response.data.error[0];
-          dispatch({
-            type: actionTypes.SHOW_SNACKBAR,
-            payload: {
-              openSnack: true,
-              message: errorMessage.message,
-              severity: 'error',
-            },
-          });
-        }
-      });
+      callFetchApi(api, null, 'PUT', putPayload, token)
+        .then((response) => {
+          if (response.status === 200) {
+            dispatch({
+              type: actionTypes.GET_SLOTS_BASED_SITE_ID,
+              payload: {
+                siteId: finalSiteId,
+              },
+            });
+            let formattedDate = moment(selectedDate).format('MMM-DD');
+            let message = isActive
+              ? `Slot Re-Scheduled to ${formattedDate + ' ' + selectedTime}`
+              : `Slot Re-Assigned to ${formattedDate + ' ' + selectedTime}`;
+            dispatch({
+              type: actionTypes.SHOW_SNACKBAR,
+              payload: {
+                openSnack: true,
+                message: message,
+                severity: 'success',
+              },
+            });
+            props.setOpenDialog(false);
+            props.closeBookingForm();
+          } else {
+            const errorMessage = isActive ? `Slot Re-Schedule Failed` : `Slot Re-Assign Failed`;
+            dispatch({
+              type: actionTypes.SHOW_SNACKBAR,
+              payload: {
+                openSnack: true,
+                message: errorMessage,
+                severity: 'error',
+              },
+            });
+          }
+        })
+        .catch((error) => {
+          if (error.response !== undefined && error.response.data !== undefined && error.response.data.error !== undefined) {
+            let errorMessage = error.response.data.error[0];
+            dispatch({
+              type: actionTypes.SHOW_SNACKBAR,
+              payload: {
+                openSnack: true,
+                message: errorMessage.message,
+                severity: 'error',
+              },
+            });
+          }
+        });
     }
+  };
+
+  const handleCloseSnackBar = () => {
+    dispatch({
+      type: actionTypes.RESET_SNACKBAR,
+    });
   };
 
   return (
@@ -485,6 +513,22 @@ const ModalDialog = (props) => {
           </div>
         </div>
       </Dialog>
+      <Snackbar
+        open={snackInfo.openSnack}
+        autoHideDuration={10000}
+        action={
+          <React.Fragment>
+            <IconButton aria-label="close" color="inherit" onClick={handleCloseSnackBar}>
+              <CloseIcon />
+            </IconButton>
+          </React.Fragment>
+        }
+        onClose={handleCloseSnackBar}
+      >
+        <Alert onClose={handleCloseSnackBar} severity={snackInfo.severity}>
+          {snackInfo.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
