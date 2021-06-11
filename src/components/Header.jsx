@@ -105,20 +105,7 @@ const Header = () => {
 
   const handleOnHomeClick = () => {
     dispatch({
-      type: actionTypes.SET_ZONE_AND_SITE_NAME,
-      payload: {
-        zoneName: '',
-        siteName: '',
-      },
-    });
-    dispatch({
-      type: actionTypes.SET_ACTIVE_FLAG,
-      payload: {
-        isActive: false,
-        isOwner: false,
-        siteId: '',
-        siteName: '',
-      },
+      type: actionTypes.RESET_DATA_UNMOUNT_SLOT_BOOKING,
     });
   };
 
