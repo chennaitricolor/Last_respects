@@ -54,7 +54,6 @@ const useStyles = makeStyles(() => ({
     fontSize: '14px',
     width: '103px',
     height: '30px',
-    borderRadius: '3px',
     textTransform: 'none',
     boxSizing: 'border-box',
     borderRadius: '3px',
@@ -264,6 +263,19 @@ const MachineryManagementContainer = () => {
     });
   };
 
+  const reAssignClick = () => {
+    let siteDetail = siteListSelector.find((site) => site.siteName === siteDetails.siteName);
+    dispatch({
+      type: actionTypes.SET_ACTIVE_FLAG,
+      payload: {
+        isActive: false,
+        isOwner: siteDetail.isOwner,
+        siteId: siteDetail.id,
+        siteName: siteDetail.siteName,
+      },
+    });
+  }
+
   return (
     <>
       <Header />
@@ -302,6 +314,7 @@ const MachineryManagementContainer = () => {
                     background: `${machineryManagementStatus ? '' : '#00AB88'}`,
                     border: `${machineryManagementStatus ? '1px solid #C4C4C4' : '1px solid #00AB88'}`,
                   }}
+                  onClick={reAssignClick}
                   component={Link}
                   to="/slotBooking"
                 >

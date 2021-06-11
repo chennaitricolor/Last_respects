@@ -629,12 +629,25 @@ const LastRespectForm = (props) => {
         .catch((error) => {
           if (error.response !== undefined && error.response.data !== undefined && error.response.data.error !== undefined) {
             let errorMessage = error.response.data.error[0];
+            let message = errorMessage.message;
+            if (errorMessage.message === 'Booking already exists') {
+              if (error.response.data.meta !== undefined && error.response.data.meta.site !== undefined) {
+                let zoneName = 'Zone - ' + error.response.data.meta.site.zoneOrDivision;
+                let siteName = ' Site - ' + error.response.data.meta.site.siteName;
+                let date =
+                  error.response.data.meta.dateOfCremation !== undefined
+                    ? moment(error.response.data.meta.dateOfCremation, 'YYYY-MM-DD').format('MMM-DD')
+                    : '';
+                let siteInfo = zoneName + siteName + ' on ' + date + ' ' + error.response.data.meta.slot;
+                message = 'Slot has been already booked for this Aadhar Number: ' + details.aadharOfDeceased + ' for ' + siteInfo;
+              }
+            }
             setSaveLoader(false);
             dispatch({
               type: actionTypes.SHOW_SNACKBAR,
               payload: {
                 openSnack: true,
-                message: errorMessage.message,
+                message: message,
                 severity: 'error',
               },
             });
@@ -894,7 +907,7 @@ const LastRespectForm = (props) => {
       </div>
       <Snackbar
         open={snackInfo.openSnack}
-        autoHideDuration={6000}
+        autoHideDuration={10000}
         action={
           <React.Fragment>
             <IconButton aria-label="close" color="inherit" onClick={handleCloseSnackBar}>
