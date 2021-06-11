@@ -57,15 +57,15 @@ const SlotBookingContainer = (props) => {
   const dispatch = useDispatch();
 
   //use preselected zone and site from machinery management screen
-  const zoneName = useSelector((state) => state.getAllZoneReducer.zoneName);
+  const zoneNamePayload = useSelector((state) => state.getAllZoneReducer.payload);
   const sitePayload = useSelector((state) => state.getSitesBasedOnZoneIdReducer.payload);
 
   const [isFormOpen, setFormOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(moment(new Date()).format('DD-MM-YYYY'));
   const [siteDetails, setSiteDetails] = useState({
-    zoneName: zoneName !== null ? zoneName : '',
-    siteName: sitePayload.siteName !== null ? sitePayload.siteName : '',
-    siteId: sitePayload.siteId !== null ? sitePayload.siteId : '',
+    zoneName: zoneNamePayload?.zoneName !== null && zoneNamePayload?.zoneName !== undefined ? zoneNamePayload?.zoneName : '',
+    siteName: sitePayload?.siteName !== null && sitePayload?.siteName !== undefined ? sitePayload.siteName : '',
+    siteId: sitePayload?.siteId !== null && sitePayload?.siteId !== undefined ? sitePayload.siteId : '',
   });
   const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
   const [type, setType] = useState('ADD');

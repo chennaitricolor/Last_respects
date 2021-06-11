@@ -10,9 +10,9 @@ const putSiteStatusReducer = (state = defaultState, action) => {
     case actionTypes.PUT_SITE_STATUS:
       return Object.assign({}, state, { isLoading: true });
     case actionTypes.PUT_SITE_STATUS_SUCCESS:
-      return Object.assign({}, state, { isLoading: false });
+      return Object.assign({}, state, { isLoading: false, response: action.response });
     case actionTypes.PUT_SITE_STATUS_FAILURE:
-      return Object.assign({}, state, { isLoading: false });
+      return Object.assign({}, state, { isLoading: false, error: action.error });
     case actionTypes.LOGOUT_SUCCESS:
       return Object.assign({}, state, defaultState);
     default:
