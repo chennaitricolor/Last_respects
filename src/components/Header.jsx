@@ -103,6 +103,25 @@ const Header = () => {
     setState({ ...state, [anchor]: open });
   };
 
+  const onHomeClick = () => {
+    dispatch({
+      type: actionTypes.SET_ZONE_AND_SITE_NAME,
+      payload: {
+        zoneName: '',
+        siteName: '',
+      },
+    });
+    dispatch({
+      type: actionTypes.SET_ACTIVE_FLAG,
+      payload: {
+        isActive: false,
+        isOwner: false,
+        siteId: '',
+        siteName: '',
+      },
+    });
+  };
+
   const menuList = (anchor) => (
     <div
       className={clsx(styles.list, {
@@ -113,7 +132,7 @@ const Header = () => {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List component="nav">
-        <ListItemLink key={'Home'} primary={'Home'} to={'/slotBooking'} />
+        <ListItemLink key={'Home'} primary={'Home'} to={'/slotBooking'} onClick={onHomeClick} />
         <ListItemLink key={'MachineryManagement'} primary={'Machinery Management'} to={'/machinery'} />
         {/*<ListItemLink key={'InventoryManagement'} primary={'Inventory Management'} to={'/inventory'} />*/}
       </List>
