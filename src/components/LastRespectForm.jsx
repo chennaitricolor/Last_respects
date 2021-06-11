@@ -18,20 +18,19 @@ import ModalDialog from './Dialog/ModalDialog';
 import { apiUrls } from '../utils/constants';
 import { callFetchApi } from '../services/api';
 import {
-  addressProof,
   alwaysDisableSaveButton,
   attenderRelationship,
   bookingStatus,
+  buriedRadioButton,
   cancellationReason,
   enableReassignButtonStatus,
-  getCookie,
-  isTokenAlive,
-  yesNoRadioButton,
-  isMobile,
   genderRadioButton,
-  buriedRadioButton,
-  placeOfDeathRadioButton,
+  getCookie,
   getMomentDateStr,
+  isMobile,
+  isTokenAlive,
+  placeOfDeathRadioButton,
+  yesNoRadioButton,
 } from '../utils/CommonUtils';
 import moment from 'moment';
 import momentTimeZone from 'moment-timezone';
@@ -42,7 +41,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Alert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
 import DateFnsUtils from '@date-io/date-fns';
-import { DatePicker, KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -344,6 +343,7 @@ const initialState = {
   attenderName: '',
   attenderContact: '',
   attenderType: '',
+  selectedAttenderType: '',
   otherAttenderType: '',
   aadharOfDeceased: '',
   proofType: '',
@@ -358,6 +358,7 @@ const LastRespectForm = (props) => {
 
   const dispatch = useDispatch();
   const [details, setDetails] = useState(initialState);
+  const [dataSet, setDataSet] = useState(false);
   const [saveLoader, setSaveLoader] = useState(false);
   const [snackInfo, setSnackInfo] = useState({
     openSnack: false,
@@ -378,10 +379,30 @@ const LastRespectForm = (props) => {
   useEffect(() => {
     if (props.type === 'EDIT' && props.details !== null) {
       setDetails(props.details);
+      setDataSet(true);
     } else {
       setDetails(initialState);
     }
   }, [props.type, props.details]);
+
+  useEffect(() => {
+    if (props.type === 'EDIT' && dataSet) {
+      if (details.attenderType.startsWith('Others')) {
+        let splittedAttenderType = props.details.attenderType.split(' - ');
+        setDetails({
+          ...details,
+          selectedAttenderType: 'Others',
+          otherAttenderType: splittedAttenderType.length > 1 ? splittedAttenderType[1] : '',
+        });
+      } else {
+        setDetails({
+          ...details,
+          selectedAttenderType: details.attenderType,
+        });
+      }
+      setDataSet(false);
+    }
+  }, [props.type, details, dataSet]);
 
   const handleOnChange = (event, id, type, dropDownList = []) => {
     if (type === 'text') {
@@ -458,6 +479,7 @@ const LastRespectForm = (props) => {
     const {
       deceasedName,
       dependent,
+      dateOfDeath,
       sex,
       age,
       attenderAddress,
@@ -466,7 +488,7 @@ const LastRespectForm = (props) => {
       placeOfDeath,
       attenderName,
       attenderContact,
-      attenderType,
+      selectedAttenderType,
       otherAttenderType,
       status,
       reasonForCancellation,
@@ -475,12 +497,18 @@ const LastRespectForm = (props) => {
 
     if (props.type === 'ADD') {
       let covidRelatedFieldsCheck = false;
+      let attenderTypeCheck = false;
       if (covidRelated !== '') {
         covidRelatedFieldsCheck = covidRelated === false || (covidRelated === true && placeOfDeath !== '');
+      }
+      if (selectedAttenderType !== '') {
+        attenderTypeCheck =
+          selectedAttenderType !== '' && (selectedAttenderType !== 'Others' || (selectedAttenderType === 'Others' && otherAttenderType !== ''));
       }
       return (
         deceasedName &&
         dependent &&
+        dateOfDeath !== null &&
         sex &&
         age &&
         attenderAddress &&
@@ -489,7 +517,7 @@ const LastRespectForm = (props) => {
         attenderName &&
         attenderContact &&
         attenderContact.length == 10 &&
-        attenderType &&
+        attenderTypeCheck &&
         status
       );
     }
@@ -530,6 +558,11 @@ const LastRespectForm = (props) => {
       slotDetails.slot = props.selectedTime;
       slotDetails.burialSiteId = parseInt(props.siteId);
       slotDetails.dateOfCremation = moment(props.selectedDate, 'DD-MM-YYYY').format('MM-DD-YYYY');
+
+      if (slotDetails.selectedAttenderType === 'Others') {
+        slotDetails.attenderType = slotDetails.selectedAttenderType + ' - ' + slotDetails.otherAttenderType;
+      }
+      slotDetails.attenderType = slotDetails.selectedAttenderType;
 
       if (!slotDetails.covidRelated) slotDetails.placeOfDeath = '';
 
@@ -775,17 +808,17 @@ const LastRespectForm = (props) => {
           <div className="row ">
             {renderDropdownInput(
               'Cremation Conducted by',
-              details.attenderType,
-              'attenderType',
+              details.selectedAttenderType,
+              'selectedAttenderType',
               handleOnChange,
               attenderRelationship,
               styles,
               props.type === 'EDIT',
               true,
             )}
-            {details.attenderType === 'Others' &&
+            {details.selectedAttenderType === 'Others' &&
               renderTextInput(
-                'Other Comments',
+                'Other Attender Type',
                 details.otherAttenderType,
                 'otherAttenderType',
                 handleOnChange,
@@ -793,9 +826,8 @@ const LastRespectForm = (props) => {
                 false,
                 null,
                 props.type === 'EDIT',
-                details.attenderType === 'Others',
+                details.selectedAttenderType === 'Others',
               )}
-            {/*{renderDropdownInput('Address Proof', details.proofType, 'proofType', handleOnChange, addressProof, styles, props.type === 'EDIT', true)}*/}
             {renderNumberInput(
               'Aadhar Number',
               details.aadharOfDeceased,

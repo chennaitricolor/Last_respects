@@ -81,20 +81,18 @@ export const bookingStatus = {
   BOOKED: [
     { id: 'BOOKED', value: 'Booked' },
     { id: 'ARRIVED', value: 'Arrived' },
-    { id: 'NOSHOW', value: 'No Show' },
     { id: 'CANCEL', value: 'Cancelled Booking' },
   ],
   ARRIVED: [
     { id: 'ARRIVED', value: 'Arrived' },
     { id: 'STARTED', value: 'Started' },
-    { id: 'NOSHOW', value: 'No Show' },
     { id: 'CANCEL', value: 'Cancelled Booking' },
   ],
   STARTED: [
     { id: 'STARTED', value: 'Started' },
-    { id: 'COMPLETE', value: 'Completed' },
+    { id: 'COMPLETE', value: 'Cremated' },
   ],
-  COMPLETED: [{ id: 'COMPLETED', value: 'Completed' }],
+  COMPLETED: [{ id: 'COMPLETED', value: 'Cremated' }],
   CANCELLED: [{ id: 'CANCELLED', value: 'Cancelled Booking' }],
   REASSIGNED: [{ id: 'REASSIGNED', value: 'Re-Assigned' }],
   NOSHOW: [{ id: 'NOSHOW', value: 'No Show' }],
