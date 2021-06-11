@@ -220,8 +220,13 @@ const ModalDialog = (props) => {
       selectedDate !== null &&
       selectedDate !== '' &&
       selectedTime !== '' &&
-      selectedReason !== '';
-
+      selectedReason !== '' &&
+      isOwner ;
+    
+    if(!isActive){
+      result = true; 
+    }
+    
     result = showReAssignComment ? commentVal !== '' : result;
 
     result ? setEnableSubmit(true) : setEnableSubmit(false);

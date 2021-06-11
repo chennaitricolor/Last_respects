@@ -147,7 +147,8 @@ const optionalKeys = [
   'aadharOfDeceased',
 ];
 
-const secret = process.env.JWT_TOKEN_SECRET;
+//const secret = process.env.JWT_TOKEN_SECRET;
+const secret = 'secret TN secret';
 
 const blockedSlots = [SLOT_STATUS.BOOKED, SLOT_STATUS.ARRIVED, SLOT_STATUS.STARTED, SLOT_STATUS.COMPLETED];
 
