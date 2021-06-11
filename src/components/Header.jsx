@@ -103,6 +103,12 @@ const Header = () => {
     setState({ ...state, [anchor]: open });
   };
 
+  const handleOnHomeClick = () => {
+    dispatch({
+      type: actionTypes.RESET_DATA_UNMOUNT_SLOT_BOOKING,
+    });
+  };
+
   const menuList = (anchor) => (
     <div
       className={clsx(styles.list, {
@@ -113,7 +119,7 @@ const Header = () => {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List component="nav">
-        <ListItemLink key={'Home'} primary={'Home'} to={'/slotBooking'} />
+        <ListItemLink key={'Home'} primary={'Home'} to={'/slotBooking'} onClick={handleOnHomeClick} />
         <ListItemLink key={'MachineryManagement'} primary={'Machinery Management'} to={'/machinery'} />
         {/*<ListItemLink key={'InventoryManagement'} primary={'Inventory Management'} to={'/inventory'} />*/}
       </List>
