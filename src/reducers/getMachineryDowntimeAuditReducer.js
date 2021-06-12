@@ -12,7 +12,7 @@ const getMachineryDowntimeAuditReducer = (state = defaultState, action) => {
     case actionTypes.GET_DOWNTIME_AUDIT_SUCCESS:
       return Object.assign({}, state, { isLoading: false, auditList: action.response });
     case actionTypes.GET_DOWNTIME_AUDIT_FAILURE:
-      return Object.assign({}, state, { isLoading: false });
+      return Object.assign({}, state, { isLoading: false, error: action.error });
     case actionTypes.LOGOUT_SUCCESS:
       return Object.assign({}, state, defaultState);
     default:

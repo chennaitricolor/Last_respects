@@ -42,8 +42,10 @@ const MachineryAuditList = ({ siteId = '' }) => {
   const styles = useStyles();
   const dispatch = useDispatch();
   const [activityLogs, setActivityLogs] = useState([]);
+  const [errorFetchingAudit, setErrorFetchingAudit] = useState(false);
 
   const downtimeList = useSelector((state) => state.getMachineryDowntimeAuditReducer.auditList);
+  const downtimeFetchError = useSelector((state) => state.getMachineryDowntimeAuditReducer.error);
 
   useEffect(() => {
     if (siteId !== '') {
@@ -57,7 +59,7 @@ const MachineryAuditList = ({ siteId = '' }) => {
   }, [siteId]);
 
   useEffect(() => {
-    if (siteId !== '') {
+    if (siteId !== '' && downtimeList !== undefined && downtimeList !== null) {
       var newLogs = [];
       downtimeList.forEach((item) => {
         var startTime = item.startTime !== null ? moment(item.statusStartTime) : moment();
@@ -72,8 +74,16 @@ const MachineryAuditList = ({ siteId = '' }) => {
         );
       });
       setActivityLogs(newLogs);
+      setErrorFetchingAudit(false);
     }
   }, [downtimeList]);
+
+  useEffect(() => {
+    if (downtimeFetchError !== null && downtimeFetchError !== '') {
+      setActivityLogs([]);
+      setErrorFetchingAudit(true);
+    }
+  }, [downtimeFetchError]);
 
   const formatDate = (startTime, endTime) => {
     var locMoment = moment.duration(endTime.diff(startTime), 'milliseconds');
@@ -81,28 +91,31 @@ const MachineryAuditList = ({ siteId = '' }) => {
   };
 
   return (
-    <TableContainer className="table">
-      <Table aria-label="customized table">
-        <TableHead>
-          <TableRow className={styles.tableHeader}>
-            {columns.map((column) => (
-              <StyledTableCell key={column.id} align={column.align}>
-                {column.label}
-              </StyledTableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {activityLogs.map((item, i) => (
-            <TableRow key={i}>
-              {columns.map((column, j) => (
-                <TableCell key={j}>{item[column.id]}</TableCell>
+    <>
+      <TableContainer className="table">
+        <Table aria-label="customized table">
+          <TableHead>
+            <TableRow className={styles.tableHeader}>
+              {columns.map((column) => (
+                <StyledTableCell key={column.id} align={column.align}>
+                  {column.label}
+                </StyledTableCell>
               ))}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {activityLogs.map((item, i) => (
+              <TableRow key={i}>
+                {columns.map((column, j) => (
+                  <TableCell key={j}>{item[column.id]}</TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      {errorFetchingAudit && <div>Error fetching downtime audit</div>}
+    </>
   );
 };
 
