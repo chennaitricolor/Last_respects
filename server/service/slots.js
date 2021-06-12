@@ -256,8 +256,9 @@ class Slots {
     if(_.isEmpty(aadharOfDeceased)) {
       return [ false ]
     }
+    const customLock = null;
     const slotWhere = { aadharOfDeceased, status: { [Sequelize.Op.in]: blockedSlots } }
-    const slotDetails = await slots.findOne({ where: slotWhere, ...options })
+    const slotDetails = await slots.findOne({ where: slotWhere, ...options, lock: customLock })
     return [!_.isEmpty(slotDetails), slotDetails];
   }
 
