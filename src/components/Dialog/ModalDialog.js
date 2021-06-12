@@ -4,7 +4,6 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import { makeStyles } from '@material-ui/core/styles';
 import RequiredFieldMarker from '../RequiredFieldMarker';
-import ErrorMessage from '../ErrorMessage';
 import { useTheme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import clsx from 'clsx';
@@ -128,6 +127,7 @@ const ModalDialog = (props) => {
     zoneName: '',
     siteName: '',
   });
+  const [slotDetailsFromForm, setSlotDetailsFromForm] = useState({});
   const [selectedReason, setReassignReason] = useState('');
   const [showReAssignComment, setShowReAssignComment] = useState(false);
   const [commentVal, setCommentVal] = useState('');
@@ -167,6 +167,10 @@ const ModalDialog = (props) => {
       setAvailableTimeSlots(availableTime);
     }
   }, [availableSlotDetails]);
+
+  useEffect(() => {
+    if (props.slotDetails !== null) setSlotDetailsFromForm(props.slotDetails);
+  }, [props.slotDetails]);
 
   useEffect(() => {
     setSnackInfo({
@@ -297,9 +301,10 @@ const ModalDialog = (props) => {
     if (token !== '' && isTokenAlive(token)) {
       let api = apiUrls.updateSlotStatus.replace(':slotId', props.slotDetails.id);
 
-      let slotDetails = props.slotDetails;
+      let slotDetails = {...slotDetailsFromForm};
       const finalSiteId = isActive ? parseInt(siteId) : parseInt(reAssignSiteId);
 
+      slotDetails.id = undefined;
       slotDetails.burialSiteId = finalSiteId;
       slotDetails.slot = selectedTime;
       slotDetails.dateOfCremation = moment(selectedDate, 'DD-MM-YYYY').format('MM-DD-YYYY');
