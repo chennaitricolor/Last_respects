@@ -64,8 +64,8 @@ export const genderRadioButton = [
 ];
 
 export const buriedRadioButton = [
-  { id: 'BURIED', value: 'Buried' },
-  { id: 'BURNT', value: 'Burnt' },
+  { id: 'BURIED', value: 'Burial' },
+  { id: 'BURNT', value: 'Burn' },
 ];
 
 export const placeOfDeathRadioButton = [

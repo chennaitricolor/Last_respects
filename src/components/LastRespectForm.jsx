@@ -729,7 +729,7 @@ const LastRespectForm = (props) => {
           <div className="row ">
             {renderDateField('Date of Death', details.dateOfDeath, 'dateOfDeath', handleOnChange, styles, props.type === 'EDIT', true)}
             {renderRadioButtonField(
-              'Sex',
+              'Gender',
               details.sex,
               'sex',
               genderRadioButton,
