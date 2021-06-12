@@ -195,6 +195,9 @@ const SlotBookingContainer = (props) => {
 
   const handleCancel = () => {
     window.scrollTo(0, 0);
+    dispatch({
+      type: actionTypes.CLEAR_SLOT_DETAILS,
+    });
     setFormOpen(false);
   };
 

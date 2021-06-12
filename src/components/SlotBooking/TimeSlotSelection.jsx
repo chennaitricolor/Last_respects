@@ -47,7 +47,6 @@ const useStyles = makeStyles({
     marginBottom: '32px',
     padding: 0,
     height: '100%',
-    maxHeight: 1000,
     overflow: 'auto',
     cursor: 'pointer',
   },
