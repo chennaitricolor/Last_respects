@@ -604,15 +604,32 @@ const LastRespectForm = (props) => {
                 siteId: props.siteId,
               },
             });
-            dispatch({
-              type: actionTypes.SHOW_SNACKBAR,
-              payload: {
-                openSnack: true,
-                message: `Slot ${props.selectedTime} has ${props.type === 'ADD' ? 'Booked' : 'Updated'}`,
-                severity: 'success',
-              },
-            });
-            props.onCancel();
+            if (props.type === 'EDIT' && payload.type !== 'COMPLETE') {
+              dispatch({
+                type: actionTypes.SHOW_SNACKBAR,
+                payload: {
+                  openSnack: true,
+                  message: `Slot ${props.selectedTime} status has been Updated`,
+                  severity: 'success',
+                },
+              });
+              dispatch({
+                type: actionTypes.GET_SLOT_DETAILS_BASED_SLOT_ID,
+                payload: {
+                  slotId: details.id,
+                },
+              });
+            } else {
+              dispatch({
+                type: actionTypes.SHOW_SNACKBAR,
+                payload: {
+                  openSnack: true,
+                  message: `Slot ${props.selectedTime} has ${props.type === 'ADD' ? 'Booked' : 'Updated'}`,
+                  severity: 'success',
+                },
+              });
+              props.onCancel();
+            }
             props.setType('EDIT');
           } else {
             setSaveLoader(false);
@@ -653,6 +670,11 @@ const LastRespectForm = (props) => {
             });
           }
         });
+    } else {
+      dispatch({
+        type: actionTypes.ROUTE_TO_PATH,
+        payload: { path: '/' },
+      });
     }
   };
 
@@ -832,7 +854,7 @@ const LastRespectForm = (props) => {
             )}
             {details.selectedAttenderType === 'Others' &&
               renderTextInput(
-                'Attender\'s Relation to Deceased',
+                "Attender's Relation to Deceased",
                 details.otherAttenderType,
                 'otherAttenderType',
                 handleOnChange,

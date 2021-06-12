@@ -388,6 +388,11 @@ const ModalDialog = (props) => {
             });
           }
         });
+    } else {
+      dispatch({
+        type: actionTypes.ROUTE_TO_PATH,
+        payload: { path: '/' },
+      });
     }
   };
 
