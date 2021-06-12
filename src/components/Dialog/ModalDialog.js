@@ -25,6 +25,8 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Alert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
 
 const useStyles = makeStyles({
   dropDownLabel: {
@@ -34,7 +36,6 @@ const useStyles = makeStyles({
   },
   dropDown: {
     width: '100%',
-    marginTop: '3%',
 
     '& label': {
       color: '#707070 !important',
@@ -49,7 +50,7 @@ const useStyles = makeStyles({
   dropDownSelect: {
     fontSize: '16px',
     height: '40px',
-    marginTop: '3%',
+    marginTop: '16px',
     backgroundColor: '#fff',
 
     '& div': {
@@ -62,33 +63,58 @@ const useStyles = makeStyles({
     color: '#F2F2F2',
     fontSize: '14px',
     fontWeight: 'bold',
-    padding: '10px 0',
-    margin: '15px auto 0',
-    width: '80%',
+    marginRight: '5%',
   },
   cancelButton: {
     border: '1px solid #E5E5E5',
     color: '#466783',
     fontSize: '14px',
     fontWeight: 'bold',
-    padding: '10px 0',
-    margin: '15px auto 0',
-    width: '80%',
   },
   disabledField: {
     background: '#E0E0E0',
   },
+  header: {
+    fontSize: '18px',
+    color: '#466783',
+    fontWeight: 'bold',
+    display: 'inline-block',
+  },
   reassignModal: {
-    padding: '15px 30px',
+    padding: 0,
   },
   close: {
     position: 'absolute',
-    top: '10px',
     right: '20px',
     cursor: 'pointer',
+    fontSize: '14px',
   },
-  datePickerRoot: {
+  datePicker: {
     width: '100%',
+    height: '40px',
+
+    '& div': {
+      backgroundColor: '#fff',
+      height: '40px',
+
+      '& input': {
+        color: '#4F4F4F',
+      },
+
+      '& fieldset': {
+        border: '1px solid #707070 !important',
+      },
+    },
+  },
+  datePickerDisabled: {
+    '& div': {
+      '& input': {
+        color: '#4F4F4F',
+      },
+      '& fieldset': {
+        // background: '#E0E0E0'
+      },
+    },
   },
   fieldLabel: {
     fontSize: '14px',
@@ -243,8 +269,7 @@ const ModalDialog = (props) => {
       selectedDate !== '' &&
       selectedTime !== '' &&
       selectedReason !== '' &&
-      isOwner &&
-      !isActive;
+      isOwner;
 
     result = showReAssignComment ? commentVal !== '' : result;
 
@@ -301,7 +326,7 @@ const ModalDialog = (props) => {
     if (token !== '' && isTokenAlive(token)) {
       let api = apiUrls.updateSlotStatus.replace(':slotId', props.slotDetails.id);
 
-      let slotDetails = {...slotDetailsFromForm};
+      let slotDetails = { ...slotDetailsFromForm };
       const finalSiteId = isActive ? parseInt(siteId) : parseInt(reAssignSiteId);
 
       slotDetails.id = undefined;
@@ -374,149 +399,162 @@ const ModalDialog = (props) => {
 
   return (
     <div>
-      <Dialog fullScreen={fullScreen} open={true} onClose={handleClose} aria-labelledby="dialog-title" disableBackdropClick>
-        <DialogTitle id="responsive-dialog-title">{isActive ? 'Re-Schedule Booking' : 'Re-Assign Booking'}</DialogTitle>
-        <div className={`container ${styles.reassignModal}`}>
+      <Dialog
+        fullScreen={fullScreen}
+        open={true}
+        onClose={handleClose}
+        aria-labelledby="dialog-title"
+        disableBackdropClick
+        style={{ height: '90%', margin: 'auto', background: '#FFFFFF' }}
+      >
+        <DialogTitle id="responsive-dialog-title">
+          <Typography className={styles.header}>{isActive ? 'Re-Schedule Booking' : 'Re-Assign Booking'}</Typography>
           <span className={`${styles.close}`} onClick={handleClose}>
             X Close
           </span>
-          <div className="row">
-            <div className="col-12 mb-4">
-              <Typography className={styles.dropDownLabel} component={'div'}>
-                Zone
-              </Typography>
-              <FormControl className={styles.dropDown}>
-                <Select
-                  variant={'outlined'}
-                  size={'small'}
-                  disabled={isActive}
-                  className={clsx(styles.dropDownSelect, isActive ? styles.disabledField : '')}
-                  value={siteDetails.zoneName}
-                  onChange={(e) => handleOnChange(e.target.value, 'zoneName')}
-                >
-                  {zoneList.map((item) => {
-                    return (
-                      <MenuItem disabled={isActive} key={item.zone_or_division_id} value={item.zone_or_division}>
-                        {item.zone_or_division}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
-            </div>
-            <div className="col-12 mb-4 ">
-              <Typography className={styles.dropDownLabel} component={'div'}>
-                Site
-              </Typography>
-              <FormControl className={styles.dropDown}>
-                <Select
-                  variant={'outlined'}
-                  size={'small'}
-                  className={clsx(styles.dropDownSelect, isActive ? styles.disabledField : '')}
-                  value={siteDetails.siteName}
-                  disabled={isActive}
-                  onChange={(e) => handleOnChange(e.target.value, 'siteName')}
-                >
-                  {siteList.map((item) => {
-                    return (
-                      <MenuItem disabled={isActive} key={item.id} value={item.siteName}>
-                        {item.siteName}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
-            </div>
-            <div className="col-12 mb-4">
-              <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                <DatePicker
-                  className={styles.datePickerRoot}
-                  disableToolbar
-                  disablePast
-                  variant="inline"
-                  format="dd-MM-yyyy"
-                  inputVariant="outlined"
-                  autoOk
-                  margin="normal"
-                  id="date-picker-inline"
-                  label={isActive ? 'Re-Schedule Date' : 'Re-Assign Date'}
-                  value={selectedDate}
-                  maxDate={maxDate}
-                  onChange={handleDateChange}
-                />
-              </MuiPickersUtilsProvider>
-            </div>
-            <div className="col-12 mb-4">
-              <Typography className={styles.dropDownLabel} component={'div'}>
-                Time
-              </Typography>
-              <FormControl className={styles.dropDown}>
-                <Select
-                  variant={'outlined'}
-                  size={'small'}
-                  className={styles.dropDownSelect}
-                  value={selectedTime}
-                  onChange={(e) => handleOnChange(e.target.value, 'time')}
-                >
-                  {availableTimeSlots.map((item, i) => {
-                    return (
-                      <MenuItem key={`item${i}`} value={item}>
-                        {item}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
-            </div>
-            <div className="col-12 mb-4">
-              <Typography className={styles.dropDownLabel} component={'div'}>
-                {isActive ? 'Re-Schedule Reason' : 'Re-Assign Reason'}
-              </Typography>
-              <FormControl className={styles.dropDown}>
-                <Select
-                  variant={'outlined'}
-                  size={'small'}
-                  className={styles.dropDownSelect}
-                  value={selectedReason}
-                  onChange={(e) => handleOnChange(e.target.value, 'reAssignReason')}
-                >
-                  {reAssignReasons.map((item) => {
-                    return (
-                      <MenuItem key={item.id} value={item.reason}>
-                        {item.reason}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
-            </div>
-            {showReAssignComment ? (
+        </DialogTitle>
+        <DialogContent>
+          <div className={`container ${styles.reassignModal}`}>
+            <div className="row">
               <div className="col-12 mb-4">
-                <Typography component={'div'} className={` ${styles.fieldLabel} `}>
-                  {'Reason'}
-                  <RequiredFieldMarker />
+                <Typography className={styles.dropDownLabel} component={'div'}>
+                  Zone
                 </Typography>
-                <TextField
-                  className={styles.textField}
-                  value={commentVal}
-                  size="small"
-                  variant={'outlined'}
-                  onChange={(event) => handleOnChange(event.target.value, 'text')}
-                  InputLabelProps={{ shrink: true }}
-                  autoComplete={'disabled'}
-                />
+                <FormControl className={styles.dropDown}>
+                  <Select
+                    variant={'outlined'}
+                    size={'small'}
+                    disabled={isActive}
+                    className={clsx(styles.dropDownSelect, isActive ? styles.disabledField : '')}
+                    value={siteDetails.zoneName}
+                    onChange={(e) => handleOnChange(e.target.value, 'zoneName')}
+                  >
+                    {zoneList.map((item) => {
+                      return (
+                        <MenuItem disabled={isActive} key={item.zone_or_division_id} value={item.zone_or_division}>
+                          {item.zone_or_division}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
               </div>
-            ) : null}
-            <div className="col-12 text-center">
-              <Button variant="contained" className={styles.saveButton} disabled={!enableSubmit} onClick={handleSubmit}>
-                Save
-              </Button>
-              <Button variant="contained" className={`${styles.cancelButton}`} onClick={handleClose}>
-                Cancel
-              </Button>
+              <div className="col-12 mb-4 ">
+                <Typography className={styles.dropDownLabel} component={'div'}>
+                  Site
+                </Typography>
+                <FormControl className={styles.dropDown}>
+                  <Select
+                    variant={'outlined'}
+                    size={'small'}
+                    className={clsx(styles.dropDownSelect, isActive ? styles.disabledField : '')}
+                    value={siteDetails.siteName}
+                    disabled={isActive}
+                    onChange={(e) => handleOnChange(e.target.value, 'siteName')}
+                  >
+                    {siteList.map((item) => {
+                      return (
+                        <MenuItem disabled={isActive} key={item.id} value={item.siteName}>
+                          {item.siteName}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
+              </div>
+              <div className="col-12 mb-4">
+                <Typography component={'div'} className={styles.fieldLabel}>
+                  {isActive ? 'Re-Schedule Date' : 'Re-Assign Date'}
+                </Typography>
+                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                  <DatePicker
+                    className={clsx(styles.datePicker, isActive ? styles.datePickerDisabled : '')}
+                    disableToolbar
+                    disablePast
+                    variant="inline"
+                    format="dd-MM-yyyy"
+                    inputVariant="outlined"
+                    autoOk
+                    margin="normal"
+                    id="date-picker-inline"
+                    value={selectedDate}
+                    maxDate={maxDate}
+                    onChange={handleDateChange}
+                  />
+                </MuiPickersUtilsProvider>
+              </div>
+              <div className="col-12 mb-4">
+                <Typography className={styles.dropDownLabel} component={'div'}>
+                  Time
+                </Typography>
+                <FormControl className={styles.dropDown}>
+                  <Select
+                    variant={'outlined'}
+                    size={'small'}
+                    className={styles.dropDownSelect}
+                    value={selectedTime}
+                    onChange={(e) => handleOnChange(e.target.value, 'time')}
+                  >
+                    {availableTimeSlots.map((item, i) => {
+                      return (
+                        <MenuItem key={`item${i}`} value={item}>
+                          {item}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
+              </div>
+              <div className="col-12 mb-4">
+                <Typography className={styles.dropDownLabel} component={'div'}>
+                  {isActive ? 'Re-Schedule Reason' : 'Re-Assign Reason'}
+                </Typography>
+                <FormControl className={styles.dropDown}>
+                  <Select
+                    variant={'outlined'}
+                    size={'small'}
+                    className={styles.dropDownSelect}
+                    value={selectedReason}
+                    onChange={(e) => handleOnChange(e.target.value, 'reAssignReason')}
+                  >
+                    {reAssignReasons.map((item) => {
+                      return (
+                        <MenuItem key={item.id} value={item.reason}>
+                          {item.reason}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
+              </div>
+              {showReAssignComment ? (
+                <div className="col-12 mb-4">
+                  <Typography component={'div'} className={` ${styles.fieldLabel} `}>
+                    {'Reason'}
+                    <RequiredFieldMarker />
+                  </Typography>
+                  <TextField
+                    className={styles.textField}
+                    value={commentVal}
+                    size="small"
+                    variant={'outlined'}
+                    onChange={(event) => handleOnChange(event.target.value, 'text')}
+                    InputLabelProps={{ shrink: true }}
+                    autoComplete={'disabled'}
+                  />
+                </div>
+              ) : null}
             </div>
           </div>
-        </div>
+          <div className="col-12 text-center" style={{ marginBottom: '16px' }}>
+            <Button variant="contained" className={styles.saveButton} disabled={!enableSubmit} onClick={handleSubmit}>
+              Save
+            </Button>
+            <Button variant="contained" className={`${styles.cancelButton}`} onClick={handleClose}>
+              Cancel
+            </Button>
+          </div>
+        </DialogContent>
       </Dialog>
       <Snackbar
         open={snackInfo.openSnack}

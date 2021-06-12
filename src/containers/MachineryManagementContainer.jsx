@@ -99,7 +99,7 @@ const MachineryManagementContainer = () => {
 
   const machineryManageOnNotification = (
     <span className={styles.notificationOnMessage}>
-      On <strong>Turning Off</strong> the status you should to reassign the booked slots.
+      On <strong>Turning Off</strong> the status you should be able to reassign the booked slots.
     </span>
   );
 

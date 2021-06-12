@@ -757,7 +757,7 @@ const LastRespectForm = (props) => {
           </div>
           <div className="row ">
             {renderRadioButtonField(
-              'Buried or Burnt',
+              'Cremation Ritual',
               details.cremationType,
               'cremationType',
               buriedRadioButton,
@@ -832,7 +832,7 @@ const LastRespectForm = (props) => {
             )}
             {details.selectedAttenderType === 'Others' &&
               renderTextInput(
-                'Other Attender Type',
+                'Attender\'s Relation to Deceased',
                 details.otherAttenderType,
                 'otherAttenderType',
                 handleOnChange,
