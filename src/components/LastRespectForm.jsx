@@ -604,7 +604,7 @@ const LastRespectForm = (props) => {
                 siteId: props.siteId,
               },
             });
-            if (props.type === 'EDIT' && payload.type !== 'COMPLETE') {
+            if (props.type === 'EDIT' && !['CANCEL', 'COMPLETE'].includes(payload.type)) {
               dispatch({
                 type: actionTypes.SHOW_SNACKBAR,
                 payload: {
@@ -644,6 +644,7 @@ const LastRespectForm = (props) => {
           }
         })
         .catch((error) => {
+          setSaveLoader(false);
           if (error.response !== undefined && error.response.data !== undefined && error.response.data.error !== undefined) {
             let errorMessage = error.response.data.error[0];
             let message = errorMessage.message;
@@ -659,7 +660,6 @@ const LastRespectForm = (props) => {
                 message = 'Slot has been already booked for this Aadhar Number: ' + details.aadharOfDeceased + ' for ' + siteInfo;
               }
             }
-            setSaveLoader(false);
             dispatch({
               type: actionTypes.SHOW_SNACKBAR,
               payload: {

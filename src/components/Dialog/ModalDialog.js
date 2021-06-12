@@ -26,9 +26,9 @@ import CloseIcon from '@material-ui/icons/Close';
 import Alert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
+import CircularProgress from "@material-ui/core/CircularProgress";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   dropDownLabel: {
     fontWeight: 'bold',
     fontSize: '14px',
@@ -140,8 +140,16 @@ const useStyles = makeStyles({
       fontSize: '16px',
       color: '#4F4F4F',
     },
+    buttonProgress: {
+      color: theme.palette.action.active,
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      marginTop: -12,
+      marginLeft: -12,
+    },
   },
-});
+}));
 
 const reAssignReasons = getReassignReasons();
 
@@ -165,6 +173,7 @@ const ModalDialog = (props) => {
   const [enableSubmit, setEnableSubmit] = useState(false);
   const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
   const [reAssignSiteId, setReAssignSiteId] = useState(0);
+  const [saveLoader, setSaveLoader] = useState(false);
   const [snackInfo, setSnackInfo] = useState({
     openSnack: false,
     message: '',
@@ -322,6 +331,7 @@ const ModalDialog = (props) => {
 
   const handleSubmit = () => {
     setEnableSubmit(false);
+    setSaveLoader(true);
     let token = getCookie('lrToken');
     if (token !== '' && isTokenAlive(token)) {
       let api = apiUrls.updateSlotStatus.replace(':slotId', props.slotDetails.id);
@@ -343,6 +353,7 @@ const ModalDialog = (props) => {
       callFetchApi(api, null, 'PUT', putPayload, token)
         .then((response) => {
           if (response.status === 200) {
+            setSaveLoader(false);
             dispatch({
               type: actionTypes.GET_SLOTS_BASED_SITE_ID,
               payload: {
@@ -364,6 +375,7 @@ const ModalDialog = (props) => {
             props.setOpenDialog(false);
             props.closeBookingForm();
           } else {
+            setSaveLoader(false);
             const errorMessage = isActive ? `Slot Re-Schedule Failed` : `Slot Re-Assign Failed`;
             dispatch({
               type: actionTypes.SHOW_SNACKBAR,
@@ -376,6 +388,7 @@ const ModalDialog = (props) => {
           }
         })
         .catch((error) => {
+          setSaveLoader(false);
           if (error.response !== undefined && error.response.data !== undefined && error.response.data.error !== undefined) {
             let errorMessage = error.response.data.error[0];
             dispatch({
@@ -552,10 +565,10 @@ const ModalDialog = (props) => {
             </div>
           </div>
           <div className="col-12 text-center" style={{ marginBottom: '16px' }}>
-            <Button variant="contained" className={styles.saveButton} disabled={!enableSubmit} onClick={handleSubmit}>
-              Save
+            <Button variant="contained" className={styles.saveButton} disabled={!enableSubmit || saveLoader} onClick={handleSubmit}>
+              {saveLoader && <CircularProgress size={24} className={styles.buttonProgress} />}Save
             </Button>
-            <Button variant="contained" className={`${styles.cancelButton}`} onClick={handleClose}>
+            <Button variant="contained" className={styles.cancelButton} disabled={saveLoader} onClick={handleClose}>
               Cancel
             </Button>
           </div>
