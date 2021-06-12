@@ -604,7 +604,7 @@ const LastRespectForm = (props) => {
                 siteId: props.siteId,
               },
             });
-            if (props.type === 'EDIT' && !['CANCEL', 'COMPLETE'].includes(payload.type)) {
+            if (props.type === 'EDIT' && payload.type !== null && !['CANCEL', 'COMPLETE'].includes(payload.type)) {
               dispatch({
                 type: actionTypes.SHOW_SNACKBAR,
                 payload: {
