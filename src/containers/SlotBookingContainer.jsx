@@ -80,6 +80,7 @@ const SlotBookingContainer = (props) => {
   const siteList = useSelector((state) => state.getSitesBasedOnZoneIdReducer.siteList);
   const dateTimeSlotDetails = useSelector((state) => state.getSlotsBasedOnSiteIdReducer.slotDetails);
   const snackBarInfo = useSelector((state) => state.showSnackBarMessageReducer);
+  const homeButtonClicked = useSelector((state) => state.homeButtonClickReducer.homeButtonClicked);
   const mobileCheck = isMobile();
 
   useEffect(() => {
@@ -87,6 +88,27 @@ const SlotBookingContainer = (props) => {
       type: actionTypes.GET_ALL_ZONES,
     });
   }, [dispatch]);
+
+  useEffect(() => {
+    if (homeButtonClicked) {
+      setType('ADD');
+      setFormOpen(false);
+      setSelectedDate(moment(new Date()).format('DD-MM-YYYY'));
+      setSelectedTimeSlot('');
+      setSelectedSlotDetails(null);
+      setSiteDetails({
+        zoneName: '',
+        siteName: '',
+        siteId: '',
+      });
+      dispatch({
+        type: actionTypes.HOME_BUTTON_CLICKED,
+        payload: {
+          homeButtonClicked: false,
+        },
+      });
+    }
+  }, [dispatch, homeButtonClicked]);
 
   useEffect(() => {
     return () => {
@@ -100,6 +122,7 @@ const SlotBookingContainer = (props) => {
         siteId: '',
       });
       setType('ADD');
+      setFormOpen(false);
       setSelectedDate(moment(new Date()).format('DD-MM-YYYY'));
       setSelectedTimeSlot('');
       setSelectedSlotDetails(null);
@@ -209,7 +232,7 @@ const SlotBookingContainer = (props) => {
           <ZoneSelection siteDetails={siteDetails} zoneList={zoneList} siteList={siteList} handleOnChangeForDropdown={handleOnChangeForDropdown} />
           <div className={`row slotContent `}>
             <div className="col-12">
-              <h4 className={`${styles.slotHeaderTitle}`}> Slot Booking</h4>
+              <h4 className={`${styles.slotHeaderTitle}`}>Slot Booking</h4>
             </div>
             {dateTimeSlotDetails !== null && siteDetails.siteName !== '' ? (
               <div className={`col-12 ${styles.overflowHidden}`}>

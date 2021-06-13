@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import loginResponse from './loginReducer';
+import homeButtonClickReducer from './homeButtonClickReducer';
 import getAllZoneReducer from './getAllZoneReducer';
 import getSitesBasedOnZoneIdReducer from './getSitesBasedOnZoneIdReducer';
 import getSlotsBasedOnSiteIdReducer from './getSlotsBasedOnSiteIdReducer';
@@ -11,6 +12,7 @@ import getMachineryDowntimeAuditReducer from './getMachineryDowntimeAuditReducer
 
 const reducers = combineReducers({
   loginResponse,
+  homeButtonClickReducer,
   getAllZoneReducer,
   getSitesBasedOnZoneIdReducer,
   getSlotsBasedOnSiteIdReducer,

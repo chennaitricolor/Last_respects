@@ -107,6 +107,12 @@ const Header = () => {
     dispatch({
       type: actionTypes.RESET_DATA_UNMOUNT_SLOT_BOOKING,
     });
+    dispatch({
+      type: actionTypes.HOME_BUTTON_CLICKED,
+      payload: {
+        homeButtonClicked: true,
+      },
+    });
   };
 
   const menuList = (anchor) => (
