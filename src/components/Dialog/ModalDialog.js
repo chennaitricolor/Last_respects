@@ -357,7 +357,7 @@ const ModalDialog = (props) => {
             dispatch({
               type: actionTypes.GET_SLOTS_BASED_SITE_ID,
               payload: {
-                siteId: finalSiteId,
+                siteId: payload.siteId,
               },
             });
             let formattedDate = moment(selectedDate).format('MMM-DD');
