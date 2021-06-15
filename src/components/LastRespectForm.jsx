@@ -865,7 +865,7 @@ const LastRespectForm = (props) => {
                 details.selectedAttenderType === 'Others',
               )}
             {renderNumberInput(
-              'Aadhar Number',
+              'Aadhar Number of Deceased Person',
               details.aadharOfDeceased,
               'aadharOfDeceased',
               handleOnChange,
