@@ -26,9 +26,9 @@ import CloseIcon from '@material-ui/icons/Close';
 import Alert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
 import DialogContent from '@material-ui/core/DialogContent';
-import CircularProgress from "@material-ui/core/CircularProgress";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   dropDownLabel: {
     fontWeight: 'bold',
     fontSize: '14px',
@@ -230,6 +230,17 @@ const ModalDialog = (props) => {
       zoneName: zoneDetailsPayload.zoneName,
       siteName: zoneDetailsPayload.siteName,
     });
+
+    //reset zone and site to original value in parent component
+    return () => {
+      dispatch({
+        type: actionTypes.SET_ZONE_AND_SITE_NAME,
+        payload: {
+          zoneName: zoneDetailsPayload.zoneName,
+          siteName: zoneDetailsPayload.siteName,
+        },
+      });
+    };
   }, [zoneDetailsPayload.zoneName, zoneDetailsPayload.siteName]);
 
   useEffect(() => {
