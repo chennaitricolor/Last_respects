@@ -4,6 +4,7 @@ const burialSite = require('./burial_sites');
 const zones = require('./zones');
 const slots = require('./slots');
 const user = require('./user');
+const dashboard = require('./dashboard')
 
 module.exports = {
   inventory,
@@ -11,5 +12,6 @@ module.exports = {
   burialSite,
   slots,
   zones,
-  user
+  user,
+  dashboard
 };

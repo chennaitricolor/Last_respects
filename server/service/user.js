@@ -194,6 +194,7 @@ class User {
         auth: true,
         token: userToken.token,
         refreshToken: userToken.refreshToken,
+        admin: userDetails.isAdmin
       })
     } catch (e) {
       const { code, message } = exceptionparser(e);

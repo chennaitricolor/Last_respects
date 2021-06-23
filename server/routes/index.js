@@ -1,7 +1,7 @@
 const router = require('express').Router();
 
 const {
-  health, burialSite, slots, zones, user
+  health, burialSite, slots, zones, user, dashboard
 } = require('../service');
 
 const { verifyToken, verifySuperUser } = require('../utils/verifyToken');
@@ -26,5 +26,6 @@ router.post('/users/login', user.login);
 router.put('/users/:id', verifyToken, verifySuperUser, user.modify); // API route for user to edit a detail
 router.delete('/users/:id', verifyToken, verifySuperUser, user.delete);
 router.get('/users', verifyToken, verifySuperUser, user.list);
+router.get('/admin/dashboard', verifyToken, verifySuperUser, dashboard.get)
 
 module.exports = router
