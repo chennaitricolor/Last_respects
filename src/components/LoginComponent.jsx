@@ -105,7 +105,7 @@ export const LoginComponent = (props) => {
       {props.getLoginResponse !== null && props.getLoginResponse.loginMessage === 'Unauthorized' ? <div className={styles.errorMessage}>Invalid Credentials</div> : <div />}
       <TextField
         className={'agent-x-login-email-id ' + styles.textField}
-        label={'Mobile Number'}
+        label={'Username / Mobile Number'}
         id={'userId'}
         value={props.loginDetails.userId}
         onChange={(event) => props.handleOnChange(event, 'userId', 'text')}
