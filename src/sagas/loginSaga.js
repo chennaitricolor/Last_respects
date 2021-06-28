@@ -10,14 +10,22 @@ export default function* loginSaga(action) {
     if (response.data !== undefined && response.data.auth) {
       setCookie('lrToken', response.data.token);
       setCookie('lrRefreshToken', response.data.refreshToken);
+      setCookie('isAdmin', response.data.admin);
       yield put({
         type: actionTypes.LOGIN_SUCCESS,
         response: response.data,
       });
-      yield put({
-        type: actionTypes.ROUTE_TO_PATH,
-        payload: { path: '/slotBooking' },
-      });
+      if (response.data.admin) {
+        yield put({
+          type: actionTypes.ROUTE_TO_PATH,
+          payload: { path: '/dashboard' },
+        });
+      } else {
+        yield put({
+          type: actionTypes.ROUTE_TO_PATH,
+          payload: { path: '/slotBooking' },
+        });
+      }
     } else {
       yield put({
         type: actionTypes.LOGIN_FAILURE,

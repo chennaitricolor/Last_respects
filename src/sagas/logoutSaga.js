@@ -6,6 +6,7 @@ export default function* logoutSaga() {
   try {
     deleteCookie('lrToken');
     deleteCookie('lrRefreshToken');
+    deleteCookie('isAdmin');
     yield put({
       type: actionTypes.LOGOUT_SUCCESS,
     });

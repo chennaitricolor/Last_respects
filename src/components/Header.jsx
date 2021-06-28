@@ -81,6 +81,7 @@ const Header = () => {
     if (token === '' || !isTokenAlive(token)) {
       deleteCookie('lrToken');
       deleteCookie('lrRefreshToken');
+      deleteCookie('isAdmin');
       dispatch({
         type: actionTypes.ROUTE_TO_PATH,
         payload: {
@@ -115,22 +116,31 @@ const Header = () => {
     });
   };
 
-  const menuList = (anchor) => (
-    <div
-      className={clsx(styles.list, {
-        [styles.fullList]: anchor === 'top' || anchor === 'bottom',
-      })}
-      role="presentation"
-      onClick={toggleDrawer(anchor, false)}
-      onKeyDown={toggleDrawer(anchor, false)}
-    >
-      <List component="nav">
-        <ListItemLink key={'Home'} primary={'Home'} to={'/slotBooking'} onClick={handleOnHomeClick} />
-        <ListItemLink key={'MachineryManagement'} primary={'Machinery Management'} to={'/machinery'} />
-        {/*<ListItemLink key={'InventoryManagement'} primary={'Inventory Management'} to={'/inventory'} />*/}
-      </List>
-    </div>
-  );
+  const menuList = (anchor) => {
+    let isAdmin = getCookie('isAdmin');
+    console.log('isAdmin: ', isAdmin, isAdmin === false, isAdmin === 'false');
+    return (
+      <div
+        className={clsx(styles.list, {
+          [styles.fullList]: anchor === 'top' || anchor === 'bottom',
+        })}
+        role="presentation"
+        onClick={toggleDrawer(anchor, false)}
+        onKeyDown={toggleDrawer(anchor, false)}
+      >
+        {isAdmin === undefined || isAdmin === '' || isAdmin === 'false' ? (
+          <List component="nav">
+            <ListItemLink key={'Home'} primary={'Home'} to={'/slotBooking'} onClick={handleOnHomeClick} />
+            <ListItemLink key={'MachineryManagement'} primary={'Machinery Management'} to={'/machinery'} />
+          </List>
+        ) : (
+          <List component="nav">
+            <ListItemLink key={'Dashboard'} primary={'Dashboard'} to={'/dashboard'} />
+          </List>
+        )}
+      </div>
+    );
+  };
 
   const ListItemLink = (props) => {
     const { primary, to, onClick } = props;

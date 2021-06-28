@@ -75,8 +75,28 @@ app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, '../build', 'index.html'));
 });
 
-app.get('/slotBooking', function (req, res) {
+const userPages = ['/slotBooking', '/machinery'];
+
+const adminPages = ['/dashboard'];
+
+app.get(userPages, function (req, res) {
+  let isAdmin = req.cookies.isAdmin;
+  if (isAdmin === undefined || isAdmin === '' || isAdmin === 'false') {
     res.sendFile(path.join(__dirname, '../build', 'index.html'));
+  }
+  if (isAdmin !== undefined && isAdmin === 'true') {
+    res.redirect('/dashboard');
+  }
+});
+
+app.get(adminPages, function (req, res) {
+  let isAdmin = req.cookies.isAdmin;
+  if (isAdmin !== undefined && isAdmin === 'true') {
+    res.sendFile(path.join(__dirname, '../build', 'index.html'));
+  }
+  if (isAdmin === undefined || isAdmin === '' || isAdmin === 'false') {
+    res.redirect('/slotBooking');
+  }
 });
 
 app.use(express.static(path.join('build')));

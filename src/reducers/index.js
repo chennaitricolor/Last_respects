@@ -9,6 +9,7 @@ import getAvailableSlotDetailsBasedOnSiteIdReducer from './getAvailableSlotDetai
 import showSnackBarMessageReducer from './showSnackBarMessageReducer';
 import putSiteStatusReducer from './putSiteStatusReducer';
 import getMachineryDowntimeAuditReducer from './getMachineryDowntimeAuditReducer';
+import getDashboardEmbedReducer from './getDashboardEmbedReducer';
 
 const reducers = combineReducers({
   loginResponse,
@@ -21,6 +22,7 @@ const reducers = combineReducers({
   showSnackBarMessageReducer,
   putSiteStatusReducer,
   getMachineryDowntimeAuditReducer,
+  getDashboardEmbedReducer,
 });
 
 export default reducers;

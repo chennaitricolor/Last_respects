@@ -9,4 +9,5 @@ export const apiUrls = {
   getSlotDetailsBasedOnSlotId: '/api/slots/:slotId',
   getAvailableSlotDetailsBasedOnSiteId: '/api/sites/:siteId/slots?date=:date&onlyFreeSlots=:availableFlag',
   getDowntimeAuditOnSlotId: '/api/machineryDowntimeAudit/:siteId?status=UNAVAILABLE',
+  getDashboardURL: '/api/admin/dashboard',
 };

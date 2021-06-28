@@ -25,6 +25,10 @@ const deleteCookie = (key) => {
   document.cookie = key + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 };
 
+const decodeToken = (token) => {
+  return jwt.decode(token);
+};
+
 const isTokenAlive = (token) => {
   const jwtTokenData = jwt.decode(token);
 
@@ -133,10 +137,10 @@ const getReassignReasons = () => {
 
 const getMomentDateStr = (date, format) => {
   return moment(date).format(format);
-}
+};
 
-const isMobile = () =>{
-  return window.innerWidth< 768 ? true: false;
-}
+const isMobile = () => {
+  return window.innerWidth < 768 ? true : false;
+};
 
-export { getCookie, setCookie, deleteCookie, isTokenAlive, getReassignReasons, getMomentDateStr,isMobile};
+export { getCookie, setCookie, deleteCookie, decodeToken, isTokenAlive, getReassignReasons, getMomentDateStr, isMobile };
