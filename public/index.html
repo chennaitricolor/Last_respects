@@ -3,7 +3,9 @@
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="Content-Security-Policy"
-          content="frame-src 'self' https://ap-south-1.quicksight.aws.amazon.com;"/>
+          content="default-src 'self';script-src 'self';style-src 'self' https://fonts.googleapis.com;
+          object-src 'none';base-uri 'self';connect-src 'self';font-src 'self';frame-src 'self' https://ap-south-1.quicksight.aws.amazon.com;
+          img-src 'self';manifest-src 'self';media-src 'self';worker-src 'none';"/>
     <link rel="icon" href="%PUBLIC_URL%/GccLogo.jpg"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta name="theme-color" content="#000000"/>
