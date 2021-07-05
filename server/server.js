@@ -20,7 +20,16 @@ moment.tz.setDefault('Asia/Kolkata');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(helmet());
+app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+          'frame-src': ["'self'", 'https://ap-south-1.quicksight.aws.amazon.com'],
+        },
+      },
+    }),
+);
 app.use(cookieParser());
 
 app.use(
