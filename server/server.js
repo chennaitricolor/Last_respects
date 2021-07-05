@@ -25,7 +25,7 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-        'frame-src': ["'self'", "'https://ap-south-1.quicksight.aws.amazon.com'"],
+        'frame-src': ["'self'", 'https://ap-south-1.quicksight.aws.amazon.com'],
       },
     },
   }),
