@@ -6,6 +6,7 @@ const path = require('path');
 const swaggerJSDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
 const winston = require('winston');
 const expressWinston = require('express-winston');
 const moment = require('moment-timezone');
@@ -19,6 +20,16 @@ moment.tz.setDefault('Asia/Kolkata');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        'frame-src': ["'self'", "'https://ap-south-1.quicksight.aws.amazon.com'"],
+      },
+    },
+  }),
+);
 app.use(cookieParser());
 
 app.use(
