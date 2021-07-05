@@ -118,7 +118,6 @@ const Header = () => {
 
   const menuList = (anchor) => {
     let isAdmin = getCookie('isAdmin');
-    console.log('isAdmin: ', isAdmin, isAdmin === false, isAdmin === 'false');
     return (
       <div
         className={clsx(styles.list, {
