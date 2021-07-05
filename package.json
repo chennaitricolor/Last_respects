@@ -72,15 +72,15 @@
     "url-loader": "4.1.1",
     "web-vitals": "^0.2.4",
     "webpack": "4.44.2",
-    "webpack-dev-server": "3.11.0",
     "webpack-manifest-plugin": "2.2.0",
     "winston": "^3.3.3",
     "workbox-webpack-plugin": "5.1.4"
   },
   "scripts": {
-    "start": "node scripts/start.js",
-    "build": "node scripts/build.js",
-    "test": "node scripts/test.js",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
     "clean": "rimraf node_modules package-lock.json && npm cache clean -f",
     "serve": "node server/server.js",
     "serve:dev": "nodemon server/server.js",
@@ -103,11 +103,6 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
-    ]
-  },
-  "babel": {
-    "presets": [
-      "react-app"
     ]
   },
   "devDependencies": {
