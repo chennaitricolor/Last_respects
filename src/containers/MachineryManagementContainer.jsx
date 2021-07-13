@@ -130,6 +130,8 @@ const MachineryManagementContainer = () => {
   const siteUpdateSuccess = useSelector((state) => state.putSiteStatusReducer.response);
   const siteUpdateFailure = useSelector((state) => state.putSiteStatusReducer.error);
 
+  useEffect(() => (window.onpopstate = () => window.history.forward(1)));
+
   useEffect(() => {
     dispatch({
       type: actionTypes.GET_ALL_ZONES,

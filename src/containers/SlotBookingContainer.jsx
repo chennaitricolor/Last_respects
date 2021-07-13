@@ -89,6 +89,8 @@ const SlotBookingContainer = (props) => {
     });
   }, [dispatch]);
 
+  useEffect(() => (window.onpopstate = () => window.history.forward(1)));
+
   useEffect(() => {
     if (homeButtonClicked) {
       setType('ADD');

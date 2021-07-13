@@ -27,6 +27,8 @@ export const ReportEmbedComponent = () => {
   const dispatch = useDispatch();
   const getDashboardEmbedUrl = useSelector((state) => state.getDashboardEmbedReducer);
 
+  useEffect(() => (window.onpopstate = () => window.history.forward(1)));
+
   useEffect(() => {
     dispatch({
       type: actionTypes.GET_DASHBOARD_EMBED_URL,

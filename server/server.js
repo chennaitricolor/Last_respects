@@ -81,7 +81,11 @@ app.use((req, res, next) => {
 app.use('/api', routes);
 
 app.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname, '../build', 'index.html'));
+  if (req.cookies['lrToken'] !== undefined && req.cookies['lrToken']) {
+    res.redirect('/slotBooking');
+  } else {
+    res.sendFile(path.join(__dirname, '../build', 'index.html'));
+  }
 });
 
 const userPages = ['/slotBooking', '/machinery'];
